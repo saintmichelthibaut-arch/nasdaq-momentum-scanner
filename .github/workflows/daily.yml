@@ -1,0 +1,121 @@
+name: Collecte quotidienne
+
+on:
+  schedule:
+    - cron: "30 22 * * 1-5"   # lun-ven 22h30 UTC, après la clôture de Wall Street
+  workflow_dispatch:
+    inputs:
+      full_refresh:
+        description: "Retélécharger tout l'historique (5 ans)"
+        type: boolean
+        default: false
+  push:
+    paths:
+      - "index.html"
+      - "config/**"
+      - "scripts/**"
+      - ".github/workflows/daily.yml"
+
+permissions:
+  contents: write
+  pages: write
+  id-token: write
+
+concurrency:
+  group: collect
+  cancel-in-progress: false
+
+jobs:
+  collect:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+          cache: pip
+
+      - name: Installer les dépendances
+        run: pip install -r requirements.txt
+
+      - name: Tests des formules
+        run: python -m unittest discover -s scripts/tests -v
+
+      - name: Restaurer le cache des cours
+        uses: actions/cache/restore@v4
+        with:
+          path: data/prices.parquet
+          key: prices-${{ github.run_id }}
+          restore-keys: prices-
+
+      - name: Collecte (yfinance → indicateurs → score)
+        id: collect
+        run: |
+          if [ "${{ inputs.full_refresh }}" = "true" ]; then
+            python scripts/collect.py --full
+          else
+            python scripts/collect.py
+          fi
+
+      - name: Backtest (vendredi, lancement manuel, ou s'il n'existe pas encore)
+        if: steps.collect.outcome == 'success'
+        continue-on-error: true
+        run: |
+          if [ "$(date -u +%u)" = "5" ] || [ "${{ github.event_name }}" != "schedule" ] || [ ! -f data/backtest/results.json ]; then
+            python scripts/backtest.py
+          else
+            echo "backtest ignoré aujourd'hui (tourne le vendredi)"
+          fi
+
+      - name: Sauvegarder le cache des cours
+        if: always() && hashFiles('data/prices.parquet') != ''
+        uses: actions/cache/save@v4
+        with:
+          path: data/prices.parquet
+          key: prices-${{ github.run_id }}
+
+      - name: Commit des données
+        if: always()
+        run: |
+          git config user.name "momentum-bot"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add data/
+          if git diff --cached --quiet; then
+            echo "rien de nouveau à committer"
+            exit 0
+          fi
+          git commit -m "données du $(date -u +%Y-%m-%d) (collecte automatique)"
+          for i in 1 2 3 4; do
+            git pull --rebase --autostash origin "${GITHUB_REF_NAME}" && git push origin "HEAD:${GITHUB_REF_NAME}" && exit 0
+            sleep $((i * 5))
+          done
+          exit 1
+
+  deploy:
+    # Publie la page sur GitHub Pages (Settings → Pages → Source : GitHub Actions)
+    needs: collect
+    if: always()
+    continue-on-error: true
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.ref_name }}
+
+      - name: Préparer le site
+        run: |
+          mkdir -p _site
+          cp index.html .nojekyll _site/
+          rsync -a --exclude 'prices.parquet' data/ _site/data/
+
+      - uses: actions/configure-pages@v5
+      - uses: actions/upload-pages-artifact@v3
+        with:
+          path: _site
+      - id: deployment
+        uses: actions/deploy-pages@v4

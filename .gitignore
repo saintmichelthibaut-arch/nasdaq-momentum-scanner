@@ -1,0 +1,7 @@
+# cache OHLCV : conservé dans le cache GitHub Actions, pas dans git (il grossirait le repo chaque jour)
+data/prices.parquet
+__pycache__/
+*.pyc
+*.tmp
+.venv/
+_site/

@@ -1,0 +1,86 @@
+{
+  "_lisez_moi": "Pondérations du score. Chaque profil doit totaliser 100. Modifie, commit, et la prochaine collecte (ou un lancement manuel) applique les nouveaux poids. Le backtest les applique aussi rétroactivement.",
+
+  "profiles": {
+    "standard": {
+      "label": "Standard",
+      "weights": {
+        "volume_momentum": 25,
+        "price_momentum": 20,
+        "relative_strength": 15,
+        "breakout_potential": 15,
+        "technical_trend": 10,
+        "acceleration": 10,
+        "volatility_compression": 5
+      }
+    },
+    "swing": {
+      "label": "Swing",
+      "weights": {
+        "volume_momentum": 30,
+        "price_momentum": 12,
+        "relative_strength": 13,
+        "breakout_potential": 20,
+        "technical_trend": 5,
+        "acceleration": 15,
+        "volatility_compression": 5
+      }
+    },
+    "long_term": {
+      "label": "Long terme",
+      "weights": {
+        "technical_trend": 25,
+        "rs_long": 25,
+        "trend_quality": 20,
+        "price_momentum": 10,
+        "relative_strength": 5,
+        "volume_momentum": 5,
+        "breakout_potential": 5,
+        "volatility_risk": 5
+      }
+    }
+  },
+
+  "default_profile": "swing",
+  "alerts_profile": "swing",
+
+  "overextension": {
+    "_note": "Multiplicateur appliqué au score total pour ne pas favoriser ce qui a déjà énormément monté. 1.0 = aucune pénalité.",
+    "rsi_start": 75,
+    "rsi_per_point": 0.02,
+    "atr_ext_start": 3.0,
+    "atr_ext_per_atr": 0.06,
+    "ret_1y_start": 1.0,
+    "ret_1y_per_100pct": 0.15,
+    "floor": 0.5
+  },
+
+  "setup_bonus": {
+    "_note": "Points ajoutés au score (après pondération) selon la configuration prix/volume détectée.",
+    "vol_leads_price": 8,
+    "flat_price_vol_surge": 4,
+    "price_up_vol_up": 2,
+    "strong_up_strong_vol": 2,
+    "mild_down_vol_surge": 0
+  },
+
+  "alerts": {
+    "score_above": 75,
+    "rvol_above": 2.0,
+    "breakout_min_rvol": 1.5,
+    "volume_accel_above": 70
+  },
+
+  "anomalies": {
+    "zscore_threshold": 2.5,
+    "lookback": 60
+  },
+
+  "sections": {
+    "top_n": 20,
+    "new_names_top_n": 50,
+    "new_names_min_universe_share": 0.3,
+    "new_names_window": 5,
+    "new_names_lookback": 10
+  }
+}

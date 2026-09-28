@@ -1,0 +1,951 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Nasdaq Momentum Scanner</title>
+<meta name="description" content="Détecte les actions tech US qui commencent à bouger, avant que le mouvement soit évident.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans+Condensed:wght@400;500;600;700&display=swap">
+<style>
+/* Layout : terminal de marché. Barre d'état collante en haut, bande d'alertes,
+   grille de panneaux denses (3 colonnes → 1 sur mobile), fiche titre en surcouche.
+   La couleur ne code QUE les variations : --up, --down, --amber. Tout le reste est neutre. */
+:root {
+  --bg: #0b0e11;
+  --panel: #10141a;
+  --panel-2: #151a21;
+  --line: #1f2630;
+  --line-2: #2a3340;
+  --fg: #c9d1da;
+  --fg-dim: #7b8794;
+  --fg-faint: #4d5763;
+  --fg-bright: #eef2f6;
+  --up: #45c08a;
+  --down: #e8625a;
+  --amber: #e2a43b;
+  --up-bg: rgba(69, 192, 138, 0.14);
+  --down-bg: rgba(232, 98, 90, 0.14);
+  --amber-bg: rgba(226, 164, 59, 0.13);
+  --font-ui: "IBM Plex Sans Condensed", "Arial Narrow", "Roboto Condensed", system-ui, sans-serif;
+  --font-num: "IBM Plex Mono", ui-monospace, "SFMono-Regular", Menlo, Consolas, monospace;
+  --fs-xs: 11px;
+  --fs-s: 12px;
+  --fs-m: 13px;
+  --fs-l: 16px;
+  --fs-xl: 22px;
+  --row: 24px;
+  color-scheme: dark;
+}
+* { box-sizing: border-box; }
+html, body { background: var(--bg); color: var(--fg); }
+body {
+  margin: 0;
+  font-family: var(--font-ui);
+  font-size: var(--fs-m);
+  line-height: 1.35;
+  -webkit-font-smoothing: antialiased;
+}
+button, input, select { font: inherit; color: inherit; }
+a { color: var(--fg-bright); }
+:focus-visible { outline: 1px solid var(--fg-bright); outline-offset: 1px; }
+.num, td.n, th.n { font-family: var(--font-num); font-variant-numeric: tabular-nums; }
+.up { color: var(--up); }
+.down { color: var(--down); }
+.amber { color: var(--amber); }
+.dim { color: var(--fg-dim); }
+.faint { color: var(--fg-faint); }
+.bright { color: var(--fg-bright); }
+.na { color: var(--fg-faint); cursor: help; border-bottom: 1px dotted var(--fg-faint); }
+
+/* ── barre d'état ─────────────────────────────── */
+.bar {
+  position: sticky; top: env(safe-area-inset-top, 0px); z-index: 20;
+  background: var(--bg);
+  border-bottom: 1px solid var(--line);
+  padding-inline: 16px;
+}
+.bar-row { display: flex; flex-wrap: wrap; align-items: center; gap: 8px 18px; padding-block: 8px; }
+.brand { display: flex; align-items: baseline; gap: 10px; }
+.brand b { font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; color: var(--fg-bright); font-size: var(--fs-m); }
+.brand span { font-size: var(--fs-xs); color: var(--fg-dim); letter-spacing: 0.06em; text-transform: uppercase; }
+.fresh { font-family: var(--font-num); font-size: var(--fs-xs); color: var(--fg-dim); display: flex; gap: 6px; align-items: center; flex-wrap: wrap; }
+.dot { width: 7px; height: 7px; border-radius: 50%; background: var(--up); display: inline-block; }
+.dot.warn { background: var(--amber); }
+.dot.bad { background: var(--down); }
+.bench { font-family: var(--font-num); font-size: var(--fs-xs); color: var(--fg-dim); }
+.spacer { flex: 1; }
+.seg { display: inline-flex; border: 1px solid var(--line-2); }
+.seg button {
+  background: transparent; border: 0; padding: 4px 10px; cursor: pointer;
+  font-size: var(--fs-s); letter-spacing: 0.04em; color: var(--fg-dim);
+}
+.seg button + button { border-left: 1px solid var(--line-2); }
+.seg button[aria-pressed="true"] { background: var(--fg-bright); color: var(--bg); font-weight: 600; }
+.seg button:hover:not([aria-pressed="true"]) { color: var(--fg-bright); }
+.tabs { display: flex; gap: 0; overflow-x: auto; }
+.tabs button {
+  background: none; border: 0; border-bottom: 2px solid transparent; padding: 6px 12px 7px;
+  cursor: pointer; color: var(--fg-dim); font-size: var(--fs-s); letter-spacing: 0.08em; text-transform: uppercase; font-weight: 600;
+  white-space: nowrap;
+}
+.tabs button[aria-selected="true"] { color: var(--fg-bright); border-bottom-color: var(--fg-bright); }
+.tabs button:hover { color: var(--fg-bright); }
+
+main { padding-inline: 16px; padding-block: 12px 40px; display: grid; gap: 12px; }
+
+/* ── bannières ────────────────────────────────── */
+.banner { border: 1px solid var(--line-2); padding: 8px 12px; font-size: var(--fs-s); display: flex; gap: 10px; align-items: baseline; flex-wrap: wrap; }
+.banner b { letter-spacing: 0.06em; text-transform: uppercase; font-size: var(--fs-xs); }
+.banner.warn { border-color: var(--amber); background: var(--amber-bg); }
+.banner.warn b { color: var(--amber); }
+.banner.bad { border-color: var(--down); background: var(--down-bg); }
+.banner.bad b { color: var(--down); }
+
+/* ── panneaux ─────────────────────────────────── */
+.grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px; }
+.span-2, .span-3 { grid-column: 1 / -1; }
+@media (max-width: 900px) { .grid { grid-template-columns: minmax(0, 1fr); } }
+@media (max-width: 760px) { .bar { position: static; } }
+.panel { background: var(--panel); border: 1px solid var(--line); min-width: 0; display: flex; flex-direction: column; }
+.panel-h { display: flex; align-items: baseline; gap: 8px; padding: 8px 10px 6px; border-bottom: 1px solid var(--line); flex-wrap: wrap; }
+.panel-h h2 { margin: 0; font-size: var(--fs-s); letter-spacing: 0.1em; text-transform: uppercase; color: var(--fg-bright); font-weight: 700; }
+.panel-h .k { font-family: var(--font-num); font-size: var(--fs-xs); color: var(--fg-faint); }
+.panel-h .hint { font-size: var(--fs-xs); color: var(--fg-dim); margin-left: auto; }
+.chip { font-size: 10px; letter-spacing: 0.08em; text-transform: uppercase; border: 1px solid var(--fg-dim); color: var(--fg-bright); padding: 0 5px; line-height: 16px; }
+.panel.key { border-color: var(--line-2); }
+.panel.key .panel-h { border-bottom-color: var(--line-2); background: var(--panel-2); }
+.panel-b { overflow-x: auto; min-width: 0; }
+.empty { padding: 14px 10px; color: var(--fg-dim); font-size: var(--fs-s); }
+
+/* ── tables ───────────────────────────────────── */
+table { border-collapse: collapse; width: 100%; font-size: var(--fs-s); }
+th, td { padding: 0 8px; height: var(--row); white-space: nowrap; text-align: left; }
+td.n, th.n { text-align: right; }
+thead th {
+  position: sticky; top: 0; background: var(--panel); z-index: 1;
+  font-weight: 500; font-size: var(--fs-xs); color: var(--fg-dim); letter-spacing: 0.04em; text-transform: uppercase;
+  border-bottom: 1px solid var(--line); height: 26px;
+}
+thead th.sortable { cursor: pointer; user-select: none; }
+thead th.sortable:hover { color: var(--fg-bright); }
+thead th[aria-sort="ascending"]::after { content: " ▲"; font-size: 8px; }
+thead th[aria-sort="descending"]::after { content: " ▼"; font-size: 8px; }
+tbody tr { border-bottom: 1px solid var(--line); cursor: pointer; }
+tbody tr:last-child { border-bottom: 0; }
+tbody tr:hover { background: var(--panel-2); }
+td.tk { font-family: var(--font-num); font-weight: 600; color: var(--fg-bright); }
+td.tk small { font-family: var(--font-ui); font-weight: 400; color: var(--fg-faint); margin-left: 4px; }
+.star { background: none; border: 0; padding: 0 2px; cursor: pointer; color: var(--fg-faint); font-size: 13px; line-height: 1; }
+.star[aria-pressed="true"] { color: var(--fg-bright); }
+.score { font-family: var(--font-num); font-weight: 600; color: var(--fg-bright); }
+.subs { display: inline-flex; gap: 3px; vertical-align: middle; }
+.sub { display: inline-grid; grid-template-columns: 7px 22px; align-items: center; gap: 2px; font-family: var(--font-num); font-size: 10px; color: var(--fg-dim); }
+.sub i { font-style: normal; color: var(--fg-faint); font-size: 9px; }
+.meter { position: relative; height: 3px; background: var(--line-2); margin-top: 1px; }
+.meter > span { position: absolute; inset: 0 auto 0 0; background: var(--fg-dim); }
+.pill { display: inline-block; font-size: 10px; letter-spacing: 0.04em; padding: 0 5px; line-height: 16px; border: 1px solid var(--line-2); color: var(--fg-dim); }
+.pill.up { border-color: var(--up); color: var(--up); }
+.pill.amber { border-color: var(--amber); color: var(--amber); }
+.pill.down { border-color: var(--down); color: var(--down); }
+.spark { vertical-align: middle; }
+
+/* ── alertes ──────────────────────────────────── */
+.alerts { background: var(--panel); border: 1px solid var(--line); }
+.alerts .panel-h { border-bottom: 1px solid var(--line); }
+.alert-list { max-height: 228px; overflow-y: auto; }
+.alert { display: grid; grid-template-columns: minmax(0, 1fr); padding: 5px 10px; border-bottom: 1px solid var(--line); cursor: pointer; }
+.alert:hover { background: var(--panel-2); }
+.alert:last-child { border-bottom: 0; }
+.alert .l1 { font-family: var(--font-num); font-size: var(--fs-s); white-space: nowrap; overflow-x: auto; }
+.alert .l1 .sep { color: var(--fg-faint); margin: 0 6px; }
+.alert .l2 { font-size: var(--fs-s); color: var(--fg-dim); }
+.alert .l2::before { content: "→ "; color: var(--fg-faint); }
+
+/* ── heatmap secteurs ─────────────────────────── */
+.heat td.hc { text-align: right; font-family: var(--font-num); }
+.heat td.sec { font-weight: 600; color: var(--fg-bright); }
+.heat tbody tr { cursor: default; }
+
+/* ── screener ─────────────────────────────────── */
+.filters { display: flex; flex-wrap: wrap; gap: 8px 12px; align-items: center; padding: 8px 10px; border-bottom: 1px solid var(--line); }
+.filters label { font-size: var(--fs-xs); color: var(--fg-dim); display: inline-flex; gap: 5px; align-items: center; letter-spacing: 0.03em; }
+.filters input[type="search"], .filters input[type="number"], .filters select {
+  background: var(--bg); border: 1px solid var(--line-2); padding: 3px 6px; font-size: var(--fs-s); min-width: 0;
+}
+.filters input[type="search"] { width: 150px; font-family: var(--font-num); text-transform: uppercase; }
+.filters input[type="number"] { width: 64px; font-family: var(--font-num); }
+.toggle { background: transparent; border: 1px solid var(--line-2); padding: 3px 8px; font-size: var(--fs-xs); cursor: pointer; color: var(--fg-dim); letter-spacing: 0.04em; }
+.toggle[aria-pressed="true"] { border-color: var(--fg-bright); color: var(--fg-bright); background: var(--panel-2); }
+.screener-wrap { overflow: auto; max-height: calc(100vh - 190px); }
+.screener td:first-child, .screener th:first-child { position: sticky; left: 0; background: var(--panel); z-index: 2; }
+.screener tbody tr:hover td:first-child { background: var(--panel-2); }
+.count { font-family: var(--font-num); font-size: var(--fs-xs); color: var(--fg-dim); }
+
+/* ── fiche titre ──────────────────────────────── */
+.sheet-bg { position: fixed; inset: 0; background: rgba(4, 6, 8, 0.72); z-index: 40; display: flex; justify-content: flex-end; }
+.sheet {
+  width: min(1100px, 100%); height: 100%; overflow-y: auto; background: var(--bg); border-left: 1px solid var(--line-2);
+  padding-inline: 16px; padding-block: calc(12px + env(safe-area-inset-top, 0px)) calc(40px + env(safe-area-inset-bottom, 0px));
+  display: grid; gap: 12px; align-content: start;
+}
+.sheet-h { display: flex; flex-wrap: wrap; gap: 6px 16px; align-items: baseline; border-bottom: 1px solid var(--line); padding-bottom: 10px; }
+.sheet-h h1 { margin: 0; font-family: var(--font-num); font-size: var(--fs-xl); color: var(--fg-bright); font-weight: 600; }
+.sheet-h .nm { color: var(--fg-dim); font-size: var(--fs-l); }
+.sheet-h .px { font-family: var(--font-num); font-size: var(--fs-xl); color: var(--fg-bright); }
+.close { margin-left: auto; background: none; border: 1px solid var(--line-2); padding: 4px 10px; cursor: pointer; color: var(--fg-dim); }
+.close:hover { color: var(--fg-bright); border-color: var(--fg-dim); }
+.kv { display: grid; grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); gap: 0; border-top: 1px solid var(--line); border-left: 1px solid var(--line); }
+.kv > div { border-right: 1px solid var(--line); border-bottom: 1px solid var(--line); padding: 5px 8px; display: flex; justify-content: space-between; gap: 8px; font-size: var(--fs-s); min-width: 0; }
+.kv > div span:first-child { color: var(--fg-dim); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.kv > div span:last-child { font-family: var(--font-num); text-align: right; white-space: nowrap; }
+.cols2 { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 12px; }
+@media (max-width: 860px) { .cols2 { grid-template-columns: minmax(0, 1fr); } }
+.bd-row { display: grid; grid-template-columns: 150px minmax(0, 1fr) 42px 52px; gap: 8px; align-items: center; padding: 3px 10px; font-size: var(--fs-s); }
+.bd-row .meter { height: 6px; }
+.bd-row .meter > span { background: var(--fg); }
+.bd-row .v, .bd-row .w { font-family: var(--font-num); text-align: right; }
+.bd-row .w { color: var(--fg-dim); font-size: var(--fs-xs); }
+.bd-total { border-top: 1px solid var(--line); margin-top: 4px; padding-top: 6px; }
+ul.facts { margin: 0; padding: 8px 10px 8px 28px; display: grid; gap: 4px; font-size: var(--fs-s); }
+.checks { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 0; font-size: var(--fs-s); }
+.checks div { padding: 4px 10px; border-bottom: 1px solid var(--line); display: flex; gap: 8px; }
+.checks .ok::before { content: "■"; color: var(--up); }
+.checks .ko::before { content: "□"; color: var(--fg-faint); }
+.chart-box { position: relative; padding: 6px 4px 4px; }
+.chart-box svg { display: block; width: 100%; height: auto; }
+.readout { font-family: var(--font-num); font-size: var(--fs-xs); color: var(--fg-dim); padding: 4px 10px; min-height: 22px; white-space: nowrap; overflow-x: auto; }
+.legend { display: flex; gap: 14px; flex-wrap: wrap; font-size: var(--fs-xs); color: var(--fg-dim); padding: 0 10px 6px; }
+.legend i { display: inline-block; width: 18px; height: 0; border-top: 1.5px solid var(--fg-dim); vertical-align: middle; margin-right: 4px; }
+svg text { font-family: var(--font-num); font-size: 10px; fill: var(--fg-dim); }
+svg .grid-l { stroke: var(--line); stroke-width: 1; }
+svg .c-up { fill: var(--up); stroke: var(--up); }
+svg .c-down { fill: var(--down); stroke: var(--down); }
+svg .v-up { fill: var(--up); opacity: 0.45; }
+svg .v-down { fill: var(--down); opacity: 0.45; }
+svg .sma20 { stroke: var(--fg-bright); stroke-width: 1; fill: none; }
+svg .sma50 { stroke: var(--fg); stroke-width: 1.2; fill: none; stroke-dasharray: 5 3; }
+svg .sma200 { stroke: var(--fg-dim); stroke-width: 1.6; fill: none; stroke-dasharray: 1.5 2.5; }
+svg .lvl-r { stroke: var(--fg-dim); stroke-width: 1; stroke-dasharray: 6 4; }
+svg .lvl-s { stroke: var(--fg-faint); stroke-width: 1; stroke-dasharray: 6 4; }
+svg .lvl-b { stroke: var(--amber); stroke-width: 1; stroke-dasharray: 2 3; }
+svg .line { stroke: var(--fg); stroke-width: 1.2; fill: none; }
+svg .line-dim { stroke: var(--fg-dim); stroke-width: 1; fill: none; stroke-dasharray: 4 3; }
+svg .xh { stroke: var(--fg-dim); stroke-width: 1; }
+svg .band { fill: var(--panel-2); }
+svg .zero { stroke: var(--line-2); }
+
+/* ── backtest / méthode ───────────────────────── */
+.prose { max-width: 78ch; padding: 10px 14px 14px; font-size: var(--fs-m); line-height: 1.55; }
+.prose h3 { font-size: var(--fs-s); letter-spacing: 0.08em; text-transform: uppercase; color: var(--fg-bright); margin: 18px 0 6px; }
+.prose p, .prose li { color: var(--fg); }
+.prose code { font-family: var(--font-num); font-size: var(--fs-s); background: var(--panel-2); padding: 0 4px; }
+.dist-row { display: grid; grid-template-columns: 70px minmax(0, 1fr) 40px; gap: 8px; align-items: center; font-size: var(--fs-xs); padding: 1px 10px; font-family: var(--font-num); }
+.dist-row .bar-f { height: 10px; }
+.bar-f.up { background: var(--up); opacity: 0.7; }
+.bar-f.down { background: var(--down); opacity: 0.7; }
+.caveats { margin: 0; padding: 8px 10px 10px 28px; font-size: var(--fs-s); color: var(--fg-dim); display: grid; gap: 3px; }
+
+@media (prefers-reduced-motion: reduce) { * { transition: none !important; scroll-behavior: auto !important; } }
+</style>
+</head>
+<body>
+
+<header class="bar">
+  <div class="bar-row">
+    <div class="brand"><b>Nasdaq Momentum Scanner</b><span>tech US · début d'accélération</span></div>
+    <div class="fresh" id="fresh"><span class="dot warn"></span><span>chargement…</span></div>
+    <div class="bench" id="bench"></div>
+    <div class="spacer"></div>
+    <div class="seg" id="profileSeg" role="group" aria-label="Profil de score"></div>
+  </div>
+  <nav class="tabs" role="tablist" id="tabs">
+    <button role="tab" data-tab="scan" aria-selected="true">Scanner</button>
+    <button role="tab" data-tab="screener" aria-selected="false">Tous les titres</button>
+    <button role="tab" data-tab="backtest" aria-selected="false">Backtest</button>
+    <button role="tab" data-tab="method" aria-selected="false">Méthode &amp; données</button>
+  </nav>
+</header>
+
+<main id="main">
+  <div class="empty">Chargement des données…</div>
+</main>
+
+<div id="sheetRoot"></div>
+
+<script>
+"use strict";
+/* Nasdaq Momentum Scanner : page 100 % statique.
+   Lit data/latest.json (écrit chaque soir par GitHub Actions). Aucun appel à une
+   API financière, aucune donnée générée ici : si une valeur manque, on affiche
+   N/A avec la raison fournie par la collecte. */
+
+const $ = (s, r = document) => r.querySelector(s);
+const esc = (s) => String(s ?? "").replace(/[&<>"']/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
+const store = {
+  get(k, d) { try { const v = localStorage.getItem("nms." + k); return v == null ? d : JSON.parse(v); } catch (e) { return d; } },
+  set(k, v) { try { localStorage.setItem("nms." + k, JSON.stringify(v)); } catch (e) { /* stockage indisponible */ } },
+};
+
+const S = {
+  data: null, status: null, backtest: null, backtestErr: null,
+  profile: store.get("profile", null),
+  tab: store.get("tab", "scan"),
+  watch: new Set(store.get("watch", [])),
+  sort: store.get("sort", { key: "score", dir: -1 }),
+  f: Object.assign({ q: "", min: 0, rvol2: false, brk: false, bb: false, sector: "", chg: "", watch: false, group: "" }, store.get("filters", {})),
+  heatMetric: store.get("heatMetric", "chg_1d"),
+  series: {},
+  btThr: store.get("btThr", "0"), btH: store.get("btH", "20"),
+};
+if (["scan", "screener", "backtest", "method"].indexOf(location.hash.slice(1)) >= 0) S.tab = location.hash.slice(1);
+
+// ── formatage ────────────────────────────────────────────────
+const isNum = (v) => typeof v === "number" && isFinite(v);
+function naSpan(reason) { return `<span class="na" title="${esc(reason || "donnée non disponible")}">N/A</span>`; }
+function reasonFor(st, path) { return (st && st.na && st.na[path]) || "donnée non disponible pour ce titre"; }
+function pct(v, nd = 1, reason) {
+  if (!isNum(v)) return naSpan(reason);
+  const s = (v * 100).toFixed(nd);
+  const cls = v > 0.00005 ? "up" : v < -0.00005 ? "down" : "dim";
+  return `<span class="${cls}">${v > 0 ? "+" : ""}${s}%</span>`;
+}
+function pts(v, nd = 1, reason) { // points de % (RS)
+  if (!isNum(v)) return naSpan(reason);
+  const cls = v > 0 ? "up" : v < 0 ? "down" : "dim";
+  return `<span class="${cls}">${v > 0 ? "+" : ""}${(v * 100).toFixed(nd)}</span>`;
+}
+function fx(v, nd = 2, reason) { return isNum(v) ? v.toFixed(nd) : naSpan(reason); }
+function money(v, cur, reason) {
+  if (!isNum(v)) return naSpan(reason);
+  const s = v >= 1000 ? v.toLocaleString("en-US", { minimumFractionDigits: 2, maximumFractionDigits: 2 }) : v.toFixed(2);
+  return cur === "EUR" ? `${s} €` : `$${s}`;
+}
+function vol(v) { if (!isNum(v)) return naSpan(); return v >= 1e9 ? (v / 1e9).toFixed(2) + "B" : v >= 1e6 ? (v / 1e6).toFixed(1) + "M" : v >= 1e3 ? (v / 1e3).toFixed(0) + "k" : v.toFixed(0); }
+function rvolCell(v) { if (!isNum(v)) return naSpan(); const cls = v >= 2 ? "amber" : v >= 1.3 ? "bright" : "dim"; return `<span class="${cls}">${v.toFixed(2)}</span>`; }
+function delta(v) { if (!isNum(v)) return `<span class="faint">·</span>`; const cls = v > 0.5 ? "up" : v < -0.5 ? "down" : "dim"; return `<span class="${cls}">${v > 0 ? "+" : ""}${v.toFixed(1)}</span>`; }
+function scoreCell(v) { return isNum(v) ? `<span class="score">${v.toFixed(0)}</span>` : naSpan("score non calculable : historique insuffisant"); }
+function rsiCell(v) { if (!isNum(v)) return naSpan(); const cls = v >= 75 ? "amber" : v >= 50 && v <= 70 ? "bright" : "dim"; return `<span class="${cls}">${v.toFixed(0)}</span>`; }
+function fmtDateTime(iso) {
+  const d = new Date(iso);
+  return d.toLocaleString("fr-FR", { weekday: "short", day: "2-digit", month: "short", hour: "2-digit", minute: "2-digit", timeZoneName: "short" });
+}
+function fmtDay(s) { if (!s) return "N/A"; const d = new Date(s + "T12:00:00Z"); return d.toLocaleDateString("fr-FR", { weekday: "short", day: "2-digit", month: "short", year: "numeric" }); }
+function subs(st) {
+  const c = st.score.components;
+  const one = (lbl, v, title) => `<span class="sub" title="${title} : ${isNum(v) ? v.toFixed(0) : "N/A"}/100"><i>${lbl}</i><span>${isNum(v) ? v.toFixed(0).padStart(3, " ") : " --"}<span class="meter" style="display:block"><span style="width:${isNum(v) ? v : 0}%"></span></span></span></span>`;
+  return `<span class="subs">${one("P", c.price_momentum, "Price Momentum")}${one("V", c.volume_momentum, "Volume Momentum")}${one("B", c.breakout_potential, "Breakout Potential")}</span>`;
+}
+function spark(vals, w = 64, h = 16) {
+  const v = (vals || []).filter(isNum);
+  if (v.length < 2) return "";
+  const lo = Math.min(...v), hi = Math.max(...v), r = hi - lo || 1;
+  const pts = v.map((y, i) => `${(i / (v.length - 1) * (w - 2) + 1).toFixed(1)},${(h - 2 - (y - lo) / r * (h - 4)).toFixed(1)}`).join(" ");
+  const last = v[v.length - 1], first = v[0];
+  const cls = last > first + 0.5 ? "var(--up)" : last < first - 0.5 ? "var(--down)" : "var(--fg-dim)";
+  const [lx, ly] = pts.split(" ").pop().split(",");
+  return `<svg class="spark" width="${w}" height="${h}" viewBox="0 0 ${w} ${h}" aria-hidden="true"><polyline points="${pts}" fill="none" stroke="${cls}" stroke-width="1.2"/><circle cx="${lx}" cy="${ly}" r="1.8" fill="${cls}"/></svg>`;
+}
+const P = () => S.profile || (S.data && S.data.meta.profile_default) || "swing";
+const sc = (st) => st.score.profiles[P()] || {};
+const byT = () => { const m = {}; (S.data ? S.data.stocks : []).forEach((s) => (m[s.ticker] = s)); return m; };
+
+// ── fraîcheur ────────────────────────────────────────────────
+function freshness() {
+  const m = S.data && S.data.meta;
+  const st = S.status;
+  const el = $("#fresh");
+  const out = { level: "ok", banners: [] };
+  if (!m) {
+    el.innerHTML = `<span class="dot bad"></span><span>aucune collecte réussie</span>`;
+    return out;
+  }
+  const gen = new Date(m.last_success_utc);
+  const ageH = (Date.now() - gen.getTime()) / 3.6e6;
+  const dow = new Date().getDay();
+  const weekend = dow === 0 || dow === 6 || (dow === 1 && ageH < 80);
+  let dot = "";
+  if (ageH > 72) { dot = "bad"; out.level = "bad"; }
+  else if (ageH > 24) { dot = "warn"; out.level = "warn"; }
+  const us = m.market_date && m.market_date.US;
+  el.innerHTML = `<span class="dot ${dot}"></span><span>séance US ${esc(fmtDay(us))}</span><span class="faint">·</span><span>collecte ${esc(fmtDateTime(m.last_success_utc))}</span><span class="faint">·</span><span>il y a ${ageH < 1 ? Math.round(ageH * 60) + " min" : ageH.toFixed(ageH < 10 ? 1 : 0) + " h"}</span>`;
+  if (ageH > 24) {
+    out.banners.push({
+      cls: ageH > 72 ? "bad" : "warn", title: ageH > 72 ? "Données périmées" : "Données de plus de 24 h",
+      text: `Dernière collecte réussie : ${fmtDateTime(m.last_success_utc)} (il y a ${Math.round(ageH)} h). ` +
+        (weekend && ageH <= 72 ? "Normal le week-end : il n'y a pas de séance le samedi et le dimanche." : "Vérifie l'onglet Actions du dépôt GitHub : la collecte automatique ne tourne peut-être plus."),
+    });
+  }
+  if (st && st.ok === false && new Date(st.last_attempt_utc) > gen) {
+    out.banners.push({ cls: "bad", title: "La dernière collecte a échoué", text: `Tentative du ${fmtDateTime(st.last_attempt_utc)} : ${st.message}. Les chiffres affichés sont ceux de la dernière collecte réussie.` });
+  }
+  if (m.failures && m.failures.length) {
+    out.banners.push({ cls: "warn", title: `${m.failures.length} titre(s) en échec`, text: m.failures.map((f) => `${f.ticker} : ${f.reason}`).join(" · ") });
+  }
+  if (m.open_session_dropped && m.open_session_dropped.length) {
+    out.banners.push({ cls: "warn", title: "Séance en cours ignorée", text: `Collecte lancée marché ouvert : la séance du jour (volume partiel) a été écartée pour ${m.open_session_dropped.join(", ")}. Les chiffres portent sur la dernière séance clôturée.` });
+  }
+  return out;
+}
+function renderBench() {
+  const b = S.data && S.data.meta.benchmarks;
+  if (!b) { $("#bench").innerHTML = ""; return; }
+  const one = (k, lbl) => b[k] ? `${lbl} <span class="bright">${b[k].close.toFixed(2)}</span> ${pct(b[k].chg_1d, 2)} <span class="faint">5j</span> ${pct(b[k].chg_5d, 1)}` : "";
+  $("#bench").innerHTML = [one("QQQ", "QQQ"), one("^FCHI", "CAC")].filter(Boolean).join('<span class="faint"> · </span>');
+}
+function renderProfileSeg() {
+  const m = S.data && S.data.meta;
+  const profs = m ? m.profiles : { swing: { label: "Swing" }, standard: { label: "Standard" }, long_term: { label: "Long terme" } };
+  const order = ["swing", "standard", "long_term"].filter((k) => profs[k]);
+  $("#profileSeg").innerHTML = order.map((k) => `<button type="button" data-p="${k}" aria-pressed="${k === P()}" title="${esc(Object.entries(profs[k].weights || {}).map(([c, w]) => `${c} ${w}`).join(", "))}">${esc(profs[k].label)}</button>`).join("");
+}
+
+// ── chargement ───────────────────────────────────────────────
+async function getJSON(url) {
+  const r = await fetch(url + "?t=" + Date.now(), { cache: "no-store" });
+  if (!r.ok) throw new Error(`${url} : HTTP ${r.status}`);
+  return r.json();
+}
+async function load() {
+  try { S.status = await getJSON("data/status.json"); } catch (e) { S.status = null; }
+  try { S.data = await getJSON("data/latest.json"); }
+  catch (e) { S.data = null; S.loadErr = e.message; }
+  if (S.data && !S.data.meta.profiles[P()]) S.profile = S.data.meta.profile_default;
+  render();
+}
+
+// ── rendu principal ──────────────────────────────────────────
+function render() {
+  renderProfileSeg();
+  renderBench();
+  document.querySelectorAll("#tabs button").forEach((b) => b.setAttribute("aria-selected", String(b.dataset.tab === S.tab)));
+  const fr = freshness();
+  const main = $("#main");
+  const banners = fr.banners.map((b) => `<div class="banner ${b.cls}"><b>${esc(b.title)}</b><span>${esc(b.text)}</span></div>`).join("");
+  if (!S.data) {
+    main.innerHTML = banners + noData();
+    return;
+  }
+  let body = "";
+  if (S.tab === "scan") body = scanView();
+  else if (S.tab === "screener") body = screenerView();
+  else if (S.tab === "backtest") body = backtestView();
+  else body = methodView();
+  main.innerHTML = banners + body;
+  if (S.tab === "screener") bindScreener();
+  if (S.tab === "backtest" && !S.backtest && !S.backtestErr) loadBacktest();
+}
+
+function noData() {
+  const st = S.status;
+  return `<section class="panel"><div class="panel-h"><h2>Pas encore de données</h2></div><div class="prose">
+  <p>Le fichier <code>data/latest.json</code> est introuvable${S.loadErr ? ` (${esc(S.loadErr)})` : ""}. La page n'affiche jamais de chiffres inventés : elle attend la première collecte.</p>
+  ${st ? `<p>Dernière tentative : ${esc(fmtDateTime(st.last_attempt_utc))}, ${st.ok ? "réussie" : "échouée : " + esc(st.message)}.</p>` : ""}
+  <h3>Lancer la première collecte</h3>
+  <ol><li>Sur GitHub, ouvre le dépôt, onglet <b>Actions</b>.</li><li>Choisis <b>Collecte quotidienne</b> dans la liste de gauche.</li><li>Clique <b>Run workflow</b>, puis le bouton vert <b>Run workflow</b>.</li><li>Attends environ 3 minutes, puis recharge cette page.</li></ol></div></section>`;
+}
+
+// ── vue Scanner ──────────────────────────────────────────────
+function scanView() {
+  const D = S.data, T = byT(), p = P(), sec = D.sections[p];
+  const lbl = D.meta.profiles[p].label;
+  return alertsPanel() + `<div class="grid">
+    ${panel("Top Momentum", `top 20 · profil ${esc(lbl)}`, "", sec.top_momentum.map((t) => T[t]).filter(Boolean), cols.top)}
+    ${panel("Volume Surge", "top 20 par anomalie de volume (z-score)", "", sec.volume_surge.map((t) => T[t]).filter(Boolean), cols.surge)}
+    ${panel("Before Breakout", "pas encore cassé · ≥ 5/8 conditions · proche résistance", "key span-2", sec.before_breakout.map((t) => T[t]).filter(Boolean), cols.bb,
+      "Aucun titre ne réunit aujourd'hui au moins 5 des 8 conditions avec un prix proche d'une résistance.", '<span class="chip">Priorité</span>')}
+    ${panel("Momentum Acceleration", "trié par Δ score 5 séances", "", sec.momentum_acceleration.map((t) => T[t]).filter(Boolean), cols.acc)}
+    ${newNamesPanel(sec, T)}
+    ${muPanel(D.sections, T)}
+    ${heatPanel()}
+  </div>`;
+}
+function panel(title, hint, cls, rows, colset, emptyMsg, chip) {
+  const body = rows.length ? table(colset, rows) : `<div class="empty">${esc(emptyMsg || "Aucun titre.")}</div>`;
+  return `<section class="panel ${cls}"><div class="panel-h"><h2>${esc(title)}</h2>${chip || ""}<span class="k">${rows.length}</span><span class="hint">${esc(hint)}</span></div><div class="panel-b">${body}</div></section>`;
+}
+function table(colset, rows) {
+  return `<table><thead><tr>${colset.map((c) => `<th class="${c.n ? "n" : ""}" title="${esc(c.tip || "")}">${esc(c.h)}</th>`).join("")}</tr></thead><tbody>${rows.map((st) => `<tr data-t="${esc(st.ticker)}">${colset.map((c) => `<td class="${c.cls || (c.n ? "n" : "")}">${c.v(st)}</td>`).join("")}</tr>`).join("")}</tbody></table>`;
+}
+const C = {
+  star: { h: "", cls: "", v: (st) => `<button class="star" data-star="${esc(st.ticker)}" aria-pressed="${S.watch.has(st.ticker)}" title="Watchlist">${S.watch.has(st.ticker) ? "★" : "☆"}</button>` },
+  tk: { h: "Titre", cls: "tk", v: (st) => `${esc(st.ticker)}` },
+  px: { h: "Prix", n: 1, v: (st) => money(st.price.close, st.currency) },
+  d1: { h: "1j", n: 1, v: (st) => pct(st.price.chg_1d, 1, reasonFor(st, "price.chg_1d")) },
+  d5: { h: "5j", n: 1, v: (st) => pct(st.price.chg_5d, 1, reasonFor(st, "price.chg_5d")) },
+  score: { h: "Score", n: 1, tip: "Momentum Score 0-100 du profil choisi", v: (st) => scoreCell(sc(st).total) },
+  subs: { h: "P · V · B", n: 0, tip: "Sous-scores Price / Volume / Breakout", v: subs },
+  rvol: { h: "RVOL", n: 1, tip: "Volume du jour / moyenne 20 séances", v: (st) => rvolCell(st.volume.rvol) },
+  zv: { h: "z vol", n: 1, tip: "z-score du volume vs 60 séances (max jour / moyenne 5j)", v: (st) => { const z = Math.max(st.zscores.z_volume ?? -99, st.zscores.z_volume5 ?? -99); return z > -99 ? `<span class="${z >= 2.5 ? "amber" : z >= 1.5 ? "bright" : "dim"}">${z.toFixed(1)}</span>` : naSpan(); } },
+  vacc: { h: "Accel", n: 1, tip: "Volume Acceleration 0-100 (rampe régulière du volume)", v: (st) => isNum(st.volume.accel.score) ? `<span class="${st.volume.accel.score >= 70 ? "amber" : st.volume.accel.score >= 40 ? "bright" : "dim"}">${st.volume.accel.score.toFixed(0)}</span>` : naSpan() },
+  bbc: { h: "Cond.", n: 1, tip: "Conditions Before Breakout réunies sur 8", v: (st) => `<span class="${st.setup.before_breakout ? "bright" : "dim"}">${st.setup.bb_count ?? "?"}/8</span>` },
+  dres: { h: "→ Résist.", n: 1, tip: "Distance à la résistance 60 séances", v: (st) => isNum(st.setup.dist_resistance) ? `<span class="${st.setup.dist_resistance <= 0.03 ? "amber" : "dim"}">${(st.setup.dist_resistance * 100).toFixed(1)}%</span>` : naSpan(reasonFor(st, "setup.resistance")) },
+  rsi: { h: "RSI", n: 1, v: (st) => rsiCell(st.momentum.rsi14) },
+  comp: { h: "Compr.", n: 1, tip: "ATR% actuel / moyenne 60j (< 1 = volatilité qui se comprime)", v: (st) => isNum(st.volatility.compression) ? `<span class="${st.volatility.compression < 0.8 ? "bright" : "dim"}">${st.volatility.compression.toFixed(2)}</span>` : naSpan(reasonFor(st, "volatility.compression")) },
+  dd1: { h: "Δ1j", n: 1, v: (st) => delta(sc(st).delta && sc(st).delta.d1) },
+  dd3: { h: "Δ3j", n: 1, v: (st) => delta(sc(st).delta && sc(st).delta.d3) },
+  dd5: { h: "Δ5j", n: 1, v: (st) => delta(sc(st).delta && sc(st).delta.d5) },
+  dd10: { h: "Δ10j", n: 1, v: (st) => delta(sc(st).delta && sc(st).delta.d10) },
+  sp: { h: "10 séances", n: 0, v: (st) => spark(sc(st).hist) },
+  setup: { h: "Config.", n: 0, v: (st) => setupPill(st) },
+  checks: { h: "Conditions réunies", tip: "Consolidation · Compression · Volume qui monte · Résistance proche · SMA20/50 en hausse · RSI 50-70 · Séances positives · RS en amélioration", v: (st) => { const c = st.setup.before_breakout_checks; const L = [["consolidation", "Cons"], ["compression", "Compr"], ["vol_rising", "Vol↑"], ["near_resistance", "Résist"], ["sma20_50_rising", "SMA↑"], ["rsi_50_70", "RSI"], ["positive_sessions", "Séances+"], ["rs_improving", "RS↑"]]; return L.map(([k, l]) => `<span class="${c[k] ? "bright" : "faint"}" style="margin-right:6px">${c[k] ? "■" : "□"} ${l}</span>`).join(""); } },
+  rs20: { h: "RS 20j", n: 1, tip: "Surperformance vs QQQ sur 20 séances, en points de %", v: (st) => pts(st.rs.rs_20d, 1, reasonFor(st, "rs.rs_20d")) },
+};
+function setupPill(st) {
+  const p = st.setup.pattern;
+  if (!p || p === "none") return `<span class="faint">·</span>`;
+  const short = { vol_leads_price: "VOL AVANT PRIX", strong_up_strong_vol: "P↑↑ V↑↑", flat_price_vol_surge: "P= V↑↑", mild_down_vol_surge: "P↓ V↑↑", price_up_vol_up: "P↑ V↑" }[p] || p;
+  const cls = p === "vol_leads_price" ? "amber" : p === "mild_down_vol_surge" ? "down" : "up";
+  return `<span class="pill ${cls}" title="${esc(st.setup.pattern_label)}">${short}</span>`;
+}
+const cols = {
+  top: [C.star, C.tk, C.px, C.d1, C.score, C.subs, C.rvol, C.dd5],
+  surge: [C.star, C.tk, C.px, C.d1, C.zv, C.rvol, C.vacc, C.setup, C.score],
+  bb: [C.star, C.tk, C.px, C.d1, C.d5, C.bbc, C.checks, C.dres, C.comp, C.vacc, C.rsi, C.rs20, C.setup, C.score, C.subs],
+  acc: [C.star, C.tk, C.score, C.dd1, C.dd3, C.dd5, C.dd10, C.sp],
+};
+
+function alertsPanel() {
+  const A = S.data.alerts || [];
+  const rules = S.data.meta.config.alerts;
+  const hint = `score franchit ${rules.score_above} · RVOL > ${rules.rvol_above} · breakout + volume · accel. volume ≥ ${rules.volume_accel_above}`;
+  if (!A.length) return `<section class="alerts"><div class="panel-h"><h2>Alertes</h2><span class="k">0</span><span class="hint">${esc(hint)}</span></div><div class="empty">Aucune alerte sur la dernière séance.</div></section>`;
+  const sep = '<span class="sep">|</span>';
+  return `<section class="alerts"><div class="panel-h"><h2>Alertes</h2><span class="k">${A.length}</span><span class="hint">${esc(hint)}</span></div><div class="alert-list">${A.map((a) =>
+    `<div class="alert" data-t="${esc(a.ticker)}"><div class="l1"><span class="bright"><b>${esc(a.ticker)}</b></span>${sep}${money(a.price, a.currency)}${sep}jour ${pct(a.chg_1d, 1)}${sep}RVOL ${isNum(a.rvol) ? a.rvol.toFixed(1) : "N/A"}${sep}score ${isNum(a.score) ? a.score.toFixed(0) : "N/A"}/100${sep}breakout ${a.breakout ? '<span class="up">oui</span>' : '<span class="dim">non</span>'}</div><div class="l2">${esc(a.reason)}</div></div>`).join("")}</div></section>`;
+}
+
+function newNamesPanel(sec, T) {
+  const rows = (sec.new_names || []).map((r) => Object.assign({ _nn: r }, T[r.ticker])).filter((r) => r.ticker);
+  const n = sec.new_names_top_n;
+  const colset = [C.star, C.tk, C.px, C.d1, C.score, { h: "Entré", n: 1, v: (st) => st._nn.entered_days_ago === 0 ? "aujourd'hui" : `il y a ${st._nn.entered_days_ago} j` }, { h: "Rang", n: 1, v: (st) => `#${st._nn.rank}` }, C.subs];
+  const hint = n < 50 ? `entrées récentes dans le top ${n} (top 50 ramené à ${n} : l'univers compte ${S.data.meta.universe_count} titres)` : "entrées récentes dans le top 50";
+  return panel("New Names to Watch", hint, "", rows, colset, "Aucune nouvelle entrée dans le top ces 5 dernières séances.");
+}
+function muPanel(secs, T) {
+  const colA = [C.star, C.tk, C.px, { h: "Sim. A", n: 1, tip: "Similarité Early MU /100", v: (st) => `<span class="score">${st.similarity.A.score.toFixed(0)}</span>` }, { h: "Ce qui matche", v: (st) => `<span class="dim" style="white-space:normal">${esc(st.similarity.A.why)}</span>` }];
+  const colB = [C.star, C.tk, C.px, { h: "Sim. B", n: 1, tip: "Similarité Early SNDK /100", v: (st) => `<span class="score">${st.similarity.B.score.toFixed(0)}</span>` }, { h: "Ce qui matche", v: (st) => `<span class="dim" style="white-space:normal">${esc(st.similarity.B.why)}</span>` }];
+  const a = (secs.next_mu || []).slice(0, 6).map((t) => T[t]).filter(Boolean);
+  const b = (secs.next_sndk || []).slice(0, 6).map((t) => T[t]).filter(Boolean);
+  return `<section class="panel span-2"><div class="panel-h"><h2>Next MU / SNDK</h2><span class="hint">Profil A : amélioration progressive · Profil B : accélération confirmée</span></div>
+  <div class="panel-b"><div class="panel-h" style="border-bottom:0;padding-bottom:0"><span class="dim" style="font-size:var(--fs-xs);letter-spacing:.08em;text-transform:uppercase">Profil A · Early MU</span></div>${table(colA, a)}
+  <div class="panel-h" style="border-bottom:0;padding-bottom:0;border-top:1px solid var(--line)"><span class="dim" style="font-size:var(--fs-xs);letter-spacing:.08em;text-transform:uppercase">Profil B · Early SNDK</span></div>${table(colB, b)}</div></section>`;
+}
+
+function heatPanel() {
+  const p = P();
+  const secs = S.data.sectors || [];
+  const metrics = [["chg_1d", "Jour"], ["chg_5d", "5 jours"], ["chg_1m", "1 mois"], ["rvol", "RVOL moyen"], ["score", "Score moyen"], ["score_d5", "Δ score 5j"]];
+  const val = (r, k) => (k === "score" || k === "score_d5") ? r[k][p] : r[k];
+  const tint = (k, v) => {
+    if (!isNum(v)) return "";
+    let a = 0, col = "";
+    if (k.startsWith("chg")) { const s = k === "chg_1d" ? 0.03 : k === "chg_5d" ? 0.08 : 0.15; a = Math.min(1, Math.abs(v) / s); col = v >= 0 ? "69,192,138" : "232,98,90"; }
+    else if (k === "rvol") { a = Math.max(0, Math.min(1, (v - 1) / 1.5)); col = "226,164,59"; }
+    else if (k === "score") { a = Math.min(1, Math.abs(v - 50) / 35); col = v >= 50 ? "69,192,138" : "232,98,90"; }
+    else if (k === "score_d5") { a = Math.min(1, Math.abs(v) / 10); col = v >= 0 ? "69,192,138" : "232,98,90"; }
+    return `background: rgba(${col}, ${(a * 0.42).toFixed(3)})`;
+  };
+  const show = (k, v) => !isNum(v) ? naSpan() : k.startsWith("chg") ? pct(v, 1) : k === "rvol" ? v.toFixed(2) : k === "score_d5" ? delta(v) : v.toFixed(0);
+  const sorted = secs.slice().sort((a, b) => (val(b, S.heatMetric) ?? -1e9) - (val(a, S.heatMetric) ?? -1e9));
+  return `<section class="panel span-3 heat"><div class="panel-h"><h2>Heatmap secteurs</h2><span class="hint">trié par <select id="heatSel" aria-label="Métrique de tri">${metrics.map(([k, l]) => `<option value="${k}" ${k === S.heatMetric ? "selected" : ""}>${l}</option>`).join("")}</select></span></div>
+  <div class="panel-b"><table><thead><tr><th>Secteur</th><th class="n">Titres</th>${metrics.map(([, l]) => `<th class="n">${l}</th>`).join("")}<th>Composition</th></tr></thead><tbody>
+  ${sorted.map((r) => `<tr><td class="sec">${esc(r.sector)}</td><td class="n dim">${r.count}</td>${metrics.map(([k]) => `<td class="hc" style="${tint(k, val(r, k))}">${show(k, val(r, k))}</td>`).join("")}<td class="dim" style="font-family:var(--font-num);font-size:var(--fs-xs)">${r.tickers.map((t) => `<a href="#" data-open="${esc(t)}" style="color:inherit;text-decoration:none">${esc(t)}</a>`).join(" ")}</td></tr>`).join("")}
+  </tbody></table></div></section>`;
+}
+
+// ── vue Tous les titres (screener) ───────────────────────────
+const SCOLS = [
+  { k: "watch", h: "★", v: (st) => C.star.v(st), s: (st) => (S.watch.has(st.ticker) ? 1 : 0) },
+  { k: "ticker", h: "Titre", cls: "tk", v: (st) => `${esc(st.ticker)}<small>${esc(st.name)}</small>`, s: (st) => st.ticker },
+  { k: "sector", h: "Secteur", v: (st) => `<span class="dim">${esc(st.sector)}</span>`, s: (st) => st.sector },
+  { k: "score", h: "Score", n: 1, v: (st) => scoreCell(sc(st).total), s: (st) => sc(st).total },
+  { k: "d5s", h: "Δ5j", n: 1, v: (st) => delta(sc(st).delta.d5), s: (st) => sc(st).delta.d5 },
+  { k: "pc", h: "P", n: 1, v: (st) => fx(st.score.components.price_momentum, 0), s: (st) => st.score.components.price_momentum },
+  { k: "vc", h: "V", n: 1, v: (st) => fx(st.score.components.volume_momentum, 0), s: (st) => st.score.components.volume_momentum },
+  { k: "bc", h: "B", n: 1, v: (st) => fx(st.score.components.breakout_potential, 0), s: (st) => st.score.components.breakout_potential },
+  { k: "price", h: "Prix", n: 1, v: (st) => money(st.price.close, st.currency), s: (st) => st.price.close },
+  ...["1d", "5d", "1m", "3m", "6m", "1y"].map((k) => ({ k: "chg_" + k, h: { "1d": "1j", "5d": "5j", "1m": "1m", "3m": "3m", "6m": "6m", "1y": "1an" }[k], n: 1, v: (st) => pct(st.price["chg_" + k], 1, reasonFor(st, "price.chg_" + k)), s: (st) => st.price["chg_" + k] })),
+  { k: "dh", h: "vs + haut 52s", n: 1, v: (st) => pct(st.price.dist_high_52w, 1, reasonFor(st, "price.dist_high_52w")), s: (st) => st.price.dist_high_52w },
+  { k: "vold", h: "Volume", n: 1, v: (st) => vol(st.volume.today), s: (st) => st.volume.today },
+  { k: "rvol", h: "RVOL", n: 1, v: (st) => rvolCell(st.volume.rvol), s: (st) => st.volume.rvol },
+  { k: "vacc", h: "Accel vol", n: 1, v: C.vacc.v, s: (st) => st.volume.accel.score },
+  { k: "rsi", h: "RSI14", n: 1, v: (st) => rsiCell(st.momentum.rsi14), s: (st) => st.momentum.rsi14 },
+  { k: "atr", h: "ATR%", n: 1, v: (st) => fx(st.volatility.atr_pct, 1), s: (st) => st.volatility.atr_pct },
+  { k: "comp", h: "Compr.", n: 1, v: C.comp.v, s: (st) => st.volatility.compression },
+  { k: "rs20", h: "RS 20j", n: 1, v: C.rs20.v, s: (st) => st.rs.rs_20d },
+  { k: "rs6m", h: "RS 6m", n: 1, v: (st) => pts(st.rs.rs_6m, 1, reasonFor(st, "rs.rs_6m")), s: (st) => st.rs.rs_6m },
+  { k: "setup", h: "Config.", v: setupPill, s: (st) => st.setup.pattern },
+  { k: "bb", h: "BB", n: 1, v: C.bbc.v, s: (st) => st.setup.bb_count },
+  { k: "brk", h: "Breakout", v: (st) => st.breakouts.length ? `<span class="pill up">${esc(st.breakouts[0].level_type)} · ${st.breakouts[0].days_ago}j</span>` : `<span class="faint">·</span>`, s: (st) => st.breakout_strength },
+  { k: "pen", h: "Pénalité", n: 1, v: (st) => isNum(st.score.overextension_penalty) && st.score.overextension_penalty < 1 ? `<span class="amber">×${st.score.overextension_penalty.toFixed(2)}</span>` : `<span class="faint">·</span>`, s: (st) => st.score.overextension_penalty },
+];
+function filtered() {
+  const f = S.f;
+  const q = f.q.trim().toUpperCase();
+  return S.data.stocks.filter((st) => {
+    const s = sc(st).total;
+    if (q && !st.ticker.includes(q) && !st.name.toUpperCase().includes(q)) return false;
+    if (f.min && !(isNum(s) && s > f.min)) return false;
+    if (f.rvol2 && !(isNum(st.volume.rvol) && st.volume.rvol > 2)) return false;
+    if (f.brk && !st.breakouts.length) return false;
+    if (f.bb && !st.setup.before_breakout) return false;
+    if (f.sector && st.sector !== f.sector) return false;
+    if (f.group && st.group !== f.group) return false;
+    if (f.chg !== "" && f.chg != null && !(isNum(st.price.chg_1d) && st.price.chg_1d * 100 >= Number(f.chg))) return false;
+    if (f.watch && !S.watch.has(st.ticker)) return false;
+    return true;
+  });
+}
+function screenerView() {
+  const rows = filtered();
+  const col = SCOLS.find((c) => c.k === S.sort.key) || SCOLS[3];
+  rows.sort((a, b) => {
+    const x = col.s(a), y = col.s(b);
+    if (x == null && y == null) return 0; if (x == null) return 1; if (y == null) return -1;
+    return (x > y ? 1 : x < y ? -1 : 0) * S.sort.dir;
+  });
+  const sectors = [...new Set(S.data.stocks.map((s) => s.sector))].sort();
+  const f = S.f;
+  const tg = (key, label) => `<button type="button" class="toggle" data-f="${key}" aria-pressed="${!!f[key]}">${label}</button>`;
+  return `<section class="panel"><div class="filters">
+    <label for="fq">Recherche <input id="fq" type="search" value="${esc(f.q)}" placeholder="TICKER" autocomplete="off"></label>
+    <span class="seg" role="group" aria-label="Score minimum">${[[0, "Tous"], [70, "Score > 70"], [80, "Score > 80"]].map(([v, l]) => `<button type="button" data-min="${v}" aria-pressed="${Number(f.min) === v}">${l}</button>`).join("")}</span>
+    ${tg("rvol2", "RVOL > 2")}${tg("brk", "Breakout")}${tg("bb", "Before breakout")}${tg("watch", "★ Watchlist")}
+    <label for="fsec">Secteur <select id="fsec"><option value="">tous</option>${sectors.map((s) => `<option ${s === f.sector ? "selected" : ""}>${esc(s)}</option>`).join("")}</select></label>
+    <label for="fgrp">Groupe <select id="fgrp"><option value="">tous</option><option value="core" ${f.group === "core" ? "selected" : ""}>Tech US</option><option value="pere" ${f.group === "pere" ? "selected" : ""}>Portefeuille long terme</option></select></label>
+    <label for="fchg">Var. jour ≥ <input id="fchg" type="number" step="0.5" value="${esc(f.chg)}" placeholder="%"> %</label>
+    <span class="count">${rows.length} / ${S.data.stocks.length}</span>
+  </div><div class="screener-wrap"><table class="screener"><thead><tr>${SCOLS.map((c) => `<th class="sortable ${c.n ? "n" : ""}" data-sort="${c.k}" ${c.k === S.sort.key ? `aria-sort="${S.sort.dir > 0 ? "ascending" : "descending"}"` : ""}>${esc(c.h)}</th>`).join("")}</tr></thead>
+  <tbody>${rows.map((st) => `<tr data-t="${esc(st.ticker)}">${SCOLS.map((c) => `<td class="${c.cls || (c.n ? "n" : "")}">${c.v(st)}</td>`).join("")}</tr>`).join("") || `<tr><td colspan="${SCOLS.length}" class="dim">Aucun titre ne passe ces filtres.</td></tr>`}</tbody></table></div></section>`;
+}
+function saveF() { store.set("filters", S.f); }
+function bindScreener() {
+  const q = $("#fq");
+  if (q) q.addEventListener("input", () => { S.f.q = q.value; saveF(); rerenderKeepFocus("fq"); });
+  const chg = $("#fchg");
+  if (chg) chg.addEventListener("change", () => { S.f.chg = chg.value; saveF(); render(); });
+  const sec = $("#fsec"); if (sec) sec.addEventListener("change", () => { S.f.sector = sec.value; saveF(); render(); });
+  const grp = $("#fgrp"); if (grp) grp.addEventListener("change", () => { S.f.group = grp.value; saveF(); render(); });
+}
+function rerenderKeepFocus(id) {
+  const el = $("#" + id); const pos = el ? el.selectionStart : 0;
+  render();
+  const n = $("#" + id); if (n) { n.focus(); try { n.setSelectionRange(pos, pos); } catch (e) { /* type number */ } }
+}
+
+// ── fiche titre ──────────────────────────────────────────────
+async function openSheet(t) {
+  const st = byT()[t];
+  if (!st) return;
+  const root = $("#sheetRoot");
+  root.innerHTML = `<div class="sheet-bg" id="sheetBg"><article class="sheet" role="dialog" aria-modal="true" aria-label="Fiche ${esc(t)}">${sheetHTML(st, null)}</article></div>`;
+  document.body.style.overflow = "hidden";
+  $("#sheetBg").addEventListener("click", (e) => { if (e.target.id === "sheetBg") closeSheet(); });
+  let ser = S.series[t];
+  if (!ser) {
+    try { ser = await getJSON(`data/series/${t.replace("^", "_")}.json`); S.series[t] = ser; }
+    catch (e) { ser = { error: e.message }; }
+  }
+  if (!$("#sheetBg")) return;
+  $("#chartSlot").innerHTML = ser.error ? `<div class="empty">Graphique indisponible : ${esc(ser.error)}</div>` : chartHTML(ser, st);
+  if (!ser.error) bindChart(ser, st);
+}
+function closeSheet() { $("#sheetRoot").innerHTML = ""; document.body.style.overflow = ""; }
+
+function sheetHTML(st) {
+  const p = P(), s = sc(st), m = S.data.meta, w = m.profiles[p].weights;
+  const na = (path) => reasonFor(st, path);
+  const cur = st.currency;
+  const comps = Object.keys(w).sort((a, b) => w[b] - w[a]);
+  const brk = st.breakouts;
+  const wc = st.what_changed;
+  const chk = st.setup.before_breakout_checks;
+  const chkL = { consolidation: "Consolidation (range 20j ≤ 6 ATR)", compression: "Volatilité qui se comprime", vol_rising: "Volume moyen qui monte", near_resistance: "Prix proche d'une résistance", sma20_50_rising: "SMA20 et SMA50 qui remontent", rsi_50_70: "RSI entre 50 et 70", positive_sessions: "Séances positives (≥ 6/10)", rs_improving: "RS vs QQQ en amélioration" };
+  const partL = { score_trend: "Score en hausse régulière", vol_gradual: "Volume en hausse graduelle", rs_improving: "RS en amélioration", near_breakout: "Breakout proche", not_extended: "Pas en surchauffe", price_accel: "Accélération du cours", vol_exceptional: "Volume exceptionnel", breakout_confirmed: "Breakout confirmé", rs_very_high: "RS très élevée", continuation: "Continuation" };
+  const wcFmt = (r, v) => !isNum(v) ? naSpan() : r.fmt === "pct" ? pct(v, 2) : r.fmt === "pts" ? pts(v, 2) : r.fmt === "vol" ? vol(v) : v.toFixed(2);
+  const wcDelta = (r) => {
+    if (!isNum(r.change)) return naSpan();
+    if (r.fmt === "vol") { const rel = r.prev20 ? r.last5 / r.prev20 - 1 : null; return isNum(rel) ? pct(rel, 0) : naSpan(); }
+    if (r.fmt === "pct" || r.fmt === "pts") return pts(r.change, 2);
+    return delta(r.change);
+  };
+  return `
+  <div class="sheet-h">
+    <h1>${esc(st.ticker)}</h1><span class="nm">${esc(st.name)}</span><span class="pill">${esc(st.sector)}</span>
+    <span class="px">${money(st.price.close, cur)}</span><span class="num">${pct(st.price.chg_1d, 2)}</span>
+    <span class="dim num" style="font-size:var(--fs-xs)">séance du ${esc(fmtDay(st.last_bar_date))} · ${st.bars_available} séances d'historique</span>
+    <button type="button" class="star" data-star="${esc(st.ticker)}" aria-pressed="${S.watch.has(st.ticker)}" style="font-size:18px">${S.watch.has(st.ticker) ? "★" : "☆"}</button>
+    <button type="button" class="close" id="closeSheet">Fermer ✕</button>
+  </div>
+  <section class="panel"><div class="panel-h"><h2>Graphique 1 an</h2><span class="hint">prix, volume, SMA 20/50/200, supports/résistances, niveaux de breakout, RSI, MACD</span></div><div id="chartSlot"><div class="empty">Chargement du graphique…</div></div></section>
+  <div class="cols2">
+    <section class="panel"><div class="panel-h"><h2>Pourquoi ce score</h2><span class="k">${esc(m.profiles[p].label)}</span><span class="hint">sous-score × poids</span></div>
+      <div style="padding-block:6px">${comps.map((k) => { const v = st.score.components[k]; return `<div class="bd-row"><span>${esc(m.component_labels[k] || k)}</span><div class="meter"><span style="width:${isNum(v) ? v : 0}%"></span></div><span class="v">${isNum(v) ? v.toFixed(0) : naSpan()}</span><span class="w">× ${w[k]}%</span></div>`; }).join("")}
+      <div class="bd-row"><span>Bonus configuration</span><span class="dim">${esc(st.setup.pattern_label)}</span><span class="v">${isNum(st.score.setup_bonus) && st.score.setup_bonus ? "+" + st.score.setup_bonus.toFixed(0) : "0"}</span><span class="w">pts</span></div>
+      <div class="bd-row"><span>Pénalité surchauffe</span><span class="dim">RSI, écart à la SMA50 en ATR, perf. 1 an</span><span class="v ${st.score.overextension_penalty < 1 ? "amber" : ""}">×${fx(st.score.overextension_penalty, 2)}</span><span class="w"></span></div>
+      <div class="bd-row bd-total"><span class="bright">Score ${esc(m.profiles[p].label)}</span><span>${spark(s.hist, 120, 18)}</span><span class="v score">${isNum(s.total) ? s.total.toFixed(0) : naSpan()}</span><span class="w">/100</span></div>
+      <div class="bd-row"><span class="dim">Δ score</span><span class="num">1j ${delta(s.delta.d1)} · 3j ${delta(s.delta.d3)} · 5j ${delta(s.delta.d5)} · 10j ${delta(s.delta.d10)}</span><span></span><span></span></div></div>
+      <div class="panel-h" style="border-top:1px solid var(--line)"><h2>En clair</h2></div>
+      ${st.score.reasons.length ? `<ul class="facts">${st.score.reasons.map((r) => `<li>${esc(r)}</li>`).join("")}</ul>` : `<div class="empty">Rien de marquant sur la dernière séance.</div>`}
+    </section>
+    <section class="panel"><div class="panel-h"><h2>What changed?</h2><span class="hint">5 dernières séances vs 20 précédentes</span></div>
+      ${wc ? `<div class="panel-b"><table><thead><tr><th></th><th class="n">5 dern.</th><th class="n">20 préc.</th><th class="n">Écart</th></tr></thead><tbody>${wc.rows.map((r) => `<tr style="cursor:default"><td>${esc(r.label)}</td><td class="n">${wcFmt(r, r.last5)}</td><td class="n dim">${wcFmt(r, r.prev20)}</td><td class="n">${wcDelta(r)}</td></tr>`).join("")}</tbody></table></div>` : `<div class="empty">Historique trop court (25 séances nécessaires).</div>`}
+      <div class="panel-h" style="border-top:1px solid var(--line)"><h2>Before breakout</h2><span class="k">${st.setup.bb_count}/8</span><span class="hint">${st.setup.in_breakout ? "déjà en breakout" : st.setup.before_breakout ? "conditions réunies" : "conditions partielles"}</span></div>
+      <div class="checks">${Object.keys(chkL).map((k) => `<div class="${chk[k] ? "ok" : "ko"}">${esc(chkL[k])}</div>`).join("")}</div>
+    </section>
+  </div>
+  <div class="cols2">
+    <section class="panel"><div class="panel-h"><h2>Breakouts</h2><span class="k">${brk.length}</span><span class="hint">actifs sur les 5 dernières séances</span></div>
+      ${brk.length ? `<div class="panel-b"><table><thead><tr><th>Niveau</th><th class="n">Prix</th><th class="n">Il y a</th><th class="n">Confirm.</th><th class="n">Écart</th><th class="n">Force</th></tr></thead><tbody>${brk.map((b) => `<tr style="cursor:default"><td>${esc(b.label)}</td><td class="n">${money(b.level, cur)}</td><td class="n">${b.days_ago} j</td><td class="n">${b.confirm_sessions}</td><td class="n">${pct(b.dist_pct, 1)}</td><td class="n score">${fx(b.strength, 0)}</td></tr>`).join("")}</tbody></table></div>` : `<div class="empty">Aucun breakout actif. Résistance 60 séances : ${money(st.setup.resistance, cur, na("setup.resistance"))} (${isNum(st.setup.dist_resistance) ? (st.setup.dist_resistance * 100).toFixed(1) + " % au-dessus" : "N/A"}).</div>`}
+      <div class="panel-h" style="border-top:1px solid var(--line)"><h2>Anomalies</h2><span class="k">${st.anomalies.length}</span><span class="hint">z-score vs 60 séances du titre</span></div>
+      ${st.anomalies.length ? `<ul class="facts">${st.anomalies.map((a) => `<li><span class="bright">${esc(a.label)}</span>${isNum(a.z) ? ` <span class="num amber">z ${a.z.toFixed(1)}</span>` : ""} <span class="dim">${esc(a.detail)}</span></li>`).join("")}</ul>` : `<div class="empty">Aucune anomalie statistique sur la dernière séance.</div>`}
+    </section>
+    <section class="panel"><div class="panel-h"><h2>Next MU / SNDK</h2></div>
+      ${["A", "B"].map((k) => { const x = st.similarity[k]; return `<div style="padding:8px 10px;border-bottom:1px solid var(--line)"><div style="display:flex;gap:10px;align-items:baseline"><span class="bright">${k === "A" ? "Profil A · Early MU" : "Profil B · Early SNDK"}</span><span class="score num" style="margin-left:auto">${x.score.toFixed(0)}/100</span></div><div class="dim" style="font-size:var(--fs-s);margin-top:3px">${esc(x.why)}</div>
+      <div style="margin-top:6px">${Object.entries(x.parts).map(([pk, pv]) => `<div class="bd-row" style="padding-inline:0"><span>${esc(partL[pk] || pk)}</span><div class="meter"><span style="width:${pv}%"></span></div><span class="v">${pv}</span><span class="w"></span></div>`).join("")}</div></div>`; }).join("")}
+    </section>
+  </div>
+  <section class="panel"><div class="panel-h"><h2>Indicateurs</h2><span class="hint">N/A = non calculable, survol pour la raison</span></div>
+    <div class="kv">
+      ${[
+        ["Var. 5j", pct(st.price.chg_5d, 1, na("price.chg_5d"))], ["Var. 1 mois", pct(st.price.chg_1m, 1, na("price.chg_1m"))], ["Var. 3 mois", pct(st.price.chg_3m, 1, na("price.chg_3m"))],
+        ["Var. 6 mois", pct(st.price.chg_6m, 1, na("price.chg_6m"))], ["Var. 1 an", pct(st.price.chg_1y, 1, na("price.chg_1y"))],
+        ["+ haut 52s", money(st.price.high_52w, cur, na("price.high_52w"))], ["+ bas 52s", money(st.price.low_52w, cur, na("price.low_52w"))], ["Écart + haut 52s", pct(st.price.dist_high_52w, 1, na("price.dist_high_52w"))],
+        ["Volume", vol(st.volume.today)], ["Moy. vol. 20j", vol(st.volume.avg20)], ["Moy. vol. 50j", st.volume.avg50 == null ? naSpan(na("volume.avg50")) : vol(st.volume.avg50)], ["RVOL", fx(st.volume.rvol, 2)],
+        ["Vol. 5j / moy. 50j", fx(st.volume.rvol5_50, 2, na("volume.rvol5_50"))], ["Accel. volume", fx(st.volume.accel.score, 0)], ["Pente vol. 5j", isNum(st.volume.accel.slope5_pct) ? `${st.volume.accel.slope5_pct.toFixed(0)} %/séance` : naSpan()], ["R² rampe 5j", fx(st.volume.accel.r2_5, 2)],
+        ["Hausses vol. d'affilée", st.volume.accel.up_streak ?? naSpan()], ["Vol. hausse/baisse 20j", fx(st.volume.updown_vol20, 2)],
+        ["RSI 14", fx(st.momentum.rsi14, 1)], ["RSI 7", fx(st.momentum.rsi7, 1)], ["MACD", fx(st.momentum.macd, 3)], ["MACD hist.", fx(st.momentum.macd_hist, 3)],
+        ["ROC 20j", pct(st.momentum.roc20, 1)], ["ROC 60j", pct(st.momentum.roc60, 1, na("momentum.roc60"))],
+        ["Pente SMA20", isNum(st.momentum.slope_sma20) ? `${st.momentum.slope_sma20.toFixed(2)} %/s.` : naSpan()], ["Pente SMA50", isNum(st.momentum.slope_sma50) ? `${st.momentum.slope_sma50.toFixed(2)} %/s.` : naSpan(na("momentum.slope_sma50"))], ["Pente SMA200", isNum(st.momentum.slope_sma200) ? `${st.momentum.slope_sma200.toFixed(3)} %/s.` : naSpan(na("momentum.slope_sma200"))],
+        ["SMA 20", money(st.trend.sma20, cur)], ["SMA 50", money(st.trend.sma50, cur, na("trend.sma50"))], ["SMA 100", money(st.trend.sma100, cur, na("trend.sma100"))], ["SMA 200", money(st.trend.sma200, cur, na("trend.sma200"))],
+        ["EMA 20", money(st.trend.ema20, cur)], ["EMA 50", money(st.trend.ema50, cur, na("trend.ema50"))],
+        ["Prix > SMA20/50/200", ["above_sma20", "above_sma50", "above_sma200"].map((k) => st.trend[k] == null ? "?" : st.trend[k] ? '<span class="up">oui</span>' : '<span class="down">non</span>').join(" / ")],
+        ["Golden cross", st.trend.golden_cross_days_ago != null ? `il y a ${st.trend.golden_cross_days_ago} s.` : '<span class="faint">aucun (120 s.)</span>'],
+        ["Reprise SMA200", st.trend.sma200_reclaim_days_ago != null ? `il y a ${st.trend.sma200_reclaim_days_ago} s.` : '<span class="faint">aucune (60 s.)</span>'],
+        ["ATR 14", fx(st.volatility.atr14, 2)], ["ATR %", isNum(st.volatility.atr_pct) ? st.volatility.atr_pct.toFixed(2) + " %" : naSpan()], ["Compression ATR", fx(st.volatility.compression, 2, na("volatility.compression"))], ["Écart SMA50 (ATR)", fx(st.volatility.ext_atr, 1, na("volatility.ext_atr"))],
+        ["RS 5j vs QQQ", pts(st.rs.rs_5d, 1)], ["RS 20j vs QQQ", pts(st.rs.rs_20d, 1)], ["RS 60j vs QQQ", pts(st.rs.rs_60d, 1, na("rs.rs_60d"))], ["RS 6m vs QQQ", pts(st.rs.rs_6m, 1, na("rs.rs_6m"))], ["RS 1an vs QQQ", pts(st.rs.rs_1y, 1, na("rs.rs_1y"))],
+        ...(st.market === "EU" ? [["RS 20j vs CAC 40", pts(st.rs.rs_local_20d, 1, na("rs.rs_local_20d"))], ["RS 6m vs CAC 40", pts(st.rs.rs_local_6m, 1, na("rs.rs_local_6m"))]] : []),
+        ["Tendance RS", { improving: '<span class="up">amélioration</span>', deteriorating: '<span class="down">dégradation</span>', flat: "stable" }[st.rs.rs_trend] || naSpan()],
+        ["Qualité tendance (R² 6m)", fx(st.trend.trend_r2, 2, na("trend.trend_r2"))], ["Consolidation", st.setup.consolidation_days ? `${st.setup.consolidation_days} s.` : '<span class="faint">non</span>'],
+        ["Séances + (10 dern.)", st.setup.up_sessions10 ?? naSpan()], ["Support 60j", money(st.setup.support, cur, na("setup.resistance"))],
+      ].map(([k, v]) => `<div><span>${esc(k)}</span><span>${v}</span></div>`).join("")}
+    </div>
+  </section>`;
+}
+
+// ── graphiques SVG faits main ───────────────────────────────
+function niceTicks(lo, hi, n) {
+  const span = hi - lo; if (!(span > 0)) return [lo];
+  const step0 = span / n, mag = Math.pow(10, Math.floor(Math.log10(step0)));
+  const step = [1, 2, 2.5, 5, 10].map((m) => m * mag).find((s) => s >= step0) || mag * 10;
+  const out = []; for (let v = Math.ceil(lo / step) * step; v <= hi + 1e-9; v += step) out.push(+v.toFixed(10));
+  return out;
+}
+function chartHTML(ser, st) {
+  return `<div class="legend"><span><i style="border-top-color:var(--fg-bright)"></i>SMA20</span><span><i style="border-top-style:dashed;border-top-color:var(--fg)"></i>SMA50</span><span><i style="border-top-style:dotted;border-top-width:2px"></i>SMA200</span><span><i style="border-top-style:dashed"></i>résistance / support (pivots ≥ 2 contacts)</span><span><i style="border-top-style:dotted;border-top-color:var(--amber)"></i>niveaux de breakout 20j · 50j · 100j · 52s</span></div>
+  <div class="readout" id="readout">Survole le graphique pour lire les valeurs.</div>
+  <div class="chart-box" id="chartBox">${chartSVG(ser, st)}</div>`;
+}
+function chartSVG(ser, st) {
+  const n = ser.dates.length;
+  const W = 1000, padL = 6, padR = 62, plotW = W - padL - padR;
+  const H1 = 300, H2 = 70, H3 = 80, H4 = 80, gap = 16;
+  const y0 = 8, y1 = y0 + H1 + gap, y2 = y1 + H2 + gap, y3 = y2 + H3 + gap, H = y3 + H4 + 20;
+  const cw = plotW / n, xi = (i) => padL + (i + 0.5) * cw;
+  const hi = ser.high.filter(isNum), lo = ser.low.filter(isNum);
+  let pmin = Math.min(...lo), pmax = Math.max(...hi);
+  const levels = [];
+  (ser.levels.resistance || []).forEach((l) => levels.push({ y: l.price, cls: "lvl-r", t: `R ${l.touches}×` }));
+  (ser.levels.support || []).forEach((l) => levels.push({ y: l.price, cls: "lvl-s", t: `S ${l.touches}×` }));
+  Object.entries(ser.breakout_levels || {}).forEach(([k, v]) => { if (isNum(v)) levels.push({ y: v, cls: "lvl-b", t: k }); });
+  const inRange = [];
+  levels.filter((l) => l.y >= pmin * 0.9 && l.y <= pmax * 1.1).sort((a, b) => a.y - b.y).forEach((l) => {
+    const prev = inRange[inRange.length - 1];
+    if (prev && Math.abs(l.y / prev.y - 1) < 0.004) { prev.t += " · " + l.t; if (l.cls === "lvl-b") prev.cls = "lvl-b"; }
+    else inRange.push(Object.assign({}, l));
+  });
+  inRange.forEach((l) => { pmin = Math.min(pmin, l.y); pmax = Math.max(pmax, l.y); });
+  const pad = (pmax - pmin) * 0.04; pmin -= pad; pmax += pad;
+  const py = (v) => y0 + (1 - (v - pmin) / (pmax - pmin)) * H1;
+  const out = [];
+  out.push(`<svg viewBox="0 0 ${W} ${H}" role="img" aria-label="Graphique ${esc(ser.ticker)} sur ${n} séances">`);
+  // grille prix
+  niceTicks(pmin, pmax, 6).forEach((v) => { const y = py(v); out.push(`<line class="grid-l" x1="${padL}" x2="${W - padR}" y1="${y}" y2="${y}"/><text x="${W - padR + 6}" y="${y + 3}">${v >= 1000 ? v.toFixed(0) : v.toFixed(v < 10 ? 2 : 1)}</text>`); });
+  // repères de mois
+  let lastM = "";
+  ser.dates.forEach((d, i) => { const m = d.slice(0, 7); if (m !== lastM) { if (lastM) { const x = xi(i) - cw / 2; out.push(`<line class="grid-l" x1="${x}" x2="${x}" y1="${y0}" y2="${y3 + H4}"/><text x="${x + 3}" y="${H - 6}">${d.slice(5, 7) === "01" ? d.slice(0, 4) : ["jan", "fév", "mar", "avr", "mai", "juin", "juil", "août", "sep", "oct", "nov", "déc"][+d.slice(5, 7) - 1]}</text>`); } lastM = m; } });
+  // niveaux
+  inRange.forEach((l) => { const y = py(l.y); out.push(`<line class="${l.cls}" x1="${padL}" x2="${W - padR}" y1="${y}" y2="${y}"/><text x="${padL + 4}" y="${y - 3}" style="fill:${l.cls === "lvl-b" ? "var(--amber)" : "var(--fg-dim)"}">${esc(l.t)} ${l.y.toFixed(2)}</text>`); });
+  // bougies
+  const bw = Math.max(1, cw * 0.62);
+  for (let i = 0; i < n; i++) {
+    const o = ser.open[i], c = ser.close[i], h = ser.high[i], l = ser.low[i];
+    if (![o, c, h, l].every(isNum)) continue;
+    const cls = c >= o ? "c-up" : "c-down", x = xi(i);
+    out.push(`<line class="${cls}" x1="${x}" x2="${x}" y1="${py(h)}" y2="${py(l)}" stroke-width="1"/><rect class="${cls}" x="${x - bw / 2}" y="${Math.min(py(o), py(c))}" width="${bw}" height="${Math.max(1, Math.abs(py(o) - py(c)))}"/>`);
+  }
+  const path = (arr, yf) => { let d = "", pen = false; arr.forEach((v, i) => { if (isNum(v)) { d += `${pen ? "L" : "M"}${xi(i).toFixed(1)},${yf(v).toFixed(1)}`; pen = true; } else pen = false; }); return d; };
+  out.push(`<path class="sma200" d="${path(ser.sma200, py)}"/><path class="sma50" d="${path(ser.sma50, py)}"/><path class="sma20" d="${path(ser.sma20, py)}"/>`);
+  // volume
+  const vmax = Math.max(...ser.volume.filter(isNum)) || 1;
+  out.push(`<text x="${padL}" y="${y1 - 3}">VOLUME</text><text x="${W - padR + 6}" y="${y1 + 8}">${vol(vmax)}</text>`);
+  for (let i = 0; i < n; i++) { const v = ser.volume[i]; if (!isNum(v)) continue; const h = v / vmax * H2; out.push(`<rect class="${ser.close[i] >= ser.open[i] ? "v-up" : "v-down"}" x="${xi(i) - bw / 2}" y="${y1 + H2 - h}" width="${bw}" height="${h}"/>`); }
+  // RSI
+  const ry = (v) => y2 + (1 - v / 100) * H3;
+  out.push(`<rect class="band" x="${padL}" y="${ry(70)}" width="${plotW}" height="${ry(30) - ry(70)}"/><text x="${padL}" y="${y2 - 3}">RSI 14</text>`);
+  [30, 50, 70].forEach((v) => out.push(`<line class="grid-l" x1="${padL}" x2="${W - padR}" y1="${ry(v)}" y2="${ry(v)}"/><text x="${W - padR + 6}" y="${ry(v) + 3}">${v}</text>`));
+  out.push(`<path class="line" d="${path(ser.rsi14, ry)}"/>`);
+  // MACD
+  const mv = [...ser.macd, ...ser.macd_signal, ...ser.macd_hist].filter(isNum);
+  const mm = Math.max(Math.abs(Math.min(...mv)), Math.abs(Math.max(...mv))) || 1;
+  const my = (v) => y3 + H4 / 2 - v / mm * (H4 / 2);
+  out.push(`<text x="${padL}" y="${y3 - 3}">MACD 12/26/9</text><line class="zero" x1="${padL}" x2="${W - padR}" y1="${my(0)}" y2="${my(0)}"/>`);
+  for (let i = 0; i < n; i++) { const v = ser.macd_hist[i]; if (!isNum(v)) continue; out.push(`<rect class="${v >= 0 ? "v-up" : "v-down"}" x="${xi(i) - bw / 2}" y="${Math.min(my(0), my(v))}" width="${bw}" height="${Math.abs(my(v) - my(0))}"/>`); }
+  out.push(`<path class="line" d="${path(ser.macd, my)}"/><path class="line-dim" d="${path(ser.macd_signal, my)}"/>`);
+  // réticule
+  out.push(`<line class="xh" id="xh" x1="0" x2="0" y1="${y0}" y2="${y3 + H4}" visibility="hidden"/><rect id="hit" x="${padL}" y="${y0}" width="${plotW}" height="${y3 + H4 - y0}" fill="transparent"/>`);
+  out.push(`</svg>`);
+  chartSVG.geom = { padL, cw, n, W };
+  return out.join("");
+}
+function bindChart(ser, st) {
+  const svg = $("#chartBox svg"), hit = $("#hit"), xh = $("#xh"), ro = $("#readout");
+  if (!svg || !hit) return;
+  const g = chartSVG.geom;
+  const move = (ev) => {
+    const pt = svg.createSVGPoint(); pt.x = ev.clientX; pt.y = ev.clientY;
+    const p = pt.matrixTransform(svg.getScreenCTM().inverse());
+    const i = Math.max(0, Math.min(g.n - 1, Math.floor((p.x - g.padL) / g.cw)));
+    const x = g.padL + (i + 0.5) * g.cw;
+    xh.setAttribute("x1", x); xh.setAttribute("x2", x); xh.setAttribute("visibility", "visible");
+    const c = ser.close[i], pc = i > 0 ? ser.close[i - 1] : null;
+    ro.innerHTML = `${esc(ser.dates[i])} · O ${fx(ser.open[i])} H ${fx(ser.high[i])} B ${fx(ser.low[i])} C <span class="bright">${fx(c)}</span> ${isNum(pc) ? pct(c / pc - 1, 2) : ""} · vol ${vol(ser.volume[i])} · SMA20 ${fx(ser.sma20[i])} SMA50 ${fx(ser.sma50[i])} SMA200 ${fx(ser.sma200[i])} · RSI ${fx(ser.rsi14[i], 1)} · MACD ${fx(ser.macd_hist[i], 3)}`;
+  };
+  hit.addEventListener("pointermove", move);
+  hit.addEventListener("pointerleave", () => xh.setAttribute("visibility", "hidden"));
+}
+
+// ── backtest ─────────────────────────────────────────────────
+async function loadBacktest() {
+  try { S.backtest = await getJSON("data/backtest/results.json"); } catch (e) { S.backtestErr = e.message; }
+  if (S.tab === "backtest") render();
+}
+function backtestView() {
+  if (S.backtestErr) return `<section class="panel"><div class="panel-h"><h2>Backtest</h2></div><div class="empty">Pas encore de résultats (${esc(S.backtestErr)}). Le backtest tourne après la collecte, le vendredi ou à chaque lancement manuel.</div></section>`;
+  const B = S.backtest;
+  if (!B) return `<section class="panel"><div class="empty">Chargement du backtest…</div></section>`;
+  const p = P(), R = B.results[p];
+  if (!R) return `<section class="panel"><div class="empty">Pas de résultats pour ce profil.</div></section>`;
+  const thr = Object.keys(R), hz = B.params.horizons.map(String);
+  if (!R[S.btThr]) S.btThr = thr[0];
+  if (hz.indexOf(S.btH) < 0) S.btH = hz[0];
+  const cell = (st, k, f) => !st || !st.n ? '<span class="faint">·</span>' : f(st[k]);
+  const sel = R[S.btThr][S.btH];
+  const eq = (B.equity_5d[p] || {})[S.btThr] || [];
+  const bh = B.qqq_buy_hold;
+  const b5 = R[S.btThr]["5"] && R[S.btThr]["5"].basket;
+  return `<section class="panel"><div class="panel-h"><h2>Backtest</h2><span class="k">${esc(B.period.start)} → ${esc(B.period.end)} · ${B.period.rebalances} semaines · ${B.universe.count} titres</span>
+    <span class="hint">chaque semaine, les ${B.params.top} meilleurs scores ${esc(S.data.meta.profiles[p].label)} · achat à l'ouverture suivante · recalculé depuis les cours, sans look-ahead</span></div>
+    <div class="panel-b"><table><thead><tr><th>Seuil</th>${hz.map((h) => `<th class="n">+${h}j moy.</th><th class="n">méd.</th><th class="n">réussite</th><th class="n">bat QQQ</th><th class="n">QQQ moy.</th><th class="n">trades</th>`).join("")}</tr></thead><tbody>
+    ${thr.map((t) => `<tr data-bt="${t}" style="${t === S.btThr ? "background:var(--panel-2)" : ""}"><td class="bright">${t === "0" ? "top " + B.params.top + " sans seuil" : "score ≥ " + t}</td>${hz.map((h) => { const s = R[t][h]; return `<td class="n">${cell(s, "mean", (v) => pct(v, 2))}</td><td class="n">${cell(s, "median", (v) => pct(v, 2))}</td><td class="n">${cell(s, "hit_rate", (v) => (v * 100).toFixed(0) + "%")}</td><td class="n">${cell(s, "beat_qqq_rate", (v) => (v * 100).toFixed(0) + "%")}</td><td class="n dim">${cell(s, "qqq_mean", (v) => pct(v, 2))}</td><td class="n dim">${s && s.n ? s.n : 0}</td>`; }).join("")}</tr>`).join("")}
+    </tbody></table></div></section>
+  <div class="cols2">
+    <section class="panel"><div class="panel-h"><h2>Courbe de capital</h2><span class="hint">portefeuille hebdo, tenu 5 séances, vs QQQ sur les mêmes semaines</span></div>
+      ${eq.length ? equitySVG(eq) : `<div class="empty">Pas de courbe pour ce seuil.</div>`}
+      ${b5 && isNum(b5.total_return) ? `<div class="kv">${[["Rendement total", pct(b5.total_return, 1)], ["QQQ (mêmes semaines)", pct(b5.qqq_total_return, 1)], ["CAGR", pct(b5.cagr, 1)], ["CAGR QQQ", pct(b5.qqq_cagr, 1)], ["Max drawdown", pct(b5.max_drawdown, 1)], ["Max drawdown QQQ", pct(b5.qqq_max_drawdown, 1)], ["Volatilité annuelle", pct(b5.volatility_ann, 1)], ["Volatilité QQQ", pct(b5.qqq_volatility_ann, 1)], ["Semaines sans titre", b5.empty_rebalances]].map(([k, v]) => `<div><span>${k}</span><span>${v}</span></div>`).join("")}</div>` : ""}
+      <div class="kv">${[["QQQ acheté-conservé", pct(bh.total_return, 1)], ["CAGR", pct(bh.cagr, 1)], ["Max drawdown", pct(bh.max_drawdown, 1)], ["Volatilité", pct(bh.volatility_ann, 1)]].map(([k, v]) => `<div><span>${k}</span><span>${v}</span></div>`).join("")}</div>
+    </section>
+    <section class="panel"><div class="panel-h"><h2>Distribution</h2><span class="hint">
+      <select id="btThr" aria-label="Seuil">${thr.map((t) => `<option value="${t}" ${t === S.btThr ? "selected" : ""}>${t === "0" ? "sans seuil" : "score ≥ " + t}</option>`).join("")}</select>
+      <select id="btH" aria-label="Horizon">${hz.map((h) => `<option value="${h}" ${h === S.btH ? "selected" : ""}>+${h} séances</option>`).join("")}</select></span></div>
+      ${sel && sel.n ? distHTML(sel) : `<div class="empty">Aucun trade pour ce seuil.</div>`}
+      ${sel && sel.n ? `<div class="kv">${[["Trades", sel.n], ["Moyenne", pct(sel.mean, 2)], ["Médiane", pct(sel.median, 2)], ["Écart-type", pct(sel.std, 1)], ["Meilleur", pct(sel.best, 1)], ["Pire", pct(sel.worst, 1)], ["Baisse max. moy. pendant la détention", pct(sel.mae_mean, 1)], ["Pire baisse pendant la détention", pct(sel.mae_worst, 1)]].map(([k, v]) => `<div><span>${k}</span><span>${v}</span></div>`).join("")}</div>` : ""}
+    </section>
+  </div>
+  <section class="panel"><div class="panel-h"><h2>À garder en tête</h2></div><ul class="caveats">${B.caveats.map((c) => `<li>${esc(c)}</li>`).join("")}</ul></section>`;
+}
+function distHTML(s) {
+  const e = Object.entries(s.distribution), mx = Math.max(...e.map(([, v]) => v)) || 1;
+  return `<div style="padding-block:6px">${e.map(([k, v]) => `<div class="dist-row"><span class="dim">${esc(k)}</span><div class="bar-f ${k.trim().startsWith("-") || k.startsWith("< -") ? "down" : "up"}" style="width:${(v / mx * 100).toFixed(1)}%"></div><span class="dim" style="text-align:right">${v}</span></div>`).join("")}</div>`;
+}
+function equitySVG(eq) {
+  const W = 600, H = 220, pl = 6, pr = 52, pt = 10, pb = 20;
+  const all = eq.flatMap((e) => [e.strat, e.qqq]);
+  let lo = Math.min(1, ...all), hi = Math.max(1, ...all); const pd = (hi - lo) * 0.05; lo -= pd; hi += pd;
+  const x = (i) => pl + i / Math.max(1, eq.length - 1) * (W - pl - pr), y = (v) => pt + (1 - (v - lo) / (hi - lo)) * (H - pt - pb);
+  const line = (k) => eq.map((e, i) => `${i ? "L" : "M"}${x(i).toFixed(1)},${y(e[k]).toFixed(1)}`).join("");
+  const ticks = niceTicks(lo, hi, 5);
+  const yrs = []; let ly = "";
+  eq.forEach((e, i) => { const yv = e.date.slice(0, 4); if (yv !== ly) { if (ly) yrs.push([i, yv]); ly = yv; } });
+  return `<div class="legend" style="padding-top:6px"><span><i style="border-top-color:var(--fg-bright);border-top-width:2px"></i>stratégie</span><span><i style="border-top-style:dashed"></i>QQQ</span></div><div class="chart-box"><svg viewBox="0 0 ${W} ${H}" role="img" aria-label="Courbe de capital">
+  ${ticks.map((v) => `<line class="grid-l" x1="${pl}" x2="${W - pr}" y1="${y(v)}" y2="${y(v)}"/><text x="${W - pr + 5}" y="${y(v) + 3}">${((v - 1) * 100).toFixed(0)}%</text>`).join("")}
+  ${yrs.map(([i, yv]) => `<line class="grid-l" x1="${x(i)}" x2="${x(i)}" y1="${pt}" y2="${H - pb}"/><text x="${x(i) + 3}" y="${H - 6}">${yv}</text>`).join("")}
+  <line class="zero" x1="${pl}" x2="${W - pr}" y1="${y(1)}" y2="${y(1)}"/>
+  <path class="line-dim" d="${line("qqq")}"/><path d="${line("strat")}" fill="none" stroke="var(--fg-bright)" stroke-width="1.6"/></svg></div>`;
+}
+
+// ── méthode ──────────────────────────────────────────────────
+function methodView() {
+  const m = S.data.meta;
+  const prof = Object.entries(m.profiles).map(([k, p]) => `<tr style="cursor:default"><td class="bright">${esc(p.label)}</td><td class="dim" style="white-space:normal">${Object.entries(p.weights).map(([c, w]) => `${esc(m.component_labels[c] || c)} <span class="num bright">${w}</span>`).join(" · ")}</td></tr>`).join("");
+  return `<section class="panel"><div class="panel-h"><h2>Pondérations</h2><span class="hint">modifiables dans config/weights.json</span></div><div class="panel-b"><table><tbody>${prof}</tbody></table></div></section>
+  <section class="panel"><div class="prose">
+  <h3>D'où viennent les chiffres</h3>
+  <p>Chaque soir de semaine à 22h30 UTC, un robot GitHub Actions télécharge les cours quotidiens via yfinance (Yahoo Finance), calcule les indicateurs et le score, puis enregistre le résultat dans <code>data/latest.json</code>. Cette page ne fait que lire ce fichier. Aucune donnée n'est générée ou complétée dans le navigateur. Une valeur absente s'affiche <span class="na">N/A</span> ; survole-la pour lire la raison.</p>
+  <p>Source : ${esc(m.source)}. ${m.ok_count}/${m.universe_count} titres calculés lors de la dernière collecte. Historique de score : ${m.history.files} jours (${m.history.live} enregistrés en direct, ${m.history.backfilled} reconstruits depuis les cours).</p>
+  <h3>Le score en bref</h3>
+  <p>Sept sous-scores de 0 à 100, pondérés selon le profil. <b>Volume Momentum</b> repose surtout sur l'accélération du volume : une régression sur les 5 et 10 dernières séances, pondérée par sa régularité (R²). Une rampe 5M → 6M → 7M → 9M → 13M score bien plus haut qu'une séance isolée à 13M. <b>Relative Strength</b> compare le titre au QQQ sur 5, 20, 60 et 126 séances, avec un bonus de 15 points quand la surperformance démarre avant les plus hauts. <b>Breakout Potential</b> combine les 8 conditions Before Breakout et la force d'un breakout récent.</p>
+  <p>La configuration <b>volume ↑ avant accélération du prix</b> ajoute ${m.config.setup_bonus.vol_leads_price} points. Une pénalité multiplie le score quand le RSI dépasse ${m.config.overextension.rsi_start}, quand le cours est à plus de ${m.config.overextension.atr_ext_start} ATR au-dessus de la SMA50, ou quand la hausse sur 1 an dépasse ${m.config.overextension.ret_1y_start * 100} % (plancher ×${m.config.overextension.floor}).</p>
+  <h3>Momentum Acceleration</h3>
+  <p>Δ score sur 1, 3, 5 et 10 séances. Les scores passés sont recalculés chaque soir depuis les cours, avec uniquement les données connues à chaque date : l'accélération est exploitable dès le premier jour, et reste cohérente si tu changes les pondérations.</p>
+  <h3>Ce que yfinance fournit, et ce qu'il ne fournit pas</h3>
+  <ul><li>Disponible : cours quotidiens ouverture / haut / bas / clôture et volume, ajustés des splits et dividendes, sur plusieurs années, pour les actions US, européennes et les indices.</li>
+  <li>Non utilisé ici : données intraday fiables sur longue période, carnet d'ordres, flux d'options, positions à découvert à jour, estimations d'analystes fiables. Yahoo n'a pas d'API officielle : un changement de leur côté peut casser la collecte un soir. La page l'affiche alors en rouge.</li>
+  <li>Les cours européens sont en euros ; leur RS est calculée contre le QQQ et contre le CAC 40.</li></ul>
+  <h3>Limites</h3>
+  <ul><li>Données de fin de journée : l'outil ne voit pas les mouvements en séance.</li><li>Le backtest souffre du biais du survivant (univers choisi aujourd'hui).</li><li>Un score élevé signale une configuration, pas une garantie de hausse.</li></ul>
+  </div></section>`;
+}
+
+// ── événements ───────────────────────────────────────────────
+document.addEventListener("click", (e) => {
+  const star = e.target.closest("[data-star]");
+  if (star) {
+    e.stopPropagation();
+    const t = star.dataset.star;
+    S.watch.has(t) ? S.watch.delete(t) : S.watch.add(t);
+    store.set("watch", [...S.watch]);
+    document.querySelectorAll(`[data-star="${CSS.escape(t)}"]`).forEach((b) => { b.setAttribute("aria-pressed", String(S.watch.has(t))); b.textContent = S.watch.has(t) ? "★" : "☆"; });
+    return;
+  }
+  const tab = e.target.closest("#tabs button");
+  if (tab) { S.tab = tab.dataset.tab; store.set("tab", S.tab); history.replaceState(null, "", "#" + S.tab); render(); return; }
+  const pb = e.target.closest("#profileSeg button");
+  if (pb) { S.profile = pb.dataset.p; store.set("profile", S.profile); render(); return; }
+  if (e.target.closest("#closeSheet")) { closeSheet(); return; }
+  const op = e.target.closest("[data-open]");
+  if (op) { e.preventDefault(); openSheet(op.dataset.open); return; }
+  const th = e.target.closest("th[data-sort]");
+  if (th) { const k = th.dataset.sort; S.sort = { key: k, dir: S.sort.key === k ? -S.sort.dir : (k === "ticker" || k === "sector" ? 1 : -1) }; store.set("sort", S.sort); render(); return; }
+  const mn = e.target.closest("[data-min]");
+  if (mn) { S.f.min = Number(mn.dataset.min); saveF(); render(); return; }
+  const tf = e.target.closest("[data-f]");
+  if (tf) { S.f[tf.dataset.f] = !S.f[tf.dataset.f]; saveF(); render(); return; }
+  const bt = e.target.closest("tr[data-bt]");
+  if (bt) { S.btThr = bt.dataset.bt; store.set("btThr", S.btThr); render(); return; }
+  const row = e.target.closest("[data-t]");
+  if (row && !e.target.closest("#sheetRoot")) openSheet(row.dataset.t);
+});
+document.addEventListener("change", (e) => {
+  if (e.target.id === "heatSel") { S.heatMetric = e.target.value; store.set("heatMetric", S.heatMetric); render(); }
+  if (e.target.id === "btThr") { S.btThr = e.target.value; store.set("btThr", S.btThr); render(); }
+  if (e.target.id === "btH") { S.btH = e.target.value; store.set("btH", S.btH); render(); }
+});
+document.addEventListener("keydown", (e) => { if (e.key === "Escape" && $("#sheetBg")) closeSheet(); });
+setInterval(() => { if (S.data) freshness(); }, 60000);
+load();
+</script>
+</body>
+</html>
