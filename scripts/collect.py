@@ -528,7 +528,7 @@ def build_alerts(stocks: dict, cfg: dict) -> list[dict]:
         if brk_today:
             b = brk_today[0]
             why.append(f"breakout du {b['label']} à {b['level']:.2f}")
-        elif st["setup"]["dist_resistance"] is not None and st["setup"]["dist_resistance"] >= 0:
+        elif st["setup"]["dist_resistance"] is not None and 0 <= st["setup"]["dist_resistance"] <= 0.10:
             why.append(f"breakout à {st['setup']['dist_resistance'] * 100:.1f} % (résistance {st['setup']['resistance']:.2f})")
         if "score" in triggers:
             why.append(f"score {prev:.0f} → {score:.0f}" if prev is not None else f"score {score:.0f}")

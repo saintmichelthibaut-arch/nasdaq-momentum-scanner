@@ -123,13 +123,30 @@ def main() -> int:
         mae = (np.nanmin(fr_low[i:j + 1]) / entry - 1) if fr_low is not None else 0.0
         return fr_close[j] / entry - 1, mae
 
+    # Référence honnête : moyenne de TOUS les titres de l'univers aux mêmes dates.
+    # Si le top 10 ne bat pas cette moyenne, le score n'apporte rien au-delà du choix de l'univers.
+    fwd_cache: dict = {}
+    universe_avg: dict = {}
+    for h in horizons:
+        for T in rebal:
+            vals = []
+            for t, fr in frames.items():
+                k = fr["idx"].searchsorted(T, side="right") - 1
+                if k < 0 or (T - fr["idx"][k]).days > 5 or not np.isfinite(fr["scores"]["standard"][k] if "standard" in fr["scores"] else np.nan):
+                    continue
+                r = fwd(fr["idx"], fr["open"], fr["close"], fr["low"], T, h)
+                fwd_cache[(t, T, h)] = r
+                if r is not None:
+                    vals.append(r[0])
+            universe_avg[(T, h)] = float(np.mean(vals)) if vals else None
+
     results, equity = {}, {}
     for p in cfg["profiles"]:
         results[p], equity[p] = {}, {}
         for thr in thresholds:
             per_h = {}
             for h in horizons:
-                rets, bres, maes, baskets = [], [], [], []
+                rets, bres, maes, baskets, ures = [], [], [], [], []
                 for T in rebal:
                     cands = []
                     for t, fr in frames.items():
@@ -146,13 +163,20 @@ def main() -> int:
                     b_rets = []
                     for _, t in cands[:args.top]:
                         fr = frames[t]
-                        r = fwd(fr["idx"], fr["open"], fr["close"], fr["low"], T, h)
+                        r = fwd_cache.get((t, T, h)) if (t, T, h) in fwd_cache else fwd(fr["idx"], fr["open"], fr["close"], fr["low"], T, h)
                         if r is None:
                             continue
                         rets.append(r[0]); maes.append(r[1]); bres.append(qb[0]); b_rets.append(r[0])
+                        ures.append(universe_avg.get((T, h)) if universe_avg.get((T, h)) is not None else np.nan)
                     baskets.append({"date": f"{T:%Y-%m-%d}", "n": len(b_rets),
                                     "ret": float(np.mean(b_rets)) if b_rets else 0.0, "qqq": qb[0]})
                 st = stats(np.array(rets), np.array(bres), np.array(maes))
+                if rets:
+                    ua = np.array(ures, dtype=float)
+                    ok = np.isfinite(ua)
+                    st["universe_mean"] = float(ua[ok].mean()) if ok.any() else None
+                    st["beat_universe_rate"] = float((np.array(rets)[ok] > ua[ok]).mean()) if ok.any() else None
+                    st["excess_vs_universe"] = float((np.array(rets)[ok] - ua[ok]).mean()) if ok.any() else None
                 br = np.array([b["ret"] for b in baskets])
                 bq = np.array([b["qqq"] for b in baskets])
                 st["basket"] = {
@@ -212,6 +236,7 @@ def main() -> int:
             "Pas de frais de courtage, de spread ni de change EUR/USD.",
             "Les rendements à +20 et +60 séances se chevauchent d'une semaine à l'autre : ils ne s'additionnent pas.",
             "Les titres récents (ex. SNDK, coté depuis février 2025) n'entrent dans le test qu'après leur période de chauffe.",
+            "Comparer le top 10 à la moyenne de l'univers (et pas seulement au QQQ) : c'est l'écart avec l'univers qui mesure l'apport réel du score.",
         ],
         "results": results,
         "equity_5d": equity,

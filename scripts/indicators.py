@@ -119,11 +119,15 @@ def volume_acceleration(volume: pd.Series) -> pd.DataFrame:
     """
     v = volume.astype(float)
     avg20_prev = sma(v, 20).shift(1)
-    s5, r5 = rolling_linreg(v, 5)
-    s10, r10 = rolling_linreg(v, 10)
+    # Un pic isolé (résultats, news) ne doit pas passer pour une rampe :
+    # volumes plafonnés à 3× la moyenne, et la hausse doit toucher plusieurs séances.
+    vc = v.clip(upper=3 * avg20_prev)
+    s5, r5 = rolling_linreg(vc, 5)
+    s10, r10 = rolling_linreg(vc, 10)
     s5n = s5 / avg20_prev * 100
     s10n = s10 / avg20_prev * 100
-    raw = 0.6 * s5n.clip(lower=0) * r5 ** 2 + 0.4 * s10n.clip(lower=0) * r10 ** 2
+    breadth = (v > 1.15 * avg20_prev).astype(float).rolling(5, min_periods=5).sum()
+    raw = (0.6 * s5n.clip(lower=0) * r5 ** 2 + 0.4 * s10n.clip(lower=0) * r10 ** 2) * lin(breadth, 0, 3)
     score = lin(raw, 0, 15) * 100
     return pd.DataFrame({
         "vacc_slope5": s5n,
@@ -131,7 +135,8 @@ def volume_acceleration(volume: pd.Series) -> pd.DataFrame:
         "vacc_slope10": s10n,
         "vacc_r2_10": r10,
         "vacc_raw": raw,
-        "vacc_score": score.where(avg20_prev.notna()),
+        "vacc_score": score.where(avg20_prev.notna() & breadth.notna()),
+        "vacc_breadth5": breadth,
         "vol_up_streak": streak(v > v.shift(1)),
     })
 

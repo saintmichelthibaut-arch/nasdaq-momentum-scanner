@@ -46,6 +46,11 @@ class VolumeAcceleration(unittest.TestCase):
         self.assertLess(spike, 50)
         self.assertGreater(ramp, 2 * spike)
 
+    def test_earnings_spike_is_not_a_ramp(self):
+        # un seul jour à 8,8× la moyenne (publication de résultats) après des séances normales
+        spike = self._score([5e6, 5.5e6, 5e6, 5.2e6, 44e6])
+        self.assertLess(spike, 40)
+
     def test_flat_volume_scores_zero(self):
         self.assertEqual(self._score([5e6] * 5), 0)
 
