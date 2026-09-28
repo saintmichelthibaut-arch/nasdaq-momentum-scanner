@@ -777,7 +777,12 @@ function chartSVG(ser, st) {
   let lastM = "";
   ser.dates.forEach((d, i) => { const m = d.slice(0, 7); if (m !== lastM) { if (lastM) { const x = xi(i) - cw / 2; out.push(`<line class="grid-l" x1="${x}" x2="${x}" y1="${y0}" y2="${y3 + H4}"/><text x="${x + 3}" y="${H - 6}">${d.slice(5, 7) === "01" ? d.slice(0, 4) : ["jan", "fév", "mar", "avr", "mai", "juin", "juil", "août", "sep", "oct", "nov", "déc"][+d.slice(5, 7) - 1]}</text>`); } lastM = m; } });
   // niveaux
-  inRange.forEach((l) => { const y = py(l.y); out.push(`<line class="${l.cls}" x1="${padL}" x2="${W - padR}" y1="${y}" y2="${y}"/><text x="${padL + 4}" y="${y - 3}" style="fill:${l.cls === "lvl-b" ? "var(--amber)" : "var(--fg-dim)"}">${esc(l.t)} ${l.y.toFixed(2)}</text>`); });
+  let lastLabel = -Infinity;
+  inRange.map((l) => Object.assign(l, { py: py(l.y) })).sort((a, b) => a.py - b.py).forEach((l) => {
+    const ly = Math.max(l.py - 3, lastLabel + 12); // étiquettes décalées pour ne pas se chevaucher
+    lastLabel = ly;
+    out.push(`<line class="${l.cls}" x1="${padL}" x2="${W - padR}" y1="${l.py}" y2="${l.py}"/><text x="${padL + 4}" y="${ly}" style="fill:${l.cls === "lvl-b" ? "var(--amber)" : "var(--fg-dim)"}">${esc(l.t)} ${l.y.toFixed(2)}</text>`);
+  });
   // bougies
   const bw = Math.max(1, cw * 0.62);
   for (let i = 0; i < n; i++) {
