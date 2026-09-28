@@ -58,7 +58,7 @@ Si une collecte échoue (Yahoo indisponible, par exemple), GitHub t'envoie un e-
 |---|---|
 | RSI, SMA 20/50/200, RVOL, ATR, RS vs QQQ, plus hauts 52 s. | **Dès la première collecte** (5 ans téléchargés) |
 | Momentum Acceleration (Δ score 1/3/5/10 j) | **Dès la première collecte** : les scores passés sont recalculés depuis les cours, avec uniquement les données connues à chaque date |
-| Backtest | **Dès la première collecte** : environ 3,5 ans testables (5 ans moins 1 an de chauffe pour la SMA200 et les 52 semaines) |
+| Backtest | **Dès la première collecte** : environ 4 ans testables (5 ans moins 1 an de chauffe pour la SMA200 et les 52 semaines) |
 | Historique « en direct » dans `data/history/` | S'accumule d'un fichier par jour. Les 60 premiers jours sont reconstruits et marqués `"backfilled": true` |
 
 Exception : **SNDK** n'est coté que depuis février 2025. Certains indicateurs longs (performance 1 an, RS 1 an) restent en N/A tant qu'il n'a pas assez de séances, et la page l'indique.
