@@ -1,5 +1,5 @@
 {
- "generated_at_utc": "2026-09-28T21:42:44+00:00",
+ "generated_at_utc": "2026-09-28T21:46:20+00:00",
  "market_date": {
   "US": "2026-09-28",
   "EU": "2026-09-28"
@@ -19,13 +19,12 @@
    "price": 334.68,
    "chg_1d": -0.1846,
    "rvol": 8.767,
-   "score": 27.36,
+   "score": 16.38,
    "breakout": false,
    "triggers": [
-    "rvol",
-    "volume_accel"
+    "rvol"
    ],
-   "reason": "volume accélère depuis 3 séance(s) (accel 100/100), volume du jour 8.8× la moyenne 20j, breakout à 41.4 % (résistance 473.10)"
+   "reason": "volume accélère depuis 3 séance(s) (accel 8/100), volume du jour 8.8× la moyenne 20j"
   }
  ]
 }
