@@ -226,10 +226,10 @@ td .nm { color: var(--fg-3); font-size: 12px; margin-left: 6px; }
 .tile .tks button:hover { color: var(--accent); }
 
 /* ── fiche titre ─────────────────────────────── */
-.sheet-bg { position: fixed; inset: 0; z-index: 50; background: rgba(4, 7, 11, 0.6); display: flex; justify-content: flex-end; }
-.sheet { width: min(1060px, 100%); height: 100%; overflow-y: auto; background: var(--bg); box-shadow: var(--shadow); padding-inline: 20px; padding-block: calc(16px + env(safe-area-inset-top, 0px)) calc(48px + env(safe-area-inset-bottom, 0px)); display: grid; gap: 16px; align-content: start; }
+.sheet-bg { position: fixed; inset: 0; z-index: 50; background: var(--bg); }
+.sheet { width: 100%; height: 100%; overflow-y: auto; background: var(--bg); padding-inline: max(20px, calc((100% - 1240px) / 2)); padding-block: calc(16px + env(safe-area-inset-top, 0px)) calc(48px + env(safe-area-inset-bottom, 0px)); display: grid; gap: 16px; align-content: start; }
 @media (max-width: 600px) { .sheet { padding-inline: 16px; } }
-.sh-top { display: flex; flex-wrap: wrap; align-items: center; gap: 8px 14px; }
+.sh-top { position: sticky; top: calc(-16px - env(safe-area-inset-top, 0px)); z-index: 5; background: var(--bg); padding-block: 12px; border-bottom: 1px solid var(--line); display: flex; flex-wrap: wrap; align-items: center; gap: 8px 14px; }
 .sh-top h1 { font-size: 30px; }
 .sh-top .nm { color: var(--fg-2); font-size: 15px; }
 .sh-top .close { margin-left: auto; border: 1px solid var(--line); background: var(--surface); border-radius: 999px; padding: 7px 16px; color: var(--fg-2); }
@@ -272,7 +272,9 @@ details.adv summary::-webkit-details-marker { display: none; }
 .kv > div { display: flex; justify-content: space-between; gap: 10px; padding: 8px 16px; border-bottom: 1px solid var(--line); font-size: 13px; min-width: 0; }
 .kv > div span:first-child { color: var(--fg-3); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 .kv > div span:last-child { font-family: var(--mono); white-space: nowrap; }
-svg text { font-family: var(--mono); font-size: 10.5px; fill: var(--fg-3); }
+svg text { font-family: var(--mono); font-size: 11.5px; fill: var(--fg-3); }
+.lvl-list { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 8px; }
+.lvl-list .chip { font-size: 11.5px; }
 svg .grid-l { stroke: var(--line); stroke-width: 1; }
 svg .c-up { fill: var(--up); stroke: var(--up); }
 svg .c-down { fill: var(--down); stroke: var(--down); }
@@ -698,7 +700,9 @@ function drawChart() {
   const ser = S.series[t]; if (!ser) return;
   if (ser.error) { slot.innerHTML = `<div class="empty">Graphique indisponible : ${esc(ser.error)}</div>`; return; }
   const W = Math.max(320, Math.round(slot.clientWidth || 1000));
-  slot.innerHTML = `<div class="readout" id="readout">Passe la souris (ou le doigt) sur le graphique pour lire les valeurs.</div><div class="chart-box" id="chartBox">${chartSVG(ser, W)}</div>`;
+  const svgHTML = chartSVG(ser, W), lv = chartSVG.levels || [];
+  const list = W < 720 && lv.length ? `<div class="lvl-list">${lv.slice().sort((a, b) => b.y - a.y).map((l) => `<span class="chip ${l.cls === "lvl-b" ? "warn" : ""}">${esc(l.t)} : ${fr(l.y, 2)}</span>`).join("")}</div>` : "";
+  slot.innerHTML = `<div class="readout" id="readout">Passe la souris (ou le doigt) sur le graphique pour lire les valeurs.</div><div class="chart-box" id="chartBox">${svgHTML}</div>${list}`;
   bindChart();
 }
 function verdictText(st) {
@@ -737,7 +741,7 @@ function sheetHTML(st) {
     ...(st.market === "EU" ? [["vs CAC 40 20 j", pts(st.rs.rs_local_20d, 1, na("rs.rs_local_20d"))], ["vs CAC 40 6 mois", pts(st.rs.rs_local_6m, 1, na("rs.rs_local_6m"))]] : []),
     ["Régularité tendance (R²)", fx(st.trend.trend_r2, 2, na("trend.trend_r2"))], ["Jours de consolidation", st.setup.consolidation_days ?? naSpan()], ["Séances positives (10 dern.)", st.setup.up_sessions10 ?? naSpan()], ["Plancher 3 mois", money(st.setup.support, cur, na("setup.resistance"))]];
   return `
-  <div class="sh-top"><h1>${esc(st.ticker)}</h1><span class="nm">${esc(st.name)}</span><span class="chip">${esc(st.sector)}</span>${starBtn(st.ticker, true)}<button type="button" class="close" id="closeSheet">Fermer ✕</button></div>
+  <div class="sh-top"><h1>${esc(st.ticker)}</h1><span class="nm">${esc(st.name)}</span><span class="chip">${esc(st.sector)}</span>${starBtn(st.ticker, true)}<button type="button" class="close" id="closeSheet">← Retour</button></div>
   <div class="verdict">${ring(s.total, 104, 9, true)}
     <div><h2>${esc(verdictText(st))}</h2>
       <div class="line"><span class="num" style="color:var(--fg);font-size:16px">${money(st.price.close, cur)}</span>${pctChip(st.price.chg_1d, 2)}<span>1 mois ${pct(st.price.chg_1m)}</span><span>1 an ${pct(st.price.chg_1y, 0, na("price.chg_1y"))}</span><span>Score sur 5 j ${deltaChip(s.delta.d5)}</span></div>
@@ -747,7 +751,7 @@ function sheetHTML(st) {
   <section class="box"><div class="toolbar"><h3 style="margin-right:auto">Le cours</h3>
     <div class="seg" role="group" aria-label="Période">${[[63, "3 mois"], [126, "6 mois"], [260, "1 an"]].map(([n, l]) => `<button type="button" data-range="${n}" aria-pressed="${S.chartRange === n}">${l}</button>`).join("")}</div>
     <div class="seg" role="group" aria-label="Type de graphique">${[["line", "Courbe"], ["candle", "Bougies"]].map(([k, l]) => `<button type="button" data-ctype="${k}" aria-pressed="${S.chartType === k}">${l}</button>`).join("")}</div></div>
-    <div class="legend"><span><i style="border-top-color:var(--accent)"></i>cours</span><span><i style="border-top-color:var(--fg-2)"></i>moyenne 20 j</span><span><i style="border-top-style:dashed;border-top-color:var(--fg-2)"></i>moyenne 50 j</span><span><i style="border-top-style:dotted"></i>moyenne 200 j</span><span><i style="border-top-style:dashed"></i>plafonds et planchers</span><span><i style="border-top-style:dashed;border-top-color:var(--warn)"></i>niveaux de cassure</span></div>
+    <div class="legend"><span><i style="border-top-color:var(--accent)"></i>cours</span><span><i style="border-top-color:var(--fg-2)"></i>moyenne 20 j</span><span><i style="border-top-style:dashed;border-top-color:var(--fg-2)"></i>moyenne 50 j</span><span><i style="border-top-style:dotted"></i>moyenne 200 j</span><span><i style="border-top-style:dashed"></i>plafonds et planchers (×3 = touché 3 fois)</span><span><i style="border-top-style:dashed;border-top-color:var(--warn)"></i>plus hauts à casser (20 j, 50 j, 100 j, 1 an)</span></div>
     <div id="chartSlot"><div class="empty">Chargement du graphique…</div></div>
     <p class="faint" style="margin:0;font-size:12px">Sous le cours : le volume échangé, le RSI (au-dessus de 70 = surchauffe, sous 30 = survente) et le MACD (barres vertes = élan haussier).</p></section>
   <div class="grid2">
@@ -786,15 +790,15 @@ function niceTicks(lo, hi, n) {
 function chartSVG(full, W = 1000) {
   const N = Math.min(S.chartRange, full.dates.length), off = full.dates.length - N, cut = (a) => a.slice(off);
   const ser = {}; ["dates", "open", "high", "low", "close", "volume", "sma20", "sma50", "sma200", "rsi14", "macd", "macd_signal", "macd_hist"].forEach((k) => (ser[k] = cut(full[k])));
-  const n = ser.dates.length, small = W < 640, padL = 4, padR = small ? 50 : 64, plotW = W - padL - padR;
+  const n = ser.dates.length, small = W < 720, padL = 4, padR = small ? 52 : 270, plotW = W - padL - padR;
   const H1 = small ? 220 : 300, H2 = small ? 48 : 64, H3 = small ? 56 : 70, H4 = small ? 56 : 70, gap = 18, y0 = 10, y1 = y0 + H1 + gap, y2 = y1 + H2 + gap, y3 = y2 + H3 + gap, H = y3 + H4 + 22;
   const cw = plotW / n, xi = (i) => padL + (i + 0.5) * cw, line = S.chartType === "line";
   const hiA = (line ? ser.close : ser.high).filter(isNum), loA = (line ? ser.close : ser.low).filter(isNum);
   let pmin = Math.min(...loA), pmax = Math.max(...hiA);
   const levels = [];
-  (full.levels.resistance || []).slice(0, 2).forEach((l) => levels.push({ y: l.price, cls: "lvl-r", t: `plafond (${l.touches} contacts)` }));
-  (full.levels.support || []).slice(0, 2).forEach((l) => levels.push({ y: l.price, cls: "lvl-s", t: `plancher (${l.touches} contacts)` }));
-  const bl = { "20d": "cassure 20 j", "50d": "cassure 50 j", "100d": "cassure 100 j", "52w": "plus haut 1 an" };
+  (full.levels.resistance || []).slice(0, 2).forEach((l) => levels.push({ y: l.price, cls: "lvl-r", t: `plafond ×${l.touches}` }));
+  (full.levels.support || []).slice(0, 2).forEach((l) => levels.push({ y: l.price, cls: "lvl-s", t: `plancher ×${l.touches}` }));
+  const bl = { "20d": "haut 20 j", "50d": "haut 50 j", "100d": "haut 100 j", "52w": "haut 1 an" };
   Object.entries(full.breakout_levels || {}).forEach(([k, v]) => { if (isNum(v)) levels.push({ y: v, cls: "lvl-b", t: bl[k] || k }); });
   const inRange = [];
   levels.filter((l) => l.y >= pmin * 0.93 && l.y <= pmax * 1.07).sort((a, b) => a.y - b.y).forEach((l) => {
@@ -825,9 +829,13 @@ function chartSVG(full, W = 1000) {
     }
   }
   let lastLabel = -Infinity;
+  chartSVG.levels = inRange;
   inRange.map((l) => Object.assign(l, { p: py(l.y) })).sort((a, b) => a.p - b.p).forEach((l) => {
-    const ly = Math.max(l.p - 4, lastLabel + 13); lastLabel = ly;
-    o.push(`<line class="${l.cls}" x1="${padL}" x2="${W - padR}" y1="${l.p}" y2="${l.p}"/><text x="${padL + 4}" y="${ly}" style="fill:${l.cls === "lvl-b" ? "var(--warn)" : "var(--fg-3)"};paint-order:stroke;stroke:var(--surface);stroke-width:3px">${esc(l.t)} · ${l.y.toFixed(2)}</text>`);
+    o.push(`<line class="${l.cls}" x1="${padL}" x2="${W - padR}" y1="${l.p}" y2="${l.p}"/>`);
+    if (small) return; // sur mobile, les niveaux sont listés sous le graphique
+    const ly = Math.max(l.p + 4, lastLabel + 15); lastLabel = ly;
+    const col = l.cls === "lvl-b" ? "var(--warn)" : "var(--fg-2)", x0 = W - padR + 64;
+    o.push(`<line x1="${W - padR}" x2="${x0 - 4}" y1="${l.p}" y2="${ly - 4}" stroke="${col}" stroke-width="1" opacity="0.5"/><text x="${x0}" y="${ly}" style="fill:${col}">${esc(l.t)} ${fr(l.y, 2)}</text>`);
   });
   const vmax = Math.max(...ser.volume.filter(isNum)) || 1;
   o.push(`<text x="${padL}" y="${y1 - 4}">Volume</text>`);
