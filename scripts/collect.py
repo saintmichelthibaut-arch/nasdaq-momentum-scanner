@@ -520,9 +520,11 @@ def build_alerts(stocks: dict, cfg: dict) -> list[dict]:
             continue
         why = []
         streak_v = st["volume"]["accel"]["up_streak"] or 0
-        if "volume_accel" in triggers or streak_v >= 3:
-            why.append(f"volume accélère depuis {streak_v} séance(s) (accel {vacc:.0f}/100)" if streak_v >= 2
+        if vacc is not None and vacc >= 40:
+            why.append(f"volume accélère depuis {streak_v} séances (accel {vacc:.0f}/100)" if streak_v >= 2
                        else f"volume en accélération (accel {vacc:.0f}/100)")
+        elif streak_v >= 3:
+            why.append(f"volume en hausse {streak_v} séances d'affilée")
         if "rvol" in triggers:
             why.append(f"volume du jour {rvol:.1f}× la moyenne 20j")
         if brk_today:
