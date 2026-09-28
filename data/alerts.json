@@ -1,0 +1,31 @@
+{
+ "generated_at_utc": "2026-09-28T21:42:44+00:00",
+ "market_date": {
+  "US": "2026-09-28",
+  "EU": "2026-09-28"
+ },
+ "profile": "swing",
+ "rules": {
+  "score_above": 75,
+  "rvol_above": 2.0,
+  "breakout_min_rvol": 1.5,
+  "volume_accel_above": 70
+ },
+ "alerts": [
+  {
+   "ticker": "MDB",
+   "name": "MongoDB",
+   "currency": "USD",
+   "price": 334.68,
+   "chg_1d": -0.1846,
+   "rvol": 8.767,
+   "score": 27.36,
+   "breakout": false,
+   "triggers": [
+    "rvol",
+    "volume_accel"
+   ],
+   "reason": "volume accélère depuis 3 séance(s) (accel 100/100), volume du jour 8.8× la moyenne 20j, breakout à 41.4 % (résistance 473.10)"
+  }
+ ]
+}
