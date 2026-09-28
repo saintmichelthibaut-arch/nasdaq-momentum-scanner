@@ -322,11 +322,11 @@ def before_breakout(x: pd.DataFrame) -> pd.DataFrame:
 
 
 SETUP_LABELS = {
-    "vol_leads_price": "Volume ↑ avant accélération du prix",
-    "strong_up_strong_vol": "Prix ↑↑ + volume ↑↑",
-    "flat_price_vol_surge": "Prix stable + volume ↑↑",
-    "mild_down_vol_surge": "Prix légèrement baissier + volume ↑↑",
-    "price_up_vol_up": "Prix ↑ + volume ↑",
+    "vol_leads_price": "Le volume monte avant le prix (signal prioritaire)",
+    "strong_up_strong_vol": "Forte hausse avec très gros volume",
+    "flat_price_vol_surge": "Prix stable mais volume en forte hausse",
+    "mild_down_vol_surge": "Légère baisse sur très gros volume",
+    "price_up_vol_up": "Hausse accompagnée d'un volume en hausse",
     "none": "Aucune configuration",
 }
 

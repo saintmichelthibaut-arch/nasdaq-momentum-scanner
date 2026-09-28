@@ -29,15 +29,20 @@ def num(v, nd: int = 4):
     return round(f, nd)
 
 
+def fr(v, nd: int = 1, sign: bool = False) -> str:
+    """Nombre au format français : 1 234,5"""
+    s = f"{v:+,.{nd}f}" if sign else f"{v:,.{nd}f}"
+    return s.replace(",", " ").replace(".", ",")
+
+
 def pct(v, nd: int = 1, sign: bool = True) -> str:
     if v is None or (isinstance(v, float) and math.isnan(v)):
         return "N/A"
-    return f"{v * 100:+.{nd}f} %" if sign else f"{v * 100:.{nd}f} %"
+    return f"{fr(v * 100, nd, sign)} %"
 
 
 def fmt_price(v, cur: str) -> str:
-    sym = "€" if cur == "EUR" else "$"
-    return f"{sym}{v:,.2f}" if cur == "USD" else f"{v:,.2f} {sym}"
+    return f"{fr(v, 2)} {'€' if cur == 'EUR' else '$'}"
 
 
 def lin1(x, lo, hi) -> float:
@@ -102,13 +107,13 @@ def anomaly_list(x: pd.DataFrame, zthr: float) -> list[dict]:
 
     zv, zv5, zr, zg = (g(row, k) for k in ("z_volume", "z_volume5", "z_return", "z_range"))
     if zv is not None and zv >= zthr:
-        add("volume", "Volume inhabituel", zv, f"volume {row['volume']/1e6:.1f}M, RVOL {row['rvol']:.1f}")
+        add("volume", "Volume inhabituel", zv, f"{fr(row['volume'] / 1e6, 1)} millions de titres échangés, {fr(row['rvol'], 1)} fois la normale")
     elif zv5 is not None and zv5 >= zthr:
-        add("volume", "Volume inhabituel sur 5 séances", zv5, f"moyenne 5j {x['volume'].iloc[-5:].mean()/1e6:.1f}M")
+        add("volume", "Volume inhabituel sur 5 séances", zv5, f"{fr(x['volume'].iloc[-5:].mean() / 1e6, 1)} millions de titres par séance en moyenne")
     if zr is not None and abs(zr) >= zthr:
-        add("return", "Variation inhabituelle", zr, f"séance {pct(row['ret_1d'])}")
+        add("return", "Variation inhabituelle", zr, f"{pct(row['ret_1d'])} sur la séance")
     if zg is not None and zg >= zthr:
-        add("volatility", "Volatilité inhabituelle", zg, f"amplitude {row['high']/row['low']*100-100:.1f} % dans la séance")
+        add("volatility", "Volatilité inhabituelle", zg, f"écart de {fr(row['high'] / row['low'] * 100 - 100, 1)} % entre le plus haut et le plus bas de la séance")
 
     above50 = x["close"] > x["sma50"]
     run_before = 0
@@ -120,35 +125,35 @@ def anomaly_list(x: pd.DataFrame, zthr: float) -> list[dict]:
     if pd.notna(row["sma50"]) and bool(above50.iloc[-1]) != bool(above50.iloc[-2]) and run_before >= 20:
         if above50.iloc[-1]:
             add("trend_break", "Rupture de tendance haussière", None,
-                f"repasse au-dessus de la SMA50 après {run_before} séances en dessous")
+                f"repasse au-dessus de sa moyenne 50 jours après {run_before} séances en dessous")
         else:
             add("trend_break", "Rupture de tendance baissière", None,
-                f"casse la SMA50 après {run_before} séances au-dessus")
+                f"passe sous sa moyenne 50 jours après {run_before} séances au-dessus")
 
     c20max = x["close"].rolling(20).max()
     c20min = x["close"].rolling(20).min()
     rsi_prev_max = x["rsi14"].rolling(20).max().shift(1)
     rsi_prev_min = x["rsi14"].rolling(20).min().shift(1)
     if pd.notna(row["rsi14"]) and row["close"] >= c20max.iloc[-1] and row["rsi14"] < rsi_prev_max.iloc[-1] - 5:
-        add("rsi_divergence", "Divergence RSI/prix baissière", None,
-            f"nouveau plus haut 20j mais RSI {row['rsi14']:.0f} < {rsi_prev_max.iloc[-1]:.0f} précédent")
+        add("rsi_divergence", "Divergence baissière (RSI)", None,
+            f"nouveau plus haut sur 20 séances, mais RSI plus faible ({row['rsi14']:.0f} contre {rsi_prev_max.iloc[-1]:.0f}) : l'élan s'essouffle")
     if pd.notna(row["rsi14"]) and row["close"] <= c20min.iloc[-1] and row["rsi14"] > rsi_prev_min.iloc[-1] + 5:
-        add("rsi_divergence", "Divergence RSI/prix haussière", None,
-            f"nouveau plus bas 20j mais RSI {row['rsi14']:.0f} > {rsi_prev_min.iloc[-1]:.0f} précédent")
+        add("rsi_divergence", "Divergence haussière (RSI)", None,
+            f"nouveau plus bas sur 20 séances, mais RSI plus fort ({row['rsi14']:.0f} contre {rsi_prev_min.iloc[-1]:.0f}) : la baisse faiblit")
 
     r5, vr = g(row, "ret_5d"), g(row, "vratio5")
     if r5 is not None and vr is not None:
         if r5 > 0.03 and vr < 0.8:
             add("volume_divergence", "Divergence volume/prix", None,
-                f"hausse de {pct(r5)} sur 5j avec un volume à {vr:.2f}× la normale")
+                f"hausse de {pct(r5)} sur 5 jours avec peu de volume ({fr(vr, 2)} fois la normale)")
         elif abs(r5) < 0.02 and vr >= 1.8:
             add("volume_divergence", "Divergence volume/prix", None,
-                f"prix stable ({pct(r5)} sur 5j) mais volume à {vr:.1f}× la normale")
+                f"prix stable ({pct(r5)} sur 5 jours) mais volume {fr(vr, 1)} fois la normale")
 
     if g(row, "sma200_reclaim_days") == 0:
-        add("ma_reclaim", "Retour au-dessus de la SMA200", None, f"clôture {row['close']:.2f} > SMA200 {row['sma200']:.2f}")
+        add("ma_reclaim", "Retour au-dessus de la moyenne 200 jours", None, f"clôture {fr(row['close'], 2)} au-dessus de {fr(row['sma200'], 2)}")
     elif g(row, "sma50_reclaim_days") == 0:
-        add("ma_reclaim", "Retour au-dessus de la SMA50", None, f"clôture {row['close']:.2f} > SMA50 {row['sma50']:.2f}")
+        add("ma_reclaim", "Retour au-dessus de la moyenne 50 jours", None, f"clôture {fr(row['close'], 2)} au-dessus de {fr(row['sma50'], 2)}")
     return out
 
 
@@ -160,42 +165,48 @@ def reasons(row: pd.Series, sc: pd.Series, cur: str) -> list[str]:
     streak_v = int(g(row, "vol_up_streak") or 0)
     vacc = g(row, "vacc_score")
     if vacc is not None and vacc >= 40:
-        items.append((vacc, f"volume en rampe : pente {row['vacc_slope5']:+.0f} %/séance sur 5j (R² {row['vacc_r2_5']:.2f})"
-                            + (f", {streak_v} hausses de volume d'affilée" if streak_v >= 3 else "")))
+        items.append((vacc, f"Le volume monte régulièrement : {fr(row['vacc_slope5'], 0, True)} % par séance sur 5 jours"
+                            + (f", {streak_v} hausses d'affilée" if streak_v >= 3 else "")))
     elif streak_v >= 3:
-        items.append((40, f"volume en hausse {streak_v} séances d'affilée"))
+        items.append((40, f"Volume en hausse {streak_v} séances d'affilée"))
     rv = g(row, "rvol")
     if rv is not None and rv >= 1.5:
-        items.append((min(100, rv * 30), f"RVOL {rv:.1f} (volume du jour vs moyenne 20j)"))
+        items.append((min(100, rv * 30), f"Volume {fr(rv, 1)} fois plus élevé que d'habitude"))
     setup = row.get("setup", "none")
     if setup and setup != "none":
         items.append((90 if setup == "vol_leads_price" else 55, SETUP_LABELS[setup]))
     for b in breakout_list(row)[:1]:
-        items.append((b["strength"] or 50, f"breakout du {b['label']} ({fmt_price(b['level'], cur)}) il y a {b['days_ago']} séance(s), force {b['strength']:.0f}/100"))
+        items.append((b["strength"] or 50, f"A cassé son {b['label']} ({fmt_price(b['level'], cur)}) {'à la dernière séance' if b['days_ago'] == 0 else 'il y a ' + str(b['days_ago']) + ' séance(s)'}, force {b['strength']:.0f}/100"))
     if bool(g(row, "before_breakout")):
-        items.append((85, f"avant breakout : {int(row['bb_count'])}/8 conditions, résistance à {pct(row['dist_resistance'], sign=False)} ({fmt_price(row['resistance'], cur)})"))
+        items.append((85, f"Prête à décoller : {int(row['bb_count'])}/8 signes, plafond à {pct(row['dist_resistance'], sign=False)} ({fmt_price(row['resistance'], cur)})"))
     rs20 = g(row, "rs_20d")
     if rs20 is not None and abs(rs20) >= 0.03:
-        items.append((lin1(abs(rs20), 0.03, 0.15) * 80 + 20, f"RS vs QQQ {rs20 * 100:+.1f} pts sur 20j"))
+        items.append((lin1(abs(rs20), 0.03, 0.15) * 80 + 20,
+                      f"A fait {fr(abs(rs20) * 100, 1)} pts {'de mieux' if rs20 > 0 else 'de moins'} que le Nasdaq sur 20 jours"))
     if bool(sc.get("c_early_rs")):
-        items.append((75, f"surperformance du Nasdaq qui démarre avant les plus hauts ({pct(row['dist_high_52w'])} du plus haut 52s)"))
+        items.append((75, f"Commence à battre le Nasdaq alors qu'elle est encore {pct(-row['dist_high_52w'], 0, sign=False)} sous son plus haut d'un an"))
     comp = g(row, "compression")
     if comp is not None and comp < 0.8:
-        items.append((60, f"volatilité comprimée : ATR à {comp:.2f}× sa moyenne 60j"))
+        items.append((60, f"Les variations se calment : {fr(comp * 100, 0)} % de leur amplitude habituelle"))
     rsi14 = g(row, "rsi14")
     if rsi14 is not None and rsi14 >= 75:
-        items.append((70, f"RSI14 {rsi14:.0f} : surachat, score pénalisé ×{sc['penalty']:.2f}"))
+        items.append((70, f"RSI {rsi14:.0f} : surchauffe, score réduit ×{fr(sc['penalty'], 2)}"))
     r1y = g(row, "ret_1y")
     if r1y is not None and r1y >= 1.0:
-        items.append((65, f"déjà {pct(r1y, 0)} sur 1 an : entrée tardive"))
+        items.append((65, f"Déjà {pct(r1y, 0)} sur 1 an : risque d'arriver tard"))
     gc = g(row, "golden_cross_days")
     if gc is not None and gc <= 20:
-        items.append((50, f"golden cross SMA50/SMA200 il y a {int(gc)} séance(s)"))
+        items.append((50, f"Moyenne 50 jours passée au-dessus de la 200 jours il y a {int(gc)} séance(s) (golden cross)"))
     items.sort(key=lambda t: -t[0])
     return [t[1] for t in items[:5]]
 
 
 # ── profils Next MU / Next SNDK ─────────────────────────────────────────────
+
+def _sentence(parts: list[str]) -> str:
+    txt = ", ".join(parts) + "."
+    return txt[:1].upper() + txt[1:]
+
 
 def similarity(row: pd.Series, sc: pd.Series, score_hist: list[float], cur: str) -> dict:
     """Profil A (Early MU) : amélioration progressive. Profil B (Early SNDK) : accélération confirmée."""
@@ -238,26 +249,26 @@ def similarity(row: pd.Series, sc: pd.Series, score_hist: list[float], cur: str)
     # Phrases construites à partir des valeurs réelles
     a_facts = []
     if d10 is not None:
-        a_facts.append(f"score {hist[0]:.0f}→{hist[-1]:.0f} sur {len(hist) - 1} séances ({steady}/5 hausses récentes)")
-    a_facts.append(f"volume accel {vacc:.0f}/100, moyenne 5j à {rvol5:.2f}× la moyenne 50j")
-    a_facts.append(f"RS 20j {rs20 * 100:+.1f} pts vs QQQ")
+        a_facts.append(f"score passé de {hist[0]:.0f} à {hist[-1]:.0f} en {len(hist) - 1} séances ({steady} hausses sur les 5 dernières)")
+    a_facts.append(f"volume des 5 derniers jours à {fr(rvol5, 2)} fois la normale (régularité {vacc:.0f}/100)")
+    a_facts.append(f"{fr(rs20 * 100, 1, True)} pts face au Nasdaq sur 20 jours")
     if dres is not None and dres >= 0:
-        a_facts.append(f"résistance à {dres * 100:.1f} %")
+        a_facts.append(f"plafond à {fr(dres * 100, 1)} %")
     a_facts.append(f"RSI {rsi14:.0f}")
 
-    b_facts = [f"{pct(r1m)} sur 1 mois", f"volume 5j à {rvol5:.2f}× la moyenne 50j"]
+    b_facts = [f"{pct(r1m)} sur 1 mois", f"volume des 5 derniers jours à {fr(rvol5, 2)} fois la normale"]
     if big_brk:
         b0 = big_brk[0]
-        b_facts.append(f"breakout {b0['label']} confirmé {b0['confirm_sessions']} séance(s)")
+        b_facts.append(f"a cassé son {b0['label']} et tient depuis {b0['confirm_sessions']} séance(s)")
     else:
-        b_facts.append("pas de breakout 50j/100j/52s actif")
-    b_facts.append(f"RS 20j {rs20 * 100:+.1f} pts vs QQQ")
+        b_facts.append("pas de cassure importante en cours")
+    b_facts.append(f"{fr(rs20 * 100, 1, True)} pts face au Nasdaq sur 20 jours")
 
     return {
         "A": {"score": round(a_score, 1), "parts": {k: round(v * 100) for k, v in a_parts.items()},
-              "why": ", ".join(a_facts) + "."},
+              "why": _sentence(a_facts)},
         "B": {"score": round(b_score, 1), "parts": {k: round(v * 100) for k, v in b_parts.items()},
-              "why": ", ".join(b_facts) + "."},
+              "why": _sentence(b_facts)},
     }
 
 

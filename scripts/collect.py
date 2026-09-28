@@ -297,6 +297,7 @@ def build_stock(t: str, df: pd.DataFrame, x: pd.DataFrame, s: pd.DataFrame, cfg:
         **m,
         "last_bar_date": f"{x.index[-1]:%Y-%m-%d}",
         "bars_available": int(len(df)),
+        "spark": [num(v) for v in x["close"].iloc[-63:]],  # ~3 mois de clôtures pour la mini-courbe
         "open_session_dropped": dropped_open,
         "price": {
             "close": num(row["close"]),
@@ -521,19 +522,19 @@ def build_alerts(stocks: dict, cfg: dict) -> list[dict]:
         why = []
         streak_v = st["volume"]["accel"]["up_streak"] or 0
         if vacc is not None and vacc >= 40:
-            why.append(f"volume accélère depuis {streak_v} séances (accel {vacc:.0f}/100)" if streak_v >= 2
-                       else f"volume en accélération (accel {vacc:.0f}/100)")
+            why.append(f"le volume accélère depuis {streak_v} séances" if streak_v >= 2
+                       else "le volume accélère régulièrement")
         elif streak_v >= 3:
             why.append(f"volume en hausse {streak_v} séances d'affilée")
         if "rvol" in triggers:
-            why.append(f"volume du jour {rvol:.1f}× la moyenne 20j")
+            why.append(f"volume {sg.fr(rvol, 1)} fois la normale")
         if brk_today:
             b = brk_today[0]
-            why.append(f"breakout du {b['label']} à {b['level']:.2f}")
+            why.append(f"cassure du {b['label']} à {sg.fr(b['level'], 2)}")
         elif st["setup"]["dist_resistance"] is not None and 0 <= st["setup"]["dist_resistance"] <= 0.10:
-            why.append(f"breakout à {st['setup']['dist_resistance'] * 100:.1f} % (résistance {st['setup']['resistance']:.2f})")
+            why.append(f"plafond à {sg.fr(st['setup']['dist_resistance'] * 100, 1)} % ({sg.fr(st['setup']['resistance'], 2)})")
         if "score" in triggers:
-            why.append(f"score {prev:.0f} → {score:.0f}" if prev is not None else f"score {score:.0f}")
+            why.append(f"score passé de {prev:.0f} à {score:.0f}" if prev is not None else f"score {score:.0f}")
         out.append({
             "ticker": st["ticker"], "name": st["name"], "currency": st["currency"],
             "price": st["price"]["close"], "chg_1d": st["price"]["chg_1d"], "rvol": rvol,
