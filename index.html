@@ -875,6 +875,15 @@ function niceTicks(lo, hi, n) {
 function chartSVG(full, W = 1000) {
   const N = Math.min(S.chartRange, full.dates.length), off = full.dates.length - N, cut = (a) => a.slice(off);
   const ser = {}; ["dates", "open", "high", "low", "close", "volume", "sma20", "sma50", "sma200", "rsi14", "macd", "macd_signal", "macd_hist"].forEach((k) => (ser[k] = cut(full[k])));
+  // séance du jour en direct : ajoutée en dernier point, clairement marquée « en cours »
+  const lv = LV(full.ticker);
+  let liveI = -1;
+  if (lv && isNum(lv.price) && S.live.session_date > ser.dates[ser.dates.length - 1]) {
+    const add = { dates: S.live.session_date, open: isNum(lv.open) ? lv.open : lv.price, high: isNum(lv.high) ? Math.max(lv.high, lv.price) : lv.price, low: isNum(lv.low) ? Math.min(lv.low, lv.price) : lv.price, close: lv.price, volume: lv.volume };
+    Object.keys(ser).forEach((k) => ser[k].push(k in add ? add[k] : null));
+    liveI = ser.dates.length - 1;
+  }
+  chartSVG.liveI = liveI; chartSVG.liveTime = lv ? lv.time : "";
   const n = ser.dates.length, small = W < 720, padL = 4;
   const H1 = small ? 220 : 300, H2 = small ? 48 : 64, H3 = small ? 56 : 70, H4 = small ? 56 : 70, gap = 18, y0 = 10, y1 = y0 + H1 + gap, y2 = y1 + H2 + gap, y3 = y2 + H3 + gap, H = y3 + H4 + 22;
   const line = S.chartType === "line";
@@ -905,15 +914,20 @@ function chartSVG(full, W = 1000) {
   if (S.layers.sma20) o.push(`<path class="sma20" d="${path(ser.sma20, py)}"/>`);
   const bw = Math.max(1, cw * 0.62);
   if (line) {
-    const d = path(ser.close, py), first = Math.max(0, ser.close.findIndex(isNum));
-    o.push(`<path class="parea" d="${d}L${xi(n - 1).toFixed(1)},${y0 + H1}L${xi(first).toFixed(1)},${y0 + H1}Z"/><path class="pline" d="${d}"/>`);
-    const lc = ser.close[n - 1]; if (isNum(lc)) o.push(`<circle cx="${xi(n - 1)}" cy="${py(lc)}" r="3.5" fill="var(--accent)"/>`);
+    const hist = liveI >= 0 ? ser.close.slice(0, liveI) : ser.close, m = hist.length;
+    const d = path(hist, py), first = Math.max(0, ser.close.findIndex(isNum));
+    o.push(`<path class="parea" d="${d}L${xi(m - 1).toFixed(1)},${y0 + H1}L${xi(first).toFixed(1)},${y0 + H1}Z"/><path class="pline" d="${d}"/>`);
+    const lc = ser.close[m - 1]; if (isNum(lc)) o.push(`<circle cx="${xi(m - 1)}" cy="${py(lc)}" r="3" fill="var(--accent)"/>`);
+    if (liveI >= 0 && isNum(lc)) {
+      const lp = ser.close[liveI], col = lp >= lc ? "var(--up)" : "var(--down)";
+      o.push(`<line x1="${xi(m - 1)}" y1="${py(lc)}" x2="${xi(liveI)}" y2="${py(lp)}" stroke="${col}" stroke-width="2" stroke-dasharray="4 3"/><circle cx="${xi(liveI)}" cy="${py(lp)}" r="7" fill="${col}" opacity="0.25"><animate attributeName="r" values="5;9;5" dur="2s" repeatCount="indefinite"/></circle><circle cx="${xi(liveI)}" cy="${py(lp)}" r="4" fill="${col}"/>`);
+    }
   } else {
     for (let i = 0; i < n; i++) {
       const op = ser.open[i], c = ser.close[i], h = ser.high[i], l = ser.low[i];
       if (![op, c, h, l].every(isNum)) continue;
-      const k = c >= op ? "c-up" : "c-down", x = xi(i);
-      o.push(`<line class="${k}" x1="${x}" x2="${x}" y1="${py(h)}" y2="${py(l)}" stroke-width="1"/><rect class="${k}" x="${x - bw / 2}" y="${Math.min(py(op), py(c))}" width="${bw}" height="${Math.max(1, Math.abs(py(op) - py(c)))}"/>`);
+      const k = c >= op ? "c-up" : "c-down", x = xi(i), live = i === liveI;
+      o.push(`<line class="${k}" x1="${x}" x2="${x}" y1="${py(h)}" y2="${py(l)}" stroke-width="1"/><rect class="${k}" x="${x - bw / 2}" y="${Math.min(py(op), py(c))}" width="${bw}" height="${Math.max(1, Math.abs(py(op) - py(c)))}"${live ? ' style="fill-opacity:0.25;stroke-width:1.5;stroke-dasharray:2 1.5"' : ""}/>`);
     }
   }
   let lastLabel = -Infinity;
@@ -927,7 +941,8 @@ function chartSVG(full, W = 1000) {
   });
   const vmax = Math.max(...ser.volume.filter(isNum)) || 1;
   o.push(`<text x="${padL}" y="${y1 - 4}">Volume</text>`);
-  for (let i = 0; i < n; i++) { const v = ser.volume[i]; if (!isNum(v)) continue; const h = v / vmax * H2; o.push(`<rect class="${ser.close[i] >= ser.open[i] ? "v-up" : "v-down"}" x="${xi(i) - bw / 2}" y="${y1 + H2 - h}" width="${bw}" height="${h}"/>`); }
+  for (let i = 0; i < n; i++) { const v = ser.volume[i]; if (!isNum(v)) continue; const h = v / vmax * H2; o.push(`<rect class="${ser.close[i] >= ser.open[i] ? "v-up" : "v-down"}" x="${xi(i) - bw / 2}" y="${y1 + H2 - h}" width="${bw}" height="${h}"${i === liveI ? ' style="opacity:0.2"' : ""}/>`); }
+  if (liveI >= 0) { const x = xi(liveI), yl = py(ser.close[liveI]); o.push(`<text x="${x - 8}" y="${Math.max(y0 + 12, yl - 12)}" text-anchor="end" style="fill:var(--accent);font-weight:600;paint-order:stroke;stroke:var(--surface);stroke-width:3px">● direct ${esc(chartSVG.liveTime)}</text>`); }
   const ry = (v) => y2 + (1 - v / 100) * H3;
   o.push(`<rect class="band" x="${padL}" y="${ry(70)}" width="${plotW}" height="${ry(30) - ry(70)}"/><text x="${padL}" y="${y2 - 4}">RSI</text>`);
   [30, 70].forEach((v) => o.push(`<text x="${W - padR + 8}" y="${ry(v) + 3.5}">${v}</text>`));
@@ -950,6 +965,7 @@ function bindChart() {
     const i = Math.max(0, Math.min(g.n - 1, Math.floor((p.x - g.padL) / g.cw))), x = g.padL + (i + 0.5) * g.cw;
     xh.setAttribute("x1", x); xh.setAttribute("x2", x); xh.setAttribute("visibility", "visible");
     const c = ser.close[i], pc = i > 0 ? ser.close[i - 1] : null;
+    if (i === chartSVG.liveI) { ro.innerHTML = `<b style="color:var(--accent)">● séance en cours (${esc(chartSVG.liveTime)})</b> · ouverture ${fr(ser.open[i], 2)} · plus haut ${fr(ser.high[i], 2)} · plus bas ${fr(ser.low[i], 2)} · dernier <b style="color:var(--fg)">${fr(ser.close[i], 2)}</b> ${isNum(ser.close[i - 1]) ? pct(ser.close[i] / ser.close[i - 1] - 1, 2) : ""} · volume échangé ${vol(ser.volume[i])}`; return; }
     ro.innerHTML = `${esc(fmtDay(ser.dates[i]))} · clôture <b style="color:var(--fg)">${fr(c, 2)}</b> ${isNum(pc) && isNum(c) ? pct(c / pc - 1, 2) : ""} · volume ${vol(ser.volume[i])} · RSI ${fr(ser.rsi14[i], 0)} · moy. 20 j ${fr(ser.sma20[i], 2)} · 50 j ${fr(ser.sma50[i], 2)} · 200 j ${fr(ser.sma200[i], 2)}`;
   };
   hit.addEventListener("pointermove", move); hit.addEventListener("pointerdown", move);
@@ -1158,7 +1174,7 @@ setInterval(async () => {
   try { const L = await getJSON("data/live.json"); changed = !S.live || L.generated_at_utc !== S.live.generated_at_utc; S.live = L; } catch (e) { /* pas de séance en cours */ }
   try { const D = await getJSON("data/latest.json"); if (D.meta.generated_at_utc !== S.data.meta.generated_at_utc) { S.data = D; changed = true; } } catch (e) { /* garde les données actuelles */ }
   const typing = document.activeElement && document.activeElement.tagName === "INPUT";
-  if (changed && !typing) render(); else freshness();
+  if (changed && !typing) { render(); if (S.openT) drawChart(); } else freshness();
 }, 60000);
 load();
 </script>

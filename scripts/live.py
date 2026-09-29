@@ -108,6 +108,8 @@ def main() -> int:
         avg20 = st["volume"]["avg20"] if st else None
         rvol_proj = (vol_so_far / frac) / avg20 if avg20 else None
         rec = {"price": num(price), "chg": num(chg), "time": last_time.strftime("%H:%M"),
+               "open": num(sub["Open"].dropna().iloc[0]) if sub["Open"].notna().any() else None,
+               "high": num(sub["High"].max()), "low": num(sub["Low"].min()),
                "market_open": info["open"], "volume": num(vol_so_far, 0), "rvol_est": num(rvol_proj, 2)}
         if st:
             res = st["setup"]["resistance"]
