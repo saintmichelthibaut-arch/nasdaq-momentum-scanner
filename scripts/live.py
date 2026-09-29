@@ -62,12 +62,16 @@ def main() -> int:
 
     now = datetime.now(timezone.utc).replace(microsecond=0)
     us = session_info("US", now)
-    if not us["open"]:
-        log("bourse US fermée : rien à faire")
+    eu = session_info("EU", now)
+    if not (us["open"] or eu["open"]):
+        log("bourses de Paris et New York fermées : rien à faire")
         return 0
     latest = json.loads((DATA / "latest.json").read_text(encoding="utf-8"))
     stocks = {s["ticker"]: s for s in latest["stocks"]}
-    tickers = list(UNIVERSE) + [BENCHMARK]
+    # seulement les marchés ouverts (+ la clôture du jour de Paris pendant la séance US)
+    tickers = [t for t in UNIVERSE if (market_of(t) == "US" and us["open"]) or market_of(t) == "EU"]
+    if us["open"]:
+        tickers.append(BENCHMARK)
     raw = yf.download(tickers, period="1d", interval="1m", group_by="ticker", auto_adjust=False,
                       prepost=False, threads=True, progress=False)
     if raw is None or raw.empty:
@@ -141,7 +145,7 @@ def main() -> int:
         state = json.loads(state_path.read_text(encoding="utf-8"))
     except Exception:
         state = {}
-    today = str(us["date"])
+    today = str(eu["date"])
     sent = set(state.get(today, []))
     new = [a for a in alerts if f"{a['ticker']}:{a['kind']}" not in sent]
     if new:
@@ -158,6 +162,7 @@ def main() -> int:
     live = {"generated_at_utc": now.isoformat(), "session_date": today,
             "source": "Yahoo Finance, cotations minute (peuvent avoir quelques minutes de retard)",
             "note": "Prix et volume en séance. Les scores restent ceux de la dernière clôture.",
+            "us_open": us["open"], "eu_open": eu["open"],
             "us_minutes_elapsed": round(us["elapsed"]), "stocks": out,
             "alerts": sorted(alerts, key=lambda a: a["ticker"])}
     (DATA / "live.json").write_text(json.dumps(live, ensure_ascii=False, allow_nan=False), encoding="utf-8")

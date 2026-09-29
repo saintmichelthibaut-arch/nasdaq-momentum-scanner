@@ -1,10 +1,11 @@
 name: Suivi en séance
 
-# Toutes les 5 minutes pendant les heures de bourse US (5 min = minimum autorisé par GitHub ;
+# Toutes les 5 minutes pendant les heures de bourse de Paris (9h-17h30) et New York (15h30-22h)
+# (5 min = minimum autorisé par GitHub ;
 # GitHub peut décaler un lancement de quelques minutes quand ses serveurs sont chargés).
 on:
   schedule:
-    - cron: "*/5 13-21 * * 1-5"
+    - cron: "*/5 7-21 * * 1-5"
   workflow_dispatch:
     inputs:
       test_push:

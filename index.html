@@ -91,6 +91,11 @@ h1, h2, h3 { font-family: var(--display); font-weight: 700; letter-spacing: -0.0
 .fresh.warn .dot { background: var(--warn); box-shadow: 0 0 0 3px var(--warn-soft); }
 .fresh.bad .dot { background: var(--down); box-shadow: 0 0 0 3px var(--down-soft); }
 .spacer { flex: 1; }
+.mkts { display: flex; gap: 6px; flex-wrap: wrap; }
+.mkt { display: inline-flex; align-items: center; gap: 6px; padding: 5px 11px; border-radius: 999px; background: var(--surface); border: 1px solid var(--line); font-size: 12.5px; color: var(--fg-2); white-space: nowrap; }
+.mkt b { color: var(--fg); font-weight: 600; }
+.mkt .led { width: 7px; height: 7px; border-radius: 50%; background: var(--fg-3); }
+.mkt.open .led { background: var(--up); box-shadow: 0 0 0 3px var(--up-soft); }
 .style-pick { display: flex; align-items: center; gap: 10px; }
 .style-pick > span { font-size: 12.5px; color: var(--fg-3); }
 .seg { display: inline-flex; flex-wrap: wrap; background: var(--surface); border: 1px solid var(--line); border-radius: 999px; padding: 3px; gap: 2px; }
@@ -348,6 +353,7 @@ p.lead { font-size: 16px; margin: 0; max-width: 72ch; }
         <div><b>Momentum Scanner</b><small>Actions tech US qui commencent à accélérer</small></div>
       </div>
       <div class="fresh" id="fresh"><span class="dot"></span><span>Chargement…</span></div>
+      <div class="mkts" id="mkts" aria-label="Horaires des bourses (heure française)"></div>
       <div class="spacer"></div>
       <button type="button" class="pill-btn" id="bellBtn" title="Recevoir les alertes en notification">🔔 Notifications</button>
       <div class="style-pick"><span>Mon style</span><div class="seg" id="profileSeg" role="group" aria-label="Style d'investissement"></div></div>
@@ -467,7 +473,7 @@ function liveOk() {
   const L = S.live, D = S.data;
   if (!L || !D || !L.stocks) return false;
   const age = (Date.now() - new Date(L.generated_at_utc).getTime()) / 3.6e6;
-  return L.session_date > (D.meta.market_date.US || "") && age < 12;
+  return L.session_date > (D.meta.market_date.US || "") && age < 12 && Object.keys(L.stocks).length > 0;
 }
 const LV = (t) => (liveOk() ? S.live.stocks[t] : null);
 function quote(st) {
@@ -490,9 +496,34 @@ function freshness() {
     d: `Dernière mise à jour réussie : ${fmtDateTime(m.last_success_utc)}. ` + (weekend && ageH <= 72 ? "C'est normal le week-end : la bourse est fermée samedi et dimanche." : "La mise à jour automatique ne tourne peut-être plus : regarde l'onglet Actions sur GitHub.") });
   if (st && st.ok === false && new Date(st.last_attempt_utc) > gen) out.push({ cls: "bad", t: "La dernière mise à jour a échoué", d: `${fmtDateTime(st.last_attempt_utc)} : ${st.message}. Les chiffres affichés sont ceux de la dernière mise à jour réussie.` });
   if (m.failures && m.failures.length) out.push({ cls: "warn", t: `${m.failures.length} action(s) non mises à jour`, d: m.failures.map((f) => `${f.ticker} : ${f.reason}`).join(" · ") });
-  if (m.open_session_dropped && m.open_session_dropped.length) out.push({ cls: "warn", t: "Séance en cours ignorée", d: `Mise à jour lancée bourse ouverte : la séance du jour a été écartée pour ${m.open_session_dropped.join(", ")}.` });
+  // séance en cours écartée des scores : normal, elle est suivie en direct (live.json)
   return out;
 }
+
+// ── horaires des bourses, en heure française ─────────────────
+function tzNow(tz) {
+  const p = {}; new Intl.DateTimeFormat("en-US", { timeZone: tz, hour12: false, weekday: "short", hour: "2-digit", minute: "2-digit" }).formatToParts(new Date()).forEach((x) => (p[x.type] = x.value));
+  return { min: (+p.hour % 24) * 60 + +p.minute, wd: p.weekday };
+}
+const hm = (m) => `${Math.floor(((m % 1440) + 1440) % 1440 / 60)}h${String(((m % 60) + 60) % 60).padStart(2, "0")}`;
+const dur = (m) => (m >= 60 ? `${Math.floor(m / 60)} h ${String(m % 60).padStart(2, "0")}` : `${m} min`);
+function marketClock() {
+  const el = $("#mkts"); if (!el) return;
+  const paris = tzNow("Europe/Paris"), ny = tzNow("America/New_York");
+  const off = ((paris.min - ny.min) + 1440) % 1440; // décalage New York → Paris (en général 6 h)
+  const M = [
+    ["🇫🇷", "Paris", paris, 9 * 60, 17 * 60 + 30, 0],
+    ["🇺🇸", "New York", ny, 9 * 60 + 30, 16 * 60, off],
+  ];
+  el.innerHTML = M.map(([flag, name, t, o, c, shift]) => {
+    const weekday = !["Sat", "Sun"].includes(t.wd), open = weekday && t.min >= o && t.min < c;
+    const txt = open ? `ouverte · ferme à ${hm(c + shift)} (dans ${dur(c - t.min)})`
+      : weekday && t.min < o ? `ouvre à ${hm(o + shift)} (dans ${dur(o - t.min)})`
+      : `fermée · ouvre ${t.wd === "Fri" || t.wd === "Sat" ? "lundi" : "demain"} à ${hm(o + shift)}`;
+    return `<span class="mkt ${open ? "open" : ""}" title="Heure française, hors jours fériés"><span class="led"></span>${flag} <b>${name}</b> ${txt}</span>`;
+  }).join("");
+}
+marketClock(); setInterval(marketClock, 30000);
 
 // ── chargement ───────────────────────────────────────────────
 async function getJSON(url) { const r = await fetch(url + "?t=" + Date.now(), { cache: "no-store" }); if (!r.ok) throw new Error(`${url} : HTTP ${r.status}`); return r.json(); }
@@ -578,7 +609,7 @@ function todayView() {
   const muSec = `<section class="sec">${secHead("Le prochain MU ou SNDK ?", "next MU / SNDK", "À gauche, « Early MU » : amélioration lente et régulière avant l'envolée. À droite, « Early SNDK » : déjà lancée, volume exceptionnel, cassure confirmée.", `<button type="button" class="more" data-more="mu">${S.expanded.mu ? "Réduire" : "Voir les 8"}</button>`)}
     <div class="cards">${muA.slice(0, k).map((st) => card(st, simSlot(st, "A"), st.similarity.A.why)).join("")}${muB.slice(0, k).map((st) => card(st, simSlot(st, "B"), st.similarity.B.why)).join("")}</div></section>`;
 
-  const liveSec = liveOk() ? `<section class="sec" id="live">${secHead("En séance", "live", `Relevé toutes les 5 minutes pendant la bourse US (dernier : ${esc(new Date(S.live.generated_at_utc).toLocaleTimeString("fr-FR", { hour: "2-digit", minute: "2-digit" }))}). Volume estimé sur toute la séance, cassures et fortes variations. Ce sont des signaux provisoires, à confirmer à la clôture ; les scores sont recalculés le soir.`)}
+  const liveSec = liveOk() ? `<section class="sec" id="live">${secHead("En séance", "live", `Relevé toutes les 5 minutes pendant les bourses de Paris (9h – 17h30) et New York (15h30 – 22h) (dernier : ${esc(new Date(S.live.generated_at_utc).toLocaleTimeString("fr-FR", { hour: "2-digit", minute: "2-digit" }))}). Volume estimé sur toute la séance, cassures et fortes variations. Ce sont des signaux provisoires, à confirmer à la clôture ; les scores sont recalculés le soir.`)}
     ${(S.live.alerts || []).length ? `<div class="alerts">${S.live.alerts.map((a) => `<div class="alert" data-t="${esc(a.ticker)}"><div class="tk">${esc(a.ticker)}</div><div class="chips"><span class="num">${money(a.price, a.currency)}</span> ${pctChip(a.chg_1d)} ${isNum(a.rvol) ? `<span class="chip ${a.rvol >= 2 ? "warn" : ""}">volume estimé ×${fr(a.rvol, 1)}</span>` : ""} <span class="chip acc">${esc(a.time)}</span> ${a.breakout ? '<span class="chip up">cassure</span>' : ""}</div><div class="why">→ ${esc(a.reason)}</div></div>`).join("")}</div>` : `<div class="empty">Aucun signal en séance pour l'instant.</div>`}</section>` : "";
   return kpis + liveSec + alerts + bb + accSec + surgeSec + topS + `<div class="two">${nnSec}${muSec}</div>`;
 }
