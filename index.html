@@ -495,7 +495,10 @@ function freshness() {
   const gen = new Date(m.last_success_utc), ageH = (Date.now() - gen.getTime()) / 3.6e6;
   const dow = new Date().getDay(), weekend = dow === 0 || dow === 6 || (dow === 1 && ageH < 80);
   el.className = "fresh" + (ageH > 72 ? " bad" : ageH > 24 ? " warn" : "");
-  el.innerHTML = `<span class="dot"></span><span>Scores du <b>${esc(fmtDay(m.market_date.US))}</b> · mis à jour ${esc(ago(ageH))}</span>` + (liveOk() ? `<span class="chip acc">● séance en direct · ${esc(new Date(S.live.generated_at_utc).toLocaleTimeString("fr-FR", { hour: "2-digit", minute: "2-digit" }))}</span>` : "");
+  const liveT = liveOk() ? new Date(S.live.generated_at_utc).toLocaleTimeString("fr-FR", { hour: "2-digit", minute: "2-digit" }) : "";
+  const liveMk = liveOk() ? [S.live.eu_open ? "Paris" : "", S.live.us_open ? "New York" : ""].filter(Boolean).join(" + ") : "";
+  el.innerHTML = (liveOk() ? `<span class="chip acc" title="Prix relevés toutes les 3 minutes pendant la séance">● Prix en direct ${esc(liveT)}${liveMk ? " · " + esc(liveMk) : ""}</span>` : "")
+    + `<span class="dot"></span><span>Scores de la clôture du <b>${esc(fmtDay(m.market_date.US))}</b> <span class="faint">(recalculés chaque soir · dernier calcul ${esc(ago(ageH))})</span></span>`;
   el.title = `Dernière mise à jour réussie : ${fmtDateTime(m.last_success_utc)}`;
   if (ageH > 24 && !liveOk()) out.push({ cls: ageH > 72 ? "bad" : "warn", t: ageH > 72 ? "Données périmées" : "Données de plus de 24 h",
     d: `Dernière mise à jour réussie : ${fmtDateTime(m.last_success_utc)}. ` + (weekend && ageH <= 72 ? "C'est normal le week-end : la bourse est fermée samedi et dimanche." : "La mise à jour automatique ne tourne peut-être plus : regarde l'onglet Actions sur GitHub.") });
