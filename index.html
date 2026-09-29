@@ -362,7 +362,7 @@ const store = {
 };
 const TABS = ["today", "all", "sectors", "backtest", "help"];
 const S = {
-  data: null, status: null, backtest: null, backtestErr: null, series: {}, openT: null,
+  data: null, status: null, live: null, backtest: null, backtestErr: null, series: {}, openT: null,
   profile: store.get("profile", null),
   tab: TABS.includes(location.hash.slice(1)) ? location.hash.slice(1) : store.get("tab", "today"),
   watch: new Set(store.get("watch", [])),
@@ -439,13 +439,25 @@ function card(st, slot, why) {
   const s = sc(st);
   return `<article class="card" data-t="${esc(st.ticker)}" tabindex="0" aria-label="${esc(st.ticker)}, score ${isNum(s.total) ? s.total.toFixed(0) : "N/A"}">
     <div class="c-top"><div class="c-id"><div class="c-tk">${esc(st.ticker)}${starBtn(st.ticker)}</div><div class="c-name">${esc(st.name)} · ${esc(st.sector)}</div></div>${ring(s.total)}</div>
-    <div class="c-price"><span class="px">${money(st.price.close, st.currency)}</span>${pctChip(st.price.chg_1d)}<span class="faint" style="font-size:12px">dernière séance</span></div>
+    ${(() => { const q = quote(st); return `<div class="c-price"><span class="px">${money(q.price, st.currency)}</span>${pctChip(q.chg)}${liveChip(q)}</div>`; })()}
     ${priceSpark(st)}
     ${slot ? `<div class="c-slot">${slot}</div>` : ""}
     ${subBars(st)}
     ${why ? `<p class="c-why">${esc(why)}</p>` : ""}
   </article>`;
 }
+function liveOk() {
+  const L = S.live, D = S.data;
+  if (!L || !D || !L.stocks) return false;
+  const age = (Date.now() - new Date(L.generated_at_utc).getTime()) / 3.6e6;
+  return L.session_date > (D.meta.market_date.US || "") && age < 12;
+}
+const LV = (t) => (liveOk() ? S.live.stocks[t] : null);
+function quote(st) {
+  const l = LV(st.ticker);
+  return l ? { price: l.price, chg: l.chg, live: true, time: l.time } : { price: st.price.close, chg: st.price.chg_1d, live: false };
+}
+const liveChip = (q) => (q.live ? `<span class="chip acc" title="Cotation en séance (peut avoir quelques minutes de retard)">● direct ${esc(q.time)}</span>` : `<span class="faint" style="font-size:12px">dernière clôture</span>`);
 const firstReason = (st) => (st.score.reasons && st.score.reasons[0]) || "";
 
 // ── fraîcheur ────────────────────────────────────────────────
@@ -455,9 +467,9 @@ function freshness() {
   const gen = new Date(m.last_success_utc), ageH = (Date.now() - gen.getTime()) / 3.6e6;
   const dow = new Date().getDay(), weekend = dow === 0 || dow === 6 || (dow === 1 && ageH < 80);
   el.className = "fresh" + (ageH > 72 ? " bad" : ageH > 24 ? " warn" : "");
-  el.innerHTML = `<span class="dot"></span><span>Cours du <b>${esc(fmtDay(m.market_date.US))}</b> · mis à jour ${esc(ago(ageH))}</span>`;
+  el.innerHTML = `<span class="dot"></span><span>Scores du <b>${esc(fmtDay(m.market_date.US))}</b> · mis à jour ${esc(ago(ageH))}</span>` + (liveOk() ? `<span class="chip acc">● séance en direct · ${esc(new Date(S.live.generated_at_utc).toLocaleTimeString("fr-FR", { hour: "2-digit", minute: "2-digit" }))}</span>` : "");
   el.title = `Dernière mise à jour réussie : ${fmtDateTime(m.last_success_utc)}`;
-  if (ageH > 24) out.push({ cls: ageH > 72 ? "bad" : "warn", t: ageH > 72 ? "Données périmées" : "Données de plus de 24 h",
+  if (ageH > 24 && !liveOk()) out.push({ cls: ageH > 72 ? "bad" : "warn", t: ageH > 72 ? "Données périmées" : "Données de plus de 24 h",
     d: `Dernière mise à jour réussie : ${fmtDateTime(m.last_success_utc)}. ` + (weekend && ageH <= 72 ? "C'est normal le week-end : la bourse est fermée samedi et dimanche." : "La mise à jour automatique ne tourne peut-être plus : regarde l'onglet Actions sur GitHub.") });
   if (st && st.ok === false && new Date(st.last_attempt_utc) > gen) out.push({ cls: "bad", t: "La dernière mise à jour a échoué", d: `${fmtDateTime(st.last_attempt_utc)} : ${st.message}. Les chiffres affichés sont ceux de la dernière mise à jour réussie.` });
   if (m.failures && m.failures.length) out.push({ cls: "warn", t: `${m.failures.length} action(s) non mises à jour`, d: m.failures.map((f) => `${f.ticker} : ${f.reason}`).join(" · ") });
@@ -470,6 +482,7 @@ async function getJSON(url) { const r = await fetch(url + "?t=" + Date.now(), { 
 async function load() {
   try { S.status = await getJSON("data/status.json"); } catch (e) { S.status = null; }
   try { S.data = await getJSON("data/latest.json"); } catch (e) { S.data = null; S.loadErr = e.message; }
+  try { S.live = await getJSON("data/live.json"); } catch (e) { S.live = null; }
   if (S.data && !S.data.meta.profiles[P()]) S.profile = S.data.meta.profile_default;
   render();
 }
@@ -514,7 +527,7 @@ function todayView() {
   const topSec = (D.sectors || []).filter((s) => isNum(s.chg_5d)).slice().sort((a, b) => b.chg_5d - a.chg_5d)[0];
   const A = D.alerts || [];
   const kpis = `<div class="kpis">
-    <div class="kpi"><div class="l">Nasdaq (QQQ), dernière séance</div><div class="v ${cls3(q && q.chg_1d)}">${q && isNum(q.chg_1d) ? sgn(q.chg_1d) + fr(q.chg_1d * 100, 2) + " %" : "N/A"}</div><div class="s">sur 5 jours : ${q ? pct(q.chg_5d, 1) : "N/A"}</div></div>
+    ${(() => { const lq = LV("QQQ"), c = lq ? lq.chg : q && q.chg_1d; return `<div class="kpi"><div class="l">Nasdaq (QQQ) ${lq ? `<span class="chip acc">● direct ${esc(lq.time)}</span>` : ", dernière séance"}</div><div class="v ${cls3(c)}">${isNum(c) ? sgn(c) + fr(c * 100, 2) + " %" : "N/A"}</div><div class="s">sur 5 jours : ${q ? pct(q.chg_5d, 1) : "N/A"}</div></div>`; })()}
     <button type="button" class="kpi" data-jump="alerts"><div class="l">Alertes</div><div class="v">${A.length}</div><div class="s">${A.length ? esc(A.slice(0, 3).map((a) => a.ticker).join(", ")) : "rien de spécial"}</div></button>
     <button type="button" class="kpi" data-jump="bb"><div class="l">Prêtes à décoller</div><div class="v">${bbReady}</div><div class="s">+ ${bbAll.length - bbReady} presque prête(s)</div></button>
     <button type="button" class="kpi" data-tabgo="sectors"><div class="l">Secteur le plus en forme (5 j)</div><div class="v" style="font-size:22px">${topSec ? esc(topSec.sector) : "N/A"}</div><div class="s">${topSec ? pct(topSec.chg_5d, 1) + " en moyenne" : ""}</div></button>
@@ -548,7 +561,9 @@ function todayView() {
   const muSec = `<section class="sec">${secHead("Le prochain MU ou SNDK ?", "next MU / SNDK", "À gauche, « Early MU » : amélioration lente et régulière avant l'envolée. À droite, « Early SNDK » : déjà lancée, volume exceptionnel, cassure confirmée.", `<button type="button" class="more" data-more="mu">${S.expanded.mu ? "Réduire" : "Voir les 8"}</button>`)}
     <div class="cards">${muA.slice(0, k).map((st) => card(st, simSlot(st, "A"), st.similarity.A.why)).join("")}${muB.slice(0, k).map((st) => card(st, simSlot(st, "B"), st.similarity.B.why)).join("")}</div></section>`;
 
-  return kpis + alerts + bb + accSec + surgeSec + topS + `<div class="two">${nnSec}${muSec}</div>`;
+  const liveSec = liveOk() ? `<section class="sec" id="live">${secHead("En séance", "live", `Relevé toutes les 5 minutes pendant la bourse US (dernier : ${esc(new Date(S.live.generated_at_utc).toLocaleTimeString("fr-FR", { hour: "2-digit", minute: "2-digit" }))}). Volume estimé sur toute la séance, cassures et fortes variations. Ce sont des signaux provisoires, à confirmer à la clôture ; les scores sont recalculés le soir.`)}
+    ${(S.live.alerts || []).length ? `<div class="alerts">${S.live.alerts.map((a) => `<div class="alert" data-t="${esc(a.ticker)}"><div class="tk">${esc(a.ticker)}</div><div class="chips"><span class="num">${money(a.price, a.currency)}</span> ${pctChip(a.chg_1d)} ${isNum(a.rvol) ? `<span class="chip ${a.rvol >= 2 ? "warn" : ""}">volume estimé ×${fr(a.rvol, 1)}</span>` : ""} <span class="chip acc">${esc(a.time)}</span> ${a.breakout ? '<span class="chip up">cassure</span>' : ""}</div><div class="why">→ ${esc(a.reason)}</div></div>`).join("")}</div>` : `<div class="empty">Aucun signal en séance pour l'instant.</div>`}</section>` : "";
+  return kpis + liveSec + alerts + bb + accSec + surgeSec + topS + `<div class="two">${nnSec}${muSec}</div>`;
 }
 function alertRow(a) {
   const trig = { score: "score > " + S.data.meta.config.alerts.score_above, rvol: "volume anormal", breakout_volume: "cassure + volume", volume_accel: "volume qui accélère" };
@@ -591,8 +606,8 @@ const COLS = [
   { k: "ticker", h: "Action", v: (st) => `${starBtn(st.ticker)} <span class="tk">${esc(st.ticker)}</span><span class="nm">${esc(st.name)}</span>`, s: (st) => st.ticker },
   { k: "score", h: "Score", n: 1, v: (st) => { const s = sc(st).total; return `<span class="mini-bar"><b>${isNum(s) ? s.toFixed(0) : "N/A"}</b><span class="bar"><i style="width:${isNum(s) ? s : 0}%;background:${ringColor(s)}"></i></span></span>`; }, s: (st) => sc(st).total },
   { k: "d5s", h: "Score sur 5 j", n: 1, v: (st) => deltaChip(sc(st).delta.d5, ""), s: (st) => sc(st).delta.d5 },
-  { k: "price", h: "Prix", n: 1, v: (st) => money(st.price.close, st.currency), s: (st) => st.price.close },
-  { k: "chg_1d", h: "Séance", n: 1, v: (st) => pct(st.price.chg_1d), s: (st) => st.price.chg_1d },
+  { k: "price", h: "Prix", n: 1, v: (st) => money(quote(st).price, st.currency), s: (st) => quote(st).price },
+  { k: "chg_1d", h: "Séance", n: 1, v: (st) => { const q = quote(st); return pct(q.chg) + (q.live ? ' <span class="chip acc" title="en direct">●</span>' : ""); }, s: (st) => quote(st).chg },
   { k: "chg_1m", h: "1 mois", n: 1, v: (st) => pct(st.price.chg_1m, 1, reasonFor(st, "price.chg_1m")), s: (st) => st.price.chg_1m },
   { k: "chg_1y", h: "1 an", n: 1, v: (st) => pct(st.price.chg_1y, 0, reasonFor(st, "price.chg_1y")), s: (st) => st.price.chg_1y },
   { k: "rvol", h: "Volume vs normal", n: 1, v: (st) => isNum(st.volume.rvol) ? `<span class="${st.volume.rvol >= 2 ? "warn" : ""}">×${fr(st.volume.rvol, 1)}</span>` : naSpan(), s: (st) => st.volume.rvol },
@@ -761,7 +776,7 @@ function sheetHTML(st) {
   <div class="sh-top"><h1>${esc(st.ticker)}</h1><span class="nm">${esc(st.name)}</span><span class="chip">${esc(st.sector)}</span>${starBtn(st.ticker, true)}<button type="button" class="close" id="closeSheet">← Retour</button></div>
   <div class="verdict">${ring(s.total, 104, 9, true)}
     <div><h2>${esc(verdictText(st))}</h2>
-      <div class="line"><span class="num" style="color:var(--fg);font-size:16px">${money(st.price.close, cur)}</span>${pctChip(st.price.chg_1d, 2)}<span>1 mois ${pct(st.price.chg_1m)}</span><span>1 an ${pct(st.price.chg_1y, 0, na("price.chg_1y"))}</span><span>Score sur 5 j ${deltaChip(s.delta.d5)}</span></div>
+      <div class="line">${(() => { const qq = quote(st); return `<span class="num" style="color:var(--fg);font-size:16px">${money(qq.price, cur)}</span>${pctChip(qq.chg, 2)}${liveChip(qq)}`; })()}<span>1 mois ${pct(st.price.chg_1m)}</span><span>1 an ${pct(st.price.chg_1y, 0, na("price.chg_1y"))}</span><span>Score sur 5 j ${deltaChip(s.delta.d5)}</span></div>
       <div class="facts">${facts.map((f) => `<span class="chip">${esc(f)}</span>`).join("") || '<span class="muted">Rien de marquant sur la dernière séance.</span>'}</div>
       <div class="faint" style="font-size:12px;margin-top:8px">Cours du ${esc(fmtDay(st.last_bar_date))} · ${st.bars_available} séances d'historique · score calculé avec le style « ${esc(profLabel(p))} »</div></div>
   </div>
@@ -993,7 +1008,14 @@ document.addEventListener("keydown", (e) => {
   if (e.key === "Enter" && e.target.matches && e.target.matches(".card[data-t]")) openSheet(e.target.dataset.t);
 });
 let rsT; window.addEventListener("resize", () => { clearTimeout(rsT); rsT = setTimeout(() => { if (S.openT) drawChart(); }, 200); });
-setInterval(() => { if (S.data) freshness(); }, 60000);
+setInterval(async () => {
+  if (!S.data) return;
+  let changed = false;
+  try { const L = await getJSON("data/live.json"); changed = !S.live || L.generated_at_utc !== S.live.generated_at_utc; S.live = L; } catch (e) { /* pas de séance en cours */ }
+  try { const D = await getJSON("data/latest.json"); if (D.meta.generated_at_utc !== S.data.meta.generated_at_utc) { S.data = D; changed = true; } } catch (e) { /* garde les données actuelles */ }
+  const typing = document.activeElement && document.activeElement.tagName === "INPUT";
+  if (changed && !typing) render(); else freshness();
+}, 60000);
 load();
 </script>
 </body>

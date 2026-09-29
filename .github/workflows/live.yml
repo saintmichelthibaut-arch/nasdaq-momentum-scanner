@@ -1,0 +1,77 @@
+name: Suivi en séance
+
+# Toutes les 5 minutes pendant les heures de bourse US (5 min = minimum autorisé par GitHub ;
+# GitHub peut décaler un lancement de quelques minutes quand ses serveurs sont chargés).
+on:
+  schedule:
+    - cron: "*/5 13-21 * * 1-5"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: pages
+  cancel-in-progress: false
+
+jobs:
+  live:
+    runs-on: ubuntu-latest
+    timeout-minutes: 8
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+          cache: pip
+
+      - name: Installer les dépendances
+        run: pip install -r requirements.txt
+
+      - name: Restaurer l'état des alertes déjà envoyées
+        uses: actions/cache/restore@v4
+        with:
+          path: data/live_state.json
+          key: live-state-${{ github.run_id }}
+          restore-keys: live-state-
+
+      - name: Cotations en séance + alertes e-mail
+        id: live
+        env:
+          ALERT_EMAIL_USER: ${{ secrets.ALERT_EMAIL_USER }}
+          ALERT_EMAIL_PASSWORD: ${{ secrets.ALERT_EMAIL_PASSWORD }}
+          ALERT_EMAIL_TO: ${{ secrets.ALERT_EMAIL_TO }}
+          ALERT_SMTP_HOST: ${{ secrets.ALERT_SMTP_HOST }}
+        run: python scripts/live.py
+
+      - name: Sauvegarder l'état des alertes
+        if: always() && hashFiles('data/live_state.json') != ''
+        uses: actions/cache/save@v4
+        with:
+          path: data/live_state.json
+          key: live-state-${{ github.run_id }}
+
+      - name: Préparer le site
+        if: hashFiles('data/live.json') != ''
+        id: site
+        run: |
+          mkdir -p _site
+          cp index.html .nojekyll _site/
+          rsync -a --exclude 'prices.parquet' --exclude 'live_state.json' data/ _site/data/
+          echo "ok=1" >> "$GITHUB_OUTPUT"
+
+      - if: steps.site.outputs.ok == '1'
+        uses: actions/configure-pages@v5
+      - if: steps.site.outputs.ok == '1'
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: _site
+      - if: steps.site.outputs.ok == '1'
+        id: deployment
+        uses: actions/deploy-pages@v4
