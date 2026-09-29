@@ -1,3 +1,4 @@
 # Appareils qui reçoivent les notifications : un code par ligne.
 # Le code s'obtient sur le téléphone : page installée sur l'écran d'accueil → 🔔 Notifications → Activer.
 # Sans la clé privée du robot, ces codes ne permettent d'envoyer aucune notification.
+{"endpoint":"https://web.push.apple.com/QBQOeFawIDImnu9deGEXcI5csRG5qn_tWJhxqu3EBoVSPu82X_EOEbvZXD5ugmRz1IalT3jY1EGoCGl2bYiGHVG-mh89Y6abHKZIg_rSGwHg3Po83fqzYI1dZ1cWHxk12KdmrtLTCppLsY6Kg2An8jFpZXem6Bx76EGTRUKQ8oc","expirationTime":null,"keys":{"p256dh":"BKqVBGfTQ3Ofln51LKmOhodfzBGhUVGultYVFZiEq3Q-nJ4PBBekFjrKfqMhlp8rTEU1P9ohyDp6OspHpmDv0NA","auth":"QrcinEZPeOVpBZ5mgK2DqA"}}
