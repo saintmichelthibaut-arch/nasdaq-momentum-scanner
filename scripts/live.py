@@ -34,10 +34,12 @@ DATA = ROOT / "data"
 SESSIONS = {"US": ("America/New_York", dtime(9, 30), dtime(16, 0)),
             "EU": ("Europe/Paris", dtime(9, 0), dtime(17, 30))}
 # seuils des alertes en séance
-MIN_MINUTES = 30          # pas d'alerte de volume dans la première demi-heure (trop bruité)
-RVOL_ALERT = 2.5          # volume estimé ≥ 2,5 fois la normale
-BREAKOUT_RVOL = 1.3       # cassure en séance confirmée par un volume estimé ≥ 1,3
-MOVE_ALERT = 0.06         # variation de ±6 % dans la séance
+MIN_MINUTES = 20          # pas d'alerte de volume dans les 20 premières minutes (trop bruité)
+RVOL_ALERT = 2.0          # volume estimé ≥ 2 fois la normale
+BREAKOUT_RVOL = 1.0       # cassure en séance avec un volume au moins normal
+MOVE_ALERT = 0.04         # variation de ±4 % dans la séance
+BIG_MOVE = 0.08           # deuxième alerte si ±8 %
+NEAR_RES = 0.01           # « prête à décoller » à moins de 1 % de son plafond
 
 
 def log(msg: str) -> None:
@@ -123,6 +125,14 @@ def main() -> int:
                                + (" ; elle était classée « prête à décoller »" if st["setup"]["before_breakout"] else "")})
             if abs(chg) >= MOVE_ALERT:
                 alerts.append({**base, "kind": "move_up" if chg > 0 else "move_down", "reason": f"{'hausse' if chg > 0 else 'baisse'} de {notify_fr(abs(chg) * 100, 1)} % depuis la clôture d'hier"})
+            if abs(chg) >= BIG_MOVE:
+                alerts.append({**base, "kind": "bigmove", "reason": f"explosion : {'+' if chg > 0 else '-'}{notify_fr(abs(chg) * 100, 1)} % dans la séance"})
+            d = rec["dist_resistance"]
+            if st["setup"]["before_breakout"] and d is not None and 0 <= d <= NEAR_RES:
+                alerts.append({**base, "kind": "near_res", "reason": f"prête à décoller et à {notify_fr(d * 100, 1)} % de son plafond ({notify_fr(res, 2)} {cur}) : cassure possible"})
+            hi20 = (st.get("breakout_levels") or {}).get("20d")
+            if hi20 and price > hi20 and not rec["above_resistance"]:
+                alerts.append({**base, "kind": "high20", "breakout": True, "reason": f"passe au-dessus de son plus haut des 20 dernières séances ({notify_fr(hi20, 2)} {cur})"})
         out[t] = rec
 
     # anti-doublon : un même signal n'est envoyé qu'une fois par jour

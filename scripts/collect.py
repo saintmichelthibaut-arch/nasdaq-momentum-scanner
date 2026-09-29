@@ -560,6 +560,7 @@ def snapshot_at(results: dict, date: pd.Timestamp, profiles) -> dict:
             **{p: num(si[f"score_{p}"], 2) for p in profiles},
             "price": num(si["c_price_momentum"], 1), "vol": num(si["c_volume_momentum"], 1),
             "brk": num(si["c_breakout_potential"], 1),
+            "bb": bool(r["before_breakout"]),
         }
     return snap
 

@@ -180,14 +180,57 @@ def main(cmd: str) -> int:
         send("✅ Momentum Scanner", "Les notifications fonctionnent sur cet appareil.", tag="test")
         return 0
     if cmd == "daily":
-        path = ROOT / "data" / "alerts.json"
-        alerts = json.loads(path.read_text(encoding="utf-8")).get("alerts", []) if path.exists() else []
-        if not alerts:
-            print("aucune alerte ce soir : pas de notification")
-            return 0
-        title, body = alerts_message(alerts, live=False)
-        send(title, body, tag="soir")
+        msgs = evening_digest()
+        if not msgs:
+            print("rien de notable ce soir : pas de notification")
+        for title, body, tag in msgs:
+            send(title, body, tag=tag)
     return 0
+
+
+def _pct(v) -> str:
+    return "" if v is None else f"{v * 100:+.1f} %".replace(".", ",")
+
+
+def evening_digest() -> list[tuple[str, str, str]]:
+    """Tout ce qui s'est passé à la séance, une notification par type d'événement."""
+    latest_p = ROOT / "data" / "latest.json"
+    if not latest_p.exists():
+        return []
+    d = json.loads(latest_p.read_text(encoding="utf-8"))
+    stocks = d["stocks"]
+    day = (d["meta"].get("market_date") or {}).get("US")
+    prev_bb = set()
+    hist = sorted((ROOT / "data" / "history").glob("*.json"))
+    prev_files = [h for h in hist if h.stem < (day or "")]
+    if prev_files:
+        snap = json.loads(prev_files[-1].read_text(encoding="utf-8")).get("stocks", {})
+        prev_bb = {t for t, v in snap.items() if v.get("bb")}
+    out = []
+
+    def add(title, items, tag):
+        if items:
+            more = f"\n+{len(items) - 5} autre(s) dans l'application" if len(items) > 5 else ""
+            out.append((f"{title} ({len(items)})", "\n".join(items[:5]) + more, tag))
+
+    alerts = d.get("alerts", [])
+    add("📈 Alertes du soir", [f"{a['ticker']} {_pct(a.get('chg_1d'))} · {a.get('reason', '')}" for a in alerts], "soir-alertes")
+    add("🚀 Cassures du jour", [f"{s['ticker']} {_pct(s['price']['chg_1d'])} · {b['label']} ({b['level']:.2f}), force {b['strength']:.0f}/100"
+                               for s in stocks for b in s["breakouts"][:1] if b["days_ago"] == 0], "soir-cassures")
+    add("🟢 Nouvelles prêtes à décoller", [f"{s['ticker']} · {s['setup']['bb_count']}/8 signes, plafond à {(s['setup']['dist_resistance'] or 0) * 100:.1f} %".replace(".", ",")
+                                         for s in stocks if s["setup"]["before_breakout"] and s["ticker"] not in prev_bb], "soir-bb")
+    acc = [(s, s["score"]["profiles"]["swing"]) for s in stocks]
+    add("⚡ Score qui accélère", [f"{s['ticker']} · score {p['hist'][-2]:.0f} → {p['total']:.0f}" if len(p["hist"]) >= 2 else s["ticker"]
+                                for s, p in sorted(acc, key=lambda x: -(x[1]["delta"]["d1"] or 0))
+                                if (p["delta"]["d1"] or 0) >= 8 or (p["delta"]["d5"] or 0) >= 15], "soir-accel")
+    add("🔊 Volume anormal", [f"{s['ticker']} {_pct(s['price']['chg_1d'])} · volume {s['volume']['rvol']:.1f} fois la normale".replace(".", ",", 1)
+                             for s in stocks if (s["volume"]["rvol"] or 0) >= 2], "soir-volume")
+    add("🆕 Nouvelles venues dans le top", [f"{r['ticker']} · rang {r['rank']}" for r in d["sections"]["swing"].get("new_names", []) if r["entered_days_ago"] == 0], "soir-new")
+    add("⚠️ Inhabituel", [f"{s['ticker']} · {a['label']}" for s in stocks for a in s["anomalies"] if a["kind"] != "volume"], "soir-anomalies")
+    mu = [f"{s['ticker']} · ressemble à {'MU' if k == 'A' else 'SNDK'} à {s['similarity'][k]['score']:.0f}/100"
+          for s in stocks for k in ("A", "B") if s["similarity"][k]["score"] >= 70]
+    add("🔮 Prochain MU / SNDK", mu, "soir-mu")
+    return out
 
 
 if __name__ == "__main__":
