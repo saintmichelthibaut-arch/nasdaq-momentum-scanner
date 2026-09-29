@@ -25,6 +25,7 @@ from zoneinfo import ZoneInfo
 sys.path.insert(0, str(Path(__file__).resolve().parent))
 
 import notify  # noqa: E402
+import push  # noqa: E402
 from signals import num  # noqa: E402
 from universe import BENCHMARK, UNIVERSE, market_of  # noqa: E402
 
@@ -136,7 +137,10 @@ def main() -> int:
     if new:
         text, body = notify.render(f"En séance : {len(new)} nouveau(x) signal(aux)",
                                    f"Relevé de {now.astimezone(ZoneInfo('Europe/Paris')):%H:%M} (heure de Paris). Signaux en direct, à confirmer à la clôture.", new)
-        if notify.send("⚡ En séance : " + ", ".join(sorted({a["ticker"] for a in new})), text, body) or not notify.configured():
+        mailed = notify.send("⚡ En séance : " + ", ".join(sorted({a["ticker"] for a in new})), text, body)
+        ptitle, pbody = push.alerts_message(new, live=True)
+        pushed = push.send(ptitle, pbody, tag="seance")
+        if mailed or pushed or not (notify.configured() or push.configured()):
             sent |= {f"{a['ticker']}:{a['kind']}" for a in new}
     state = {today: sorted(sent)}
     state_path.write_text(json.dumps(state), encoding="utf-8")

@@ -5,6 +5,14 @@
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>Nasdaq Momentum Scanner</title>
 <meta name="description" content="Repère les actions tech US qui commencent à accélérer, avant que le mouvement soit évident.">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="apple-touch-icon" href="icon-180.png">
+<link rel="icon" href="icon-192.png">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="Momentum">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="theme-color" content="#0c1016">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,600;12..96,700&family=Onest:wght@400;500;600;700&family=Geist+Mono:wght@400;500;600&display=swap">
@@ -319,6 +327,14 @@ p.lead { font-size: 16px; margin: 0; max-width: 72ch; }
 .prose { max-width: 75ch; color: var(--fg-2); }
 .prose p { margin: 0; }
 
+.dlg-bg { position: fixed; inset: 0; z-index: 60; background: rgba(4, 7, 11, 0.6); display: grid; place-items: center; padding: 16px; }
+.dlg { width: min(560px, 100%); max-height: 100%; overflow-y: auto; background: var(--surface); border: 1px solid var(--line); border-radius: calc(var(--r) + 4px); padding: 20px; display: grid; gap: 14px; grid-template-columns: minmax(0, 1fr); box-shadow: var(--shadow); }
+.dlg h2 { font-size: 20px; }
+.dlg p, .dlg ol { margin: 0; color: var(--fg-2); }
+.dlg ol { padding-left: 20px; display: grid; gap: 6px; }
+.dlg textarea { width: 100%; min-height: 110px; font-family: var(--mono); font-size: 11px; background: var(--surface-2); color: var(--fg); border: 1px solid var(--line); border-radius: 10px; padding: 10px; resize: vertical; }
+.btn-main { border: 0; background: var(--accent); color: #fff; border-radius: 999px; padding: 10px 18px; font-weight: 600; justify-self: start; }
+.btn-main:disabled { opacity: 0.5; }
 @media (prefers-reduced-motion: reduce) { * { transition: none !important; scroll-behavior: auto !important; } }
 </style>
 </head>
@@ -333,6 +349,7 @@ p.lead { font-size: 16px; margin: 0; max-width: 72ch; }
       </div>
       <div class="fresh" id="fresh"><span class="dot"></span><span>Chargement…</span></div>
       <div class="spacer"></div>
+      <button type="button" class="pill-btn" id="bellBtn" title="Recevoir les alertes en notification">🔔 Notifications</button>
       <div class="style-pick"><span>Mon style</span><div class="seg" id="profileSeg" role="group" aria-label="Style d'investissement"></div></div>
     </div>
     <nav class="tabs" role="tablist" id="tabs">
@@ -979,6 +996,52 @@ function helpView() {
     <p><b>Limites :</b> données de fin de séance seulement, rien en direct. Le backtest est optimiste, car la liste d'actions a été choisie aujourd'hui en connaissant leur parcours. Un bon score signale une configuration intéressante, pas une hausse garantie.</p></div></section>
   <section class="sec">${secHead("Les pondérations", "weights", "Le poids de chaque critère selon le style. Modifiable dans le fichier config/weights.json du dépôt GitHub.")}<div class="panel"><div class="tbl-wrap"><table><tbody>${prof}</tbody></table></div></div></section>`;
 }
+
+// ── notifications ────────────────────────────────────────────
+const isIOS = /iPhone|iPad|iPod/.test(navigator.userAgent);
+const isStandalone = () => (window.matchMedia && matchMedia("(display-mode: standalone)").matches) || navigator.standalone === true;
+const pushSupported = () => "serviceWorker" in navigator && "PushManager" in window && "Notification" in window;
+let swReg = null, pushKey = null;
+if ("serviceWorker" in navigator) navigator.serviceWorker.register("sw.js").then((r) => (swReg = r)).catch(() => { /* page ouverte hors https */ });
+function keyBytes(b64) { const s = atob((b64 + "=".repeat((4 - b64.length % 4) % 4)).replace(/-/g, "+").replace(/_/g, "/")); return Uint8Array.from(s, (c) => c.charCodeAt(0)); }
+function closeDlg() { const d = $("#dlgBg"); if (d) d.remove(); }
+function dlg(html) { closeDlg(); document.body.insertAdjacentHTML("beforeend", `<div class="dlg-bg" id="dlgBg"><div class="dlg" role="dialog" aria-modal="true" aria-label="Notifications">${html}<button type="button" class="pill-btn" data-dlgclose="1" style="justify-self:start">Fermer</button></div></div>`); }
+function codeBlock(sub) {
+  const code = JSON.stringify(sub);
+  return `<p><b>Dernière étape :</b> copie ce code et colle-le sur GitHub dans le secret <code>PUSH_SUBSCRIPTIONS</code>. Un code par ligne : si ton père active aussi les notifications, il t'envoie son code et tu l'ajoutes sur une nouvelle ligne.</p>
+    <textarea id="subCode" readonly>${esc(code)}</textarea>
+    <button type="button" class="btn-main" id="copyCode">Copier le code</button>`;
+}
+async function openNotif() {
+  if (!pushSupported()) {
+    if (isIOS && !isStandalone()) return dlg(`<h2>Recevoir les alertes sur ton iPhone</h2><p>Sur iPhone, les notifications ne marchent que depuis l'icône de l'écran d'accueil, et cette icône doit avoir été ajoutée <b>après</b> cette mise à jour.</p><ol><li>Supprime l'ancienne icône Momentum de ton écran d'accueil.</li><li>Ouvre cette page dans <b>Safari</b>, touche le bouton <b>Partager</b> (carré avec une flèche), puis <b>« Sur l'écran d'accueil »</b>.</li><li>Ouvre la page depuis la nouvelle icône, puis touche 🔔 Notifications.</li></ol><p class="faint" style="font-size:12.5px">Il faut iOS 16.4 ou plus récent.</p>`);
+    return dlg(`<h2>Notifications indisponibles</h2><p>Ce navigateur ne gère pas les notifications web. Sur iPhone, utilise Safari et ajoute la page à l'écran d'accueil ; sur Android ou ordinateur, utilise Chrome, Edge ou Firefox.</p>`);
+  }
+  try { const r = await fetch("data/push_key.txt?t=" + Date.now(), { cache: "no-store" }); pushKey = r.ok ? (await r.text()).trim() : ""; } catch (e) { pushKey = ""; }
+  if (!/^[A-Za-z0-9_-]{80,90}$/.test(pushKey)) return dlg(`<h2>Presque prêt</h2><p>La clé d'envoi n'existe pas encore. Sur GitHub, crée le secret <code>PUSH_SEED</code> (une phrase secrète quelconque, longue), relance la mise à jour, puis reviens ici.</p>`);
+  const reg = swReg || (await navigator.serviceWorker.ready);
+  const existing = await reg.pushManager.getSubscription();
+  if (existing && Notification.permission === "granted") return dlg(`<h2>Notifications activées ✓</h2><p>Cet appareil est prêt. Si tu n'as pas encore collé son code sur GitHub, fais-le maintenant.</p>${codeBlock(existing)}`);
+  if (Notification.permission === "denied") return dlg(`<h2>Notifications bloquées</h2><p>Tu as refusé les notifications pour cette page. Pour les réautoriser : ${isIOS ? "Réglages → Notifications → Momentum" : "réglages du site dans ton navigateur (icône à gauche de l'adresse)"}, puis reviens ici.</p>`);
+  dlg(`<h2>Recevoir les alertes en notification</h2><p>Tu seras prévenu pendant la séance (volume anormal, cassure, forte variation) et le soir après la clôture. Jamais deux fois le même signal dans la journée.</p><button type="button" class="btn-main" id="doSub">Activer sur cet appareil</button><div id="subOut"></div>`);
+}
+async function doSubscribe(btn) {
+  btn.disabled = true;
+  try {
+    const perm = await Notification.requestPermission();
+    if (perm !== "granted") { $("#subOut").innerHTML = `<p>Autorisation refusée. Tu pourras réessayer plus tard.</p>`; return; }
+    const reg = swReg || (await navigator.serviceWorker.ready);
+    const sub = await reg.pushManager.subscribe({ userVisibleOnly: true, applicationServerKey: keyBytes(pushKey) });
+    $("#subOut").innerHTML = codeBlock(sub.toJSON());
+    btn.remove();
+  } catch (e) { $("#subOut").innerHTML = `<p>L'activation a échoué : ${esc(e.message)}</p>`; btn.disabled = false; }
+}
+document.addEventListener("click", (e) => {
+  if (e.target.id === "bellBtn") { openNotif(); return; }
+  if (e.target.id === "doSub") { doSubscribe(e.target); return; }
+  if (e.target.id === "copyCode") { const t = $("#subCode"); navigator.clipboard.writeText(t.value).then(() => (e.target.textContent = "Copié ✓")).catch(() => { t.select(); e.target.textContent = "Sélectionné : fais Copier"; }); return; }
+  if (e.target.dataset && e.target.dataset.dlgclose || e.target.id === "dlgBg") { closeDlg(); }
+});
 
 // ── événements ───────────────────────────────────────────────
 document.addEventListener("click", (e) => {

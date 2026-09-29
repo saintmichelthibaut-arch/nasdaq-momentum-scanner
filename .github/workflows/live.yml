@@ -6,6 +6,11 @@ on:
   schedule:
     - cron: "*/5 13-21 * * 1-5"
   workflow_dispatch:
+    inputs:
+      test_push:
+        description: "Envoyer une notification de test"
+        type: boolean
+        default: false
 
 permissions:
   contents: read
@@ -41,6 +46,13 @@ jobs:
           key: live-state-${{ github.run_id }}
           restore-keys: live-state-
 
+      - name: Notification de test
+        if: inputs.test_push == true
+        env:
+          PUSH_SEED: ${{ secrets.PUSH_SEED }}
+          PUSH_SUBSCRIPTIONS: ${{ secrets.PUSH_SUBSCRIPTIONS }}
+        run: python scripts/push.py test
+
       - name: Cotations en séance + alertes e-mail
         id: live
         env:
@@ -48,6 +60,8 @@ jobs:
           ALERT_EMAIL_PASSWORD: ${{ secrets.ALERT_EMAIL_PASSWORD }}
           ALERT_EMAIL_TO: ${{ secrets.ALERT_EMAIL_TO }}
           ALERT_SMTP_HOST: ${{ secrets.ALERT_SMTP_HOST }}
+          PUSH_SEED: ${{ secrets.PUSH_SEED }}
+          PUSH_SUBSCRIPTIONS: ${{ secrets.PUSH_SUBSCRIPTIONS }}
         run: python scripts/live.py
 
       - name: Sauvegarder l'état des alertes
@@ -60,10 +74,14 @@ jobs:
       - name: Préparer le site
         if: hashFiles('data/live.json') != ''
         id: site
+        env:
+          PUSH_SEED: ${{ secrets.PUSH_SEED }}
         run: |
           mkdir -p _site
-          cp index.html .nojekyll _site/
+          cp index.html .nojekyll sw.js manifest.webmanifest _site/
+          cp icon-*.png _site/
           rsync -a --exclude 'prices.parquet' --exclude 'live_state.json' data/ _site/data/
+          python scripts/push.py pubkey > _site/data/push_key.txt
           echo "ok=1" >> "$GITHUB_OUTPUT"
 
       - if: steps.site.outputs.ok == '1'
