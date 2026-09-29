@@ -1,11 +1,11 @@
 name: Suivi en séance
 
-# Toutes les 5 minutes pendant les heures de bourse de Paris (9h-17h30) et New York (15h30-22h)
-# (5 min = minimum autorisé par GitHub ;
-# GitHub peut décaler un lancement de quelques minutes quand ses serveurs sont chargés).
+# Relevé toutes les ~3 minutes pendant les bourses de Paris (9h-17h30) et New York (15h30-22h).
+# Chaque passage relance le suivant lui-même (les plannings GitHub très fréquents sont peu fiables).
+# Le planning ci-dessous ne sert que de filet de sécurité pour (re)démarrer la chaîne.
 on:
   schedule:
-    - cron: "*/5 7-21 * * 1-5"
+    - cron: "2,32 7-21 * * 1-5"
   workflow_dispatch:
     inputs:
       test_push:
@@ -15,6 +15,7 @@ on:
 
 permissions:
   contents: read
+  actions: write
   pages: write
   id-token: write
 
@@ -30,6 +31,10 @@ jobs:
       name: github-pages
       url: ${{ steps.deployment.outputs.page_url }}
     steps:
+      - name: Heure de départ
+        id: start
+        run: echo "t=$(date +%s)" >> "$GITHUB_OUTPUT"
+
       - uses: actions/checkout@v4
 
       - uses: actions/setup-python@v5
@@ -100,3 +105,12 @@ jobs:
       - if: steps.site.outputs.ok == '1'
         id: deployment
         uses: actions/deploy-pages@v4
+
+      - name: Relancer le prochain relevé dans ~3 minutes
+        if: always() && hashFiles('data/live.json') != '' && inputs.test_push != true
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          elapsed=$(( $(date +%s) - ${{ steps.start.outputs.t }} ))
+          wait=$(( 180 - elapsed )); [ $wait -gt 0 ] && sleep $wait
+          gh workflow run live.yml --repo "$GITHUB_REPOSITORY" --ref "$GITHUB_REF_NAME"
