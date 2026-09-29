@@ -1008,7 +1008,7 @@ function closeDlg() { const d = $("#dlgBg"); if (d) d.remove(); }
 function dlg(html) { closeDlg(); document.body.insertAdjacentHTML("beforeend", `<div class="dlg-bg" id="dlgBg"><div class="dlg" role="dialog" aria-modal="true" aria-label="Notifications">${html}<button type="button" class="pill-btn" data-dlgclose="1" style="justify-self:start">Fermer</button></div></div>`); }
 function codeBlock(sub) {
   const code = JSON.stringify(sub);
-  return `<p><b>Dernière étape :</b> copie ce code et colle-le sur GitHub dans le secret <code>PUSH_SUBSCRIPTIONS</code>. Un code par ligne : si ton père active aussi les notifications, il t'envoie son code et tu l'ajoutes sur une nouvelle ligne.</p>
+  return `<p><b>Dernière étape :</b> copie ce code et envoie-le à Claude dans votre conversation : il l'ajoute au projet pour toi. Pour ton père : il fait la même chose sur son téléphone et t'envoie son code, que tu transmets aussi.</p>
     <textarea id="subCode" readonly>${esc(code)}</textarea>
     <button type="button" class="btn-main" id="copyCode">Copier le code</button>`;
 }
@@ -1018,10 +1018,10 @@ async function openNotif() {
     return dlg(`<h2>Notifications indisponibles</h2><p>Ce navigateur ne gère pas les notifications web. Sur iPhone, utilise Safari et ajoute la page à l'écran d'accueil ; sur Android ou ordinateur, utilise Chrome, Edge ou Firefox.</p>`);
   }
   try { const r = await fetch("data/push_key.txt?t=" + Date.now(), { cache: "no-store" }); pushKey = r.ok ? (await r.text()).trim() : ""; } catch (e) { pushKey = ""; }
-  if (!/^[A-Za-z0-9_-]{80,90}$/.test(pushKey)) return dlg(`<h2>Presque prêt</h2><p>La clé d'envoi n'existe pas encore. Sur GitHub, crée le secret <code>PUSH_SEED</code> (une phrase secrète quelconque, longue), relance la mise à jour, puis reviens ici.</p>`);
+  if (!/^[A-Za-z0-9_-]{80,90}$/.test(pushKey)) return dlg(`<h2>Presque prêt</h2><p>La clé d'envoi sera créée à la prochaine mise à jour du robot (quelques minutes). Reviens ici un peu plus tard.</p>`);
   const reg = swReg || (await navigator.serviceWorker.ready);
   const existing = await reg.pushManager.getSubscription();
-  if (existing && Notification.permission === "granted") return dlg(`<h2>Notifications activées ✓</h2><p>Cet appareil est prêt. Si tu n'as pas encore collé son code sur GitHub, fais-le maintenant.</p>${codeBlock(existing)}`);
+  if (existing && Notification.permission === "granted") return dlg(`<h2>Notifications activées ✓</h2><p>Cet appareil est prêt. Si tu n'as pas encore envoyé son code à Claude, fais-le maintenant.</p>${codeBlock(existing)}`);
   if (Notification.permission === "denied") return dlg(`<h2>Notifications bloquées</h2><p>Tu as refusé les notifications pour cette page. Pour les réautoriser : ${isIOS ? "Réglages → Notifications → Momentum" : "réglages du site dans ton navigateur (icône à gauche de l'adresse)"}, puis reviens ici.</p>`);
   dlg(`<h2>Recevoir les alertes en notification</h2><p>Tu seras prévenu pendant la séance (volume anormal, cassure, forte variation) et le soir après la clôture. Jamais deux fois le même signal dans la journée.</p><button type="button" class="btn-main" id="doSub">Activer sur cet appareil</button><div id="subOut"></div>`);
 }

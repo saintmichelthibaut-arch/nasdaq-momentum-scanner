@@ -39,6 +39,12 @@ jobs:
       - name: Installer les dépendances
         run: pip install -r requirements.txt
 
+      - name: Clé d'envoi des notifications
+        uses: actions/cache@v4
+        with:
+          path: .vapid
+          key: vapid-key-v1
+
       - name: Restaurer l'état des alertes déjà envoyées
         uses: actions/cache/restore@v4
         with:

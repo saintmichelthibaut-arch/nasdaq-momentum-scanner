@@ -4,8 +4,9 @@ Protocole standard Web Push (RFC 8030 / 8291 / 8292), sans service tiers :
 GitHub Actions envoie directement aux serveurs de notification d'Apple / Google / Mozilla.
 
 Secrets GitHub (Settings → Secrets and variables → Actions) :
-  PUSH_SEED            une phrase secrète quelconque, longue (sert à fabriquer la clé d'envoi)
-  PUSH_SUBSCRIPTIONS   un code d'abonnement par ligne (copié depuis la page, bouton 🔔)
+  PUSH_SEED            (optionnel) phrase secrète ; sinon la clé est générée et gardée en cache
+  PUSH_SUBSCRIPTIONS   (optionnel) codes d'abonnement ; ils peuvent aussi être dans
+                       config/push_subscriptions.txt (un code par ligne)
 
   python scripts/push.py pubkey          écrit la clé publique (lue par la page)
   python scripts/push.py daily           notifications des alertes du soir
@@ -48,13 +49,27 @@ def raw_public(key) -> bytes:
     return key.public_key().public_bytes(serialization.Encoding.X962, serialization.PublicFormat.UncompressedPoint)
 
 
-def vapid_key():
-    """Clé d'envoi dérivée de la phrase secrète PUSH_SEED (toujours la même pour une même phrase)."""
+SUBS_FILE = ROOT / "config" / "push_subscriptions.txt"
+KEY_FILE = ROOT / ".vapid" / "key.pem"   # conservée dans le cache GitHub Actions, jamais committée
+
+
+def vapid_key(create: bool = False):
+    """Clé d'envoi. Priorité : secret PUSH_SEED s'il existe ; sinon clé générée une fois
+    par le robot et conservée dans le cache GitHub (aucune manipulation nécessaire)."""
     seed = os.environ.get("PUSH_SEED", "")
-    if not seed:
+    if seed:
+        d = int.from_bytes(hashlib.sha256(("momentum-scanner-vapid:" + seed).encode()).digest(), "big") % (CURVE_ORDER - 1) + 1
+        return ec.derive_private_key(d, ec.SECP256R1())
+    if KEY_FILE.exists():
+        return serialization.load_pem_private_key(KEY_FILE.read_bytes(), password=None)
+    if not create:
         return None
-    d = int.from_bytes(hashlib.sha256(("momentum-scanner-vapid:" + seed).encode()).digest(), "big") % (CURVE_ORDER - 1) + 1
-    return ec.derive_private_key(d, ec.SECP256R1())
+    key = ec.generate_private_key(ec.SECP256R1())
+    KEY_FILE.parent.mkdir(parents=True, exist_ok=True)
+    KEY_FILE.write_bytes(key.private_bytes(serialization.Encoding.PEM, serialization.PrivateFormat.PKCS8,
+                                           serialization.NoEncryption()))
+    print("nouvelle clé d'envoi créée")
+    return key
 
 
 def page_url() -> str:
@@ -67,7 +82,10 @@ def page_url() -> str:
 
 def subscriptions() -> list[dict]:
     out = []
-    for line in os.environ.get("PUSH_SUBSCRIPTIONS", "").splitlines():
+    lines = os.environ.get("PUSH_SUBSCRIPTIONS", "").splitlines()
+    if SUBS_FILE.exists():  # codes copiés depuis la page (bouton 🔔), un par ligne
+        lines += [ln for ln in SUBS_FILE.read_text(encoding="utf-8").splitlines() if not ln.lstrip().startswith("#")]
+    for line in lines:
         line = line.strip()
         if not line:
             continue
@@ -155,7 +173,7 @@ def alerts_message(alerts: list[dict], live: bool) -> tuple[str, str]:
 
 def main(cmd: str) -> int:
     if cmd == "pubkey":
-        key = vapid_key()
+        key = vapid_key(create=True)
         print(b64u(raw_public(key)) if key else "")
         return 0
     if cmd == "test":

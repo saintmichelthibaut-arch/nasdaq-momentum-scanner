@@ -1,0 +1,3 @@
+# Appareils qui reçoivent les notifications : un code par ligne.
+# Le code s'obtient sur le téléphone : page installée sur l'écran d'accueil → 🔔 Notifications → Activer.
+# Sans la clé privée du robot, ces codes ne permettent d'envoyer aucune notification.

@@ -8,3 +8,4 @@ _site/
 # couche « en séance » : publiée avec la page, pas committée (sinon un commit toutes les 5 min)
 data/live.json
 data/live_state.json
+.vapid/
