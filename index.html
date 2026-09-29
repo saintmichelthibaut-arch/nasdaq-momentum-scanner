@@ -273,6 +273,10 @@ details.adv summary::-webkit-details-marker { display: none; }
 .kv > div span:first-child { color: var(--fg-3); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 .kv > div span:last-child { font-family: var(--mono); white-space: nowrap; }
 svg text { font-family: var(--mono); font-size: 11.5px; fill: var(--fg-3); }
+.layers { display: flex; flex-wrap: wrap; gap: 6px; align-items: center; }
+.layers .pill-btn { display: inline-flex; align-items: center; gap: 7px; font-size: 12.5px; padding: 5px 11px; }
+.layers .pill-btn i { display: inline-block; width: 16px; height: 0; }
+.layers .pill-btn[aria-pressed="false"] { opacity: 0.6; }
 .lvl-list { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 8px; }
 .lvl-list .chip { font-size: 11.5px; }
 svg .grid-l { stroke: var(--line); stroke-width: 1; }
@@ -368,6 +372,7 @@ const S = {
   allCols: store.get("allCols", false),
   heat: store.get("heat", "chg_5d"),
   chartRange: store.get("chartRange", 126), chartType: store.get("chartType", "line"),
+  layers: Object.assign({ sma20: false, sma50: true, sma200: false, res: true, sup: false, brk: false }, store.get("layers", {})),
   btThr: store.get("btThr", "0"), btH: store.get("btH", "20"),
 };
 if (!TABS.includes(S.tab)) S.tab = "today";
@@ -695,6 +700,18 @@ async function openSheet(t) {
   drawChart();
 }
 function closeSheet() { $("#sheetRoot").innerHTML = ""; document.body.style.overflow = ""; S.openT = null; }
+const LAYERS = [
+  ["sma20", "Moyenne 20 j", "border-top:2px solid var(--fg-2)", "Prix moyen des 20 dernières séances : la tendance courte."],
+  ["sma50", "Moyenne 50 j", "border-top:2px dashed var(--fg-2)", "Prix moyen des 50 dernières séances : la tendance de fond sur 2-3 mois."],
+  ["sma200", "Moyenne 200 j", "border-top:2px dotted var(--fg-2)", "Prix moyen sur environ 1 an. Au-dessus = tendance longue haussière."],
+  ["res", "Plafonds", "border-top:2px dashed var(--fg-3)", "Prix où le cours a buté plusieurs fois vers le haut (×3 = 3 fois)."],
+  ["sup", "Planchers", "border-top:2px dotted var(--fg-3)", "Prix où le cours a rebondi plusieurs fois vers le bas."],
+  ["brk", "Plus hauts à casser", "border-top:2px dashed var(--warn)", "Plus haut des 20, 50, 100 dernières séances et d'un an. Le franchir = cassure."],
+];
+function layerButtons() {
+  return `<span class="faint" style="font-size:12px">Afficher :</span>` + LAYERS.map(([k, l, sw, tip]) => `<button type="button" class="pill-btn" data-layer="${k}" aria-pressed="${!!S.layers[k]}" title="${esc(tip)}"><i style="${sw}"></i>${l}</button>`).join("")
+    + `<button type="button" class="pill-btn" data-layer="__none" title="Masquer toutes les lignes">Tout masquer</button>`;
+}
 function drawChart() {
   const t = S.openT, slot = $("#chartSlot"); if (!t || !slot) return;
   const ser = S.series[t]; if (!ser) return;
@@ -751,7 +768,7 @@ function sheetHTML(st) {
   <section class="box"><div class="toolbar"><h3 style="margin-right:auto">Le cours</h3>
     <div class="seg" role="group" aria-label="Période">${[[63, "3 mois"], [126, "6 mois"], [260, "1 an"]].map(([n, l]) => `<button type="button" data-range="${n}" aria-pressed="${S.chartRange === n}">${l}</button>`).join("")}</div>
     <div class="seg" role="group" aria-label="Type de graphique">${[["line", "Courbe"], ["candle", "Bougies"]].map(([k, l]) => `<button type="button" data-ctype="${k}" aria-pressed="${S.chartType === k}">${l}</button>`).join("")}</div></div>
-    <div class="legend"><span><i style="border-top-color:var(--accent)"></i>cours</span><span><i style="border-top-color:var(--fg-2)"></i>moyenne 20 j</span><span><i style="border-top-style:dashed;border-top-color:var(--fg-2)"></i>moyenne 50 j</span><span><i style="border-top-style:dotted"></i>moyenne 200 j</span><span><i style="border-top-style:dashed"></i>plafonds et planchers (×3 = touché 3 fois)</span><span><i style="border-top-style:dashed;border-top-color:var(--warn)"></i>plus hauts à casser (20 j, 50 j, 100 j, 1 an)</span></div>
+    <div id="layerBar" class="layers" role="group" aria-label="Lignes affichées sur le graphique">${layerButtons()}</div>
     <div id="chartSlot"><div class="empty">Chargement du graphique…</div></div>
     <p class="faint" style="margin:0;font-size:12px">Sous le cours : le volume échangé, le RSI (au-dessus de 70 = surchauffe, sous 30 = survente) et le MACD (barres vertes = élan haussier).</p></section>
   <div class="grid2">
@@ -790,22 +807,23 @@ function niceTicks(lo, hi, n) {
 function chartSVG(full, W = 1000) {
   const N = Math.min(S.chartRange, full.dates.length), off = full.dates.length - N, cut = (a) => a.slice(off);
   const ser = {}; ["dates", "open", "high", "low", "close", "volume", "sma20", "sma50", "sma200", "rsi14", "macd", "macd_signal", "macd_hist"].forEach((k) => (ser[k] = cut(full[k])));
-  const n = ser.dates.length, small = W < 720, padL = 4, padR = small ? 52 : 270, plotW = W - padL - padR;
+  const n = ser.dates.length, small = W < 720, padL = 4;
   const H1 = small ? 220 : 300, H2 = small ? 48 : 64, H3 = small ? 56 : 70, H4 = small ? 56 : 70, gap = 18, y0 = 10, y1 = y0 + H1 + gap, y2 = y1 + H2 + gap, y3 = y2 + H3 + gap, H = y3 + H4 + 22;
-  const cw = plotW / n, xi = (i) => padL + (i + 0.5) * cw, line = S.chartType === "line";
+  const line = S.chartType === "line";
   const hiA = (line ? ser.close : ser.high).filter(isNum), loA = (line ? ser.close : ser.low).filter(isNum);
   let pmin = Math.min(...loA), pmax = Math.max(...hiA);
   const levels = [];
-  (full.levels.resistance || []).slice(0, 2).forEach((l) => levels.push({ y: l.price, cls: "lvl-r", t: `plafond ×${l.touches}` }));
-  (full.levels.support || []).slice(0, 2).forEach((l) => levels.push({ y: l.price, cls: "lvl-s", t: `plancher ×${l.touches}` }));
+  if (S.layers.res) (full.levels.resistance || []).slice(0, 2).forEach((l) => levels.push({ y: l.price, cls: "lvl-r", t: `plafond ×${l.touches}` }));
+  if (S.layers.sup) (full.levels.support || []).slice(0, 2).forEach((l) => levels.push({ y: l.price, cls: "lvl-s", t: `plancher ×${l.touches}` }));
   const bl = { "20d": "haut 20 j", "50d": "haut 50 j", "100d": "haut 100 j", "52w": "haut 1 an" };
-  Object.entries(full.breakout_levels || {}).forEach(([k, v]) => { if (isNum(v)) levels.push({ y: v, cls: "lvl-b", t: bl[k] || k }); });
+  if (S.layers.brk) Object.entries(full.breakout_levels || {}).forEach(([k, v]) => { if (isNum(v)) levels.push({ y: v, cls: "lvl-b", t: bl[k] || k }); });
   const inRange = [];
   levels.filter((l) => l.y >= pmin * 0.93 && l.y <= pmax * 1.07).sort((a, b) => a.y - b.y).forEach((l) => {
     const pv = inRange[inRange.length - 1];
     if (pv && Math.abs(l.y / pv.y - 1) < 0.004) { pv.t += " · " + l.t; if (l.cls === "lvl-b") pv.cls = "lvl-b"; } else inRange.push(Object.assign({}, l));
   });
   inRange.forEach((l) => { pmin = Math.min(pmin, l.y); pmax = Math.max(pmax, l.y); });
+  const padR = small || !inRange.length ? 56 : 270, plotW = W - padL - padR, cw = plotW / n, xi = (i) => padL + (i + 0.5) * cw;
   const pad = (pmax - pmin) * 0.05; pmin -= pad; pmax += pad;
   const py = (v) => y0 + (1 - (v - pmin) / (pmax - pmin)) * H1;
   const o = [`<svg viewBox="0 0 ${W} ${H}" role="img" aria-label="Cours de ${esc(full.ticker)} sur ${n} séances">`];
@@ -814,7 +832,9 @@ function chartSVG(full, W = 1000) {
   let lastM = "";
   ser.dates.forEach((d, i) => { const mk = d.slice(0, 7); if (mk !== lastM) { if (lastM) { const x = xi(i) - cw / 2; o.push(`<line class="grid-l" x1="${x}" x2="${x}" y1="${y0}" y2="${y3 + H4}"/><text x="${x + 4}" y="${H - 6}">${d.slice(5, 7) === "01" ? d.slice(0, 4) : MO[+d.slice(5, 7) - 1]}</text>`); } lastM = mk; } });
   const path = (arr, yf) => { let d = "", pen = false; arr.forEach((v, i) => { if (isNum(v)) { d += `${pen ? "L" : "M"}${xi(i).toFixed(1)},${yf(v).toFixed(1)}`; pen = true; } else pen = false; }); return d; };
-  o.push(`<path class="sma200" d="${path(ser.sma200, py)}"/><path class="sma50" d="${path(ser.sma50, py)}"/><path class="sma20" d="${path(ser.sma20, py)}"/>`);
+  if (S.layers.sma200) o.push(`<path class="sma200" d="${path(ser.sma200, py)}"/>`);
+  if (S.layers.sma50) o.push(`<path class="sma50" d="${path(ser.sma50, py)}"/>`);
+  if (S.layers.sma20) o.push(`<path class="sma20" d="${path(ser.sma20, py)}"/>`);
   const bw = Math.max(1, cw * 0.62);
   if (line) {
     const d = path(ser.close, py), first = Math.max(0, ser.close.findIndex(isNum));
@@ -955,6 +975,7 @@ document.addEventListener("click", (e) => {
   const pb = e.target.closest("#profileSeg button"); if (pb) { S.profile = pb.dataset.p; store.set("profile", S.profile); render(); if (S.openT) openSheet(S.openT); return; }
   if (e.target.closest("#closeSheet") || e.target.id === "sheetBg") { closeSheet(); return; }
   const rg = e.target.closest("[data-range]"); if (rg) { S.chartRange = Number(rg.dataset.range); store.set("chartRange", S.chartRange); document.querySelectorAll("[data-range]").forEach((b) => b.setAttribute("aria-pressed", String(b === rg))); drawChart(); return; }
+  const ly = e.target.closest("[data-layer]"); if (ly) { const k = ly.dataset.layer; if (k === "__none") Object.keys(S.layers).forEach((x) => (S.layers[x] = false)); else S.layers[k] = !S.layers[k]; store.set("layers", S.layers); const bar = $("#layerBar"); if (bar) bar.innerHTML = layerButtons(); drawChart(); return; }
   const ct = e.target.closest("[data-ctype]"); if (ct) { S.chartType = ct.dataset.ctype; store.set("chartType", S.chartType); document.querySelectorAll("[data-ctype]").forEach((b) => b.setAttribute("aria-pressed", String(b === ct))); drawChart(); return; }
   const more = e.target.closest("[data-more]"); if (more) { S.expanded[more.dataset.more] = !S.expanded[more.dataset.more]; render(); return; }
   const op = e.target.closest("[data-open]"); if (op) { openSheet(op.dataset.open); return; }
