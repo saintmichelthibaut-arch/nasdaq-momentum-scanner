@@ -14,7 +14,7 @@ on:
       - "index.html"
       - "sw.js"
       - "manifest.webmanifest"
-      - "config/**"
+      - "config/weights.json"
       - "scripts/**"
       - ".github/workflows/daily.yml"
 
@@ -152,6 +152,7 @@ jobs:
           rsync -a --exclude 'prices.parquet' data/ _site/data/
           pip install -q "cryptography>=42"
           python scripts/push.py pubkey > _site/data/push_key.txt
+          python scripts/push.py devices > _site/data/push_devices.json
 
       - uses: actions/configure-pages@v5
       - uses: actions/upload-pages-artifact@v3

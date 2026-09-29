@@ -6,6 +6,7 @@ name: Suivi en séance
 on:
   schedule:
     - cron: "2,32 7-21 * * 1-5"
+    - cron: "17 */2 * * 0,6"   # week-end : seulement l'enregistrement des nouveaux téléphones
   workflow_dispatch:
     inputs:
       test_push:
@@ -14,7 +15,7 @@ on:
         default: false
 
 permissions:
-  contents: read
+  contents: write
   actions: write
   pages: write
   id-token: write
@@ -58,6 +59,12 @@ jobs:
           key: live-state-${{ github.run_id }}
           restore-keys: live-state-
 
+      - name: Nouveaux téléphones (activés depuis l'appli)
+        env:
+          PUSH_SEED: ${{ secrets.PUSH_SEED }}
+          PUSH_SUBSCRIPTIONS: ${{ secrets.PUSH_SUBSCRIPTIONS }}
+        run: python scripts/push.py sync
+
       - name: Notification de test
         if: inputs.test_push == true
         env:
@@ -83,6 +90,17 @@ jobs:
           path: data/live_state.json
           key: live-state-${{ github.run_id }}
 
+      - name: Enregistrer la liste des téléphones
+        if: always()
+        run: |
+          git add config/push_subscriptions.txt
+          if ! git diff --cached --quiet; then
+            git config user.name "momentum-bot"
+            git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+            git commit -m "notifications : liste des téléphones mise à jour"
+            for i in 1 2 3; do git pull --rebase --autostash origin "$GITHUB_REF_NAME" && git push origin "HEAD:$GITHUB_REF_NAME" && break; sleep 5; done
+          fi
+
       - name: Préparer le site
         if: hashFiles('data/live.json') != ''
         id: site
@@ -94,6 +112,7 @@ jobs:
           cp icon-*.png _site/
           rsync -a --exclude 'prices.parquet' --exclude 'live_state.json' data/ _site/data/
           python scripts/push.py pubkey > _site/data/push_key.txt
+          python scripts/push.py devices > _site/data/push_devices.json
           echo "ok=1" >> "$GITHUB_OUTPUT"
 
       - if: steps.site.outputs.ok == '1'

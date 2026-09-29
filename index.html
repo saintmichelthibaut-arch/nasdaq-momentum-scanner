@@ -332,6 +332,11 @@ p.lead { font-size: 16px; margin: 0; max-width: 72ch; }
 .prose { max-width: 75ch; color: var(--fg-2); }
 .prose p { margin: 0; }
 
+.nbar { position: fixed; left: 12px; right: 12px; bottom: calc(12px + env(safe-area-inset-bottom, 0px)); z-index: 55; max-width: 560px; margin: 0 auto; background: var(--surface); border: 1px solid color-mix(in srgb, var(--accent) 50%, var(--line)); border-radius: 18px; box-shadow: var(--shadow); padding: 14px 16px; display: grid; grid-template-columns: auto minmax(0, 1fr); gap: 4px 12px; align-items: center; }
+.nbar .ic { grid-row: span 2; font-size: 26px; }
+.nbar b { font-size: 15px; }
+.nbar p { margin: 0; font-size: 13px; color: var(--fg-2); }
+.nbar .acts { grid-column: 1 / -1; display: flex; gap: 8px; justify-content: flex-end; margin-top: 8px; }
 .dlg-bg { position: fixed; inset: 0; z-index: 60; background: rgba(4, 7, 11, 0.6); display: grid; place-items: center; padding: 16px; }
 .dlg { width: min(560px, 100%); max-height: 100%; overflow-y: auto; background: var(--surface); border: 1px solid var(--line); border-radius: calc(var(--r) + 4px); padding: 20px; display: grid; gap: 14px; grid-template-columns: minmax(0, 1fr); box-shadow: var(--shadow); }
 .dlg h2 { font-size: 20px; }
@@ -1037,39 +1042,83 @@ if ("serviceWorker" in navigator) navigator.serviceWorker.register("sw.js").then
 function keyBytes(b64) { const s = atob((b64 + "=".repeat((4 - b64.length % 4) % 4)).replace(/-/g, "+").replace(/_/g, "/")); return Uint8Array.from(s, (c) => c.charCodeAt(0)); }
 function closeDlg() { const d = $("#dlgBg"); if (d) d.remove(); }
 function dlg(html) { closeDlg(); document.body.insertAdjacentHTML("beforeend", `<div class="dlg-bg" id="dlgBg"><div class="dlg" role="dialog" aria-modal="true" aria-label="Notifications">${html}<button type="button" class="pill-btn" data-dlgclose="1" style="justify-self:start">Fermer</button></div></div>`); }
+const RELAY_TOPIC = "momentum-scanner-0a195695734e59c8ee53"; // même nom que scripts/push.py
+async function sha16(t) { const h = await crypto.subtle.digest("SHA-256", new TextEncoder().encode(t)); return [...new Uint8Array(h)].map((x) => x.toString(16).padStart(2, "0")).join("").slice(0, 16); }
+async function deviceConfirmed(sub) {
+  try { const r = await fetch("data/push_devices.json?t=" + Date.now(), { cache: "no-store" }); if (!r.ok) return false; return (await r.json()).includes(await sha16(sub.endpoint)); } catch (e) { return false; }
+}
+async function sendToRelay(sub) {
+  const r = await fetch("https://ntfy.sh/" + RELAY_TOPIC, { method: "POST", body: JSON.stringify(sub) });
+  if (!r.ok) throw new Error("relais indisponible (HTTP " + r.status + ")");
+  store.set("pushSent", sub.endpoint);
+}
 function codeBlock(sub) {
   const code = JSON.stringify(sub);
-  return `<p><b>Dernière étape :</b> copie ce code et envoie-le à Claude dans votre conversation : il l'ajoute au projet pour toi. Pour ton père : il fait la même chose sur son téléphone et t'envoie son code, que tu transmets aussi.</p>
-    <textarea id="subCode" readonly>${esc(code)}</textarea>
-    <button type="button" class="btn-main" id="copyCode">Copier le code</button>`;
+  return `<details><summary class="faint" style="cursor:pointer;font-size:12.5px">Dépannage : code de l'appareil</summary><textarea id="subCode" readonly style="margin-top:8px">${esc(code)}</textarea><button type="button" class="pill-btn" id="copyCode">Copier le code</button></details>`;
+}
+async function loadPushKey() {
+  try { const r = await fetch("data/push_key.txt?t=" + Date.now(), { cache: "no-store" }); pushKey = r.ok ? (await r.text()).trim() : ""; } catch (e) { pushKey = ""; }
+  return /^[A-Za-z0-9_-]{80,90}$/.test(pushKey);
+}
+async function subscribeDevice() {
+  const perm = await Notification.requestPermission();
+  if (perm !== "granted") throw new Error("autorisation refusée");
+  if (!pushKey && !(await loadPushKey())) throw new Error("clé d'envoi pas encore prête, réessaie dans quelques minutes");
+  const reg = swReg || (await navigator.serviceWorker.ready);
+  const sub = (await reg.pushManager.getSubscription()) || (await reg.pushManager.subscribe({ userVisibleOnly: true, applicationServerKey: keyBytes(pushKey) }));
+  const json = sub.toJSON();
+  await sendToRelay(json);
+  return json;
+}
+// Bandeau « Recevoir les alertes ? » à l'ouverture de l'appli (écran d'accueil)
+async function maybeShowNotifBar() {
+  if (!pushSupported() || !isStandalone() || Notification.permission === "denied") return;
+  const later = store.get("notifLater", 0);
+  if (Date.now() - later < 3 * 86400000) return;
+  if (Notification.permission === "granted") {
+    const reg = swReg || (await navigator.serviceWorker.ready);
+    const sub = await reg.pushManager.getSubscription();
+    if (sub && store.get("pushSent", "") === sub.endpoint) return; // déjà transmis
+    if (sub) { try { await sendToRelay(sub.toJSON()); } catch (e) { /* réessai à la prochaine ouverture */ } return; }
+  }
+  if ($("#nbar")) return;
+  document.body.insertAdjacentHTML("beforeend", `<div class="nbar" id="nbar" role="dialog" aria-label="Activer les notifications"><span class="ic">🔔</span><b>Recevoir les alertes ?</b><p>Explosions, cassures, volumes anormaux : prévenu en direct sur ce téléphone.</p><div class="acts"><button type="button" class="pill-btn" id="nbLater">Plus tard</button><button type="button" class="btn-main" id="nbGo">Activer</button></div></div>`);
 }
 async function openNotif() {
   if (!pushSupported()) {
     if (isIOS && !isStandalone()) return dlg(`<h2>Recevoir les alertes sur ton iPhone</h2><p>Sur iPhone, les notifications ne marchent que depuis l'icône de l'écran d'accueil, et cette icône doit avoir été ajoutée <b>après</b> cette mise à jour.</p><ol><li>Supprime l'ancienne icône Momentum de ton écran d'accueil.</li><li>Ouvre cette page dans <b>Safari</b>, touche le bouton <b>Partager</b> (carré avec une flèche), puis <b>« Sur l'écran d'accueil »</b>.</li><li>Ouvre la page depuis la nouvelle icône, puis touche 🔔 Notifications.</li></ol><p class="faint" style="font-size:12.5px">Il faut iOS 16.4 ou plus récent.</p>`);
     return dlg(`<h2>Notifications indisponibles</h2><p>Ce navigateur ne gère pas les notifications web. Sur iPhone, utilise Safari et ajoute la page à l'écran d'accueil ; sur Android ou ordinateur, utilise Chrome, Edge ou Firefox.</p>`);
   }
-  try { const r = await fetch("data/push_key.txt?t=" + Date.now(), { cache: "no-store" }); pushKey = r.ok ? (await r.text()).trim() : ""; } catch (e) { pushKey = ""; }
-  if (!/^[A-Za-z0-9_-]{80,90}$/.test(pushKey)) return dlg(`<h2>Presque prêt</h2><p>La clé d'envoi sera créée à la prochaine mise à jour du robot (quelques minutes). Reviens ici un peu plus tard.</p>`);
+  if (!(await loadPushKey())) return dlg(`<h2>Presque prêt</h2><p>La clé d'envoi sera prête à la prochaine mise à jour du robot (quelques minutes). Reviens ici un peu plus tard.</p>`);
   const reg = swReg || (await navigator.serviceWorker.ready);
   const existing = await reg.pushManager.getSubscription();
-  if (existing && Notification.permission === "granted") return dlg(`<h2>Notifications activées ✓</h2><p>Cet appareil est prêt. Si tu n'as pas encore envoyé son code à Claude, fais-le maintenant.</p>${codeBlock(existing)}`);
-  if (Notification.permission === "denied") return dlg(`<h2>Notifications bloquées</h2><p>Tu as refusé les notifications pour cette page. Pour les réautoriser : ${isIOS ? "Réglages → Notifications → Momentum" : "réglages du site dans ton navigateur (icône à gauche de l'adresse)"}, puis reviens ici.</p>`);
-  dlg(`<h2>Recevoir les alertes en notification</h2><p>Tu seras prévenu pendant la séance (volume anormal, cassure, forte variation) et le soir après la clôture. Jamais deux fois le même signal dans la journée.</p><button type="button" class="btn-main" id="doSub">Activer sur cet appareil</button><div id="subOut"></div>`);
+  if (Notification.permission === "denied") return dlg(`<h2>Notifications bloquées</h2><p>Tu as refusé les notifications pour cette appli. Pour les réautoriser : ${isIOS ? "Réglages → Notifications → Momentum" : "réglages du site dans ton navigateur (icône à gauche de l'adresse)"}, puis reviens ici.</p>`);
+  if (existing && Notification.permission === "granted") {
+    const ok = await deviceConfirmed(existing);
+    if (!ok && store.get("pushSent", "") !== existing.endpoint) { try { await sendToRelay(existing.toJSON()); } catch (e) { /* */ } }
+    return dlg(ok ? `<h2>Notifications activées ✓</h2><p>Ce téléphone est enregistré et reçoit les alertes.</p>${codeBlock(existing.toJSON())}`
+      : `<h2>Activation en cours…</h2><p>Ton téléphone a été transmis au robot. Tu recevras une notification « ✅ Notifications activées » dès son prochain passage (quelques minutes en semaine pendant la bourse, jusqu'à 2 h sinon).</p>${codeBlock(existing.toJSON())}`);
+  }
+  dlg(`<h2>Recevoir les alertes en notification</h2><p>Explosions, cassures, volumes anormaux pendant la séance, et le récapitulatif du soir. Jamais deux fois le même signal dans la journée.</p><button type="button" class="btn-main" id="doSub">Activer sur ce téléphone</button><div id="subOut"></div>`);
 }
 async function doSubscribe(btn) {
   btn.disabled = true;
   try {
-    const perm = await Notification.requestPermission();
-    if (perm !== "granted") { $("#subOut").innerHTML = `<p>Autorisation refusée. Tu pourras réessayer plus tard.</p>`; return; }
-    const reg = swReg || (await navigator.serviceWorker.ready);
-    const sub = await reg.pushManager.subscribe({ userVisibleOnly: true, applicationServerKey: keyBytes(pushKey) });
-    $("#subOut").innerHTML = codeBlock(sub.toJSON());
+    const sub = await subscribeDevice();
     btn.remove();
-  } catch (e) { $("#subOut").innerHTML = `<p>L'activation a échoué : ${esc(e.message)}</p>`; btn.disabled = false; }
+    $("#subOut").innerHTML = `<p><b>C'est fait ✓</b> Tu recevras une notification « ✅ Notifications activées » dans quelques minutes pour confirmer.</p>${codeBlock(sub)}`;
+  } catch (e) { $("#subOut").innerHTML = `<p>L'activation n'a pas abouti : ${esc(e.message)}.</p>`; btn.disabled = false; }
 }
 document.addEventListener("click", (e) => {
   if (e.target.id === "bellBtn") { openNotif(); return; }
   if (e.target.id === "doSub") { doSubscribe(e.target); return; }
+  if (e.target.id === "nbLater") { store.set("notifLater", Date.now()); $("#nbar").remove(); return; }
+  if (e.target.id === "nbGo") {
+    const bar = $("#nbar"), btn = e.target; btn.disabled = true; btn.textContent = "Activation…";
+    subscribeDevice().then(() => { bar.innerHTML = `<span class="ic">✅</span><b>C'est activé</b><p>Une notification de confirmation arrive dans quelques minutes.</p>`; setTimeout(() => bar.remove(), 6000); })
+      .catch((err) => { bar.querySelector("p").textContent = "Pas abouti : " + err.message + ". Réessaie avec le bouton 🔔 en haut."; btn.disabled = false; btn.textContent = "Réessayer"; });
+    return;
+  }
   if (e.target.id === "copyCode") { const t = $("#subCode"); navigator.clipboard.writeText(t.value).then(() => (e.target.textContent = "Copié ✓")).catch(() => { t.select(); e.target.textContent = "Sélectionné : fais Copier"; }); return; }
   if (e.target.dataset && e.target.dataset.dlgclose || e.target.id === "dlgBg") { closeDlg(); }
 });
@@ -1102,6 +1151,7 @@ document.addEventListener("keydown", (e) => {
   if (e.key === "Enter" && e.target.matches && e.target.matches(".card[data-t]")) openSheet(e.target.dataset.t);
 });
 let rsT; window.addEventListener("resize", () => { clearTimeout(rsT); rsT = setTimeout(() => { if (S.openT) drawChart(); }, 200); });
+setTimeout(maybeShowNotifBar, 1500);
 setInterval(async () => {
   if (!S.data) return;
   let changed = false;

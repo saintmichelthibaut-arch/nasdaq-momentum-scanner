@@ -50,6 +50,12 @@ def raw_public(key) -> bytes:
 
 
 SUBS_FILE = ROOT / "config" / "push_subscriptions.txt"
+# Relais public (ntfy.sh) : le téléphone y dépose son abonnement, le robot le récupère.
+# Même nom dans index.html (RELAY_TOPIC). Un abonnement seul ne permet d'envoyer aucune
+# notification sans la clé privée du robot.
+RELAY_TOPIC = "momentum-scanner-0a195695734e59c8ee53"
+PUSH_HOSTS = ("web.push.apple.com", "fcm.googleapis.com", "updates.push.services.mozilla.com")
+MAX_DEVICES = 20
 KEY_FILE = ROOT / ".vapid" / "key.pem"   # conservée dans le cache GitHub Actions, jamais committée
 
 
@@ -154,11 +160,73 @@ def send(title: str, body: str, tag: str = "alertes", path: str = "") -> bool:
         if 200 <= code < 300:
             ok += 1
         elif code in (404, 410):
-            print(f"appareil n°{i} : abonnement expiré, il faut réactiver les notifications sur cet appareil")
+            print(f"appareil n°{i} : abonnement expiré, retiré de la liste")
+            remove_subscription(sub["endpoint"])
         else:
             print(f"appareil n°{i} : refus du serveur de notification (HTTP {code})")
     print(f"notification envoyée à {ok}/{len(subs)} appareil(s) : {title}")
     return ok > 0
+
+
+def _valid(sub) -> bool:
+    try:
+        u = urlparse(sub["endpoint"])
+        host_ok = u.scheme == "https" and (u.hostname in PUSH_HOSTS or (u.hostname or "").endswith(".notify.windows.com"))
+        return host_ok and len(b64u_dec(sub["keys"]["p256dh"])) == 65 and len(b64u_dec(sub["keys"]["auth"])) == 16
+    except Exception:
+        return False
+
+
+def _file_lines() -> list[str]:
+    return SUBS_FILE.read_text(encoding="utf-8").splitlines() if SUBS_FILE.exists() else []
+
+
+def remove_subscription(endpoint: str) -> None:
+    lines = _file_lines()
+    kept = [ln for ln in lines if endpoint not in ln]
+    if len(kept) != len(lines):
+        SUBS_FILE.write_text("\n".join(kept) + "\n", encoding="utf-8")
+
+
+def sync_relay() -> int:
+    """Récupère les téléphones qui viennent d'activer les notifications depuis l'appli."""
+    url = f"https://ntfy.sh/{RELAY_TOPIC}/json?poll=1&since=12h"
+    try:
+        with urllib.request.urlopen(url, timeout=20) as r:
+            raw = r.read().decode("utf-8", "replace")
+    except Exception as e:
+        print(f"relais injoignable ({e}) : on réessaiera au prochain passage")
+        return 0
+    known = {s["endpoint"] for s in subscriptions()}
+    new = []
+    for line in raw.splitlines():
+        try:
+            ev = json.loads(line)
+            sub = json.loads(ev.get("message", ""))
+            sub = {"endpoint": sub["endpoint"], "expirationTime": None,
+                   "keys": {"p256dh": sub["keys"]["p256dh"], "auth": sub["keys"]["auth"]}}
+        except Exception:
+            continue
+        if _valid(sub) and sub["endpoint"] not in known and len(known) < MAX_DEVICES:
+            known.add(sub["endpoint"])
+            new.append(sub)
+    if not new:
+        print("aucun nouvel appareil")
+        return 0
+    with open(SUBS_FILE, "a", encoding="utf-8") as f:
+        for sub in new:
+            f.write(json.dumps(sub, separators=(",", ":")) + "\n")
+    key = vapid_key()
+    for sub in new:
+        code = send_one(sub, {"title": "✅ Notifications activées", "body": "Ce téléphone recevra les alertes du Momentum Scanner.",
+                              "tag": "bienvenue", "url": page_url()}, key) if key else 0
+        print(f"nouvel appareil enregistré (bienvenue : HTTP {code})")
+    return len(new)
+
+
+def devices() -> list[str]:
+    """Empreintes des appareils enregistrés (publiées pour que l'appli affiche « confirmé »)."""
+    return [hashlib.sha256(s["endpoint"].encode()).hexdigest()[:16] for s in subscriptions()]
 
 
 def alerts_message(alerts: list[dict], live: bool) -> tuple[str, str]:
@@ -175,6 +243,12 @@ def main(cmd: str) -> int:
     if cmd == "pubkey":
         key = vapid_key(create=True)
         print(b64u(raw_public(key)) if key else "")
+        return 0
+    if cmd == "sync":
+        sync_relay()
+        return 0
+    if cmd == "devices":
+        print(json.dumps(devices()))
         return 0
     if cmd == "test":
         send("✅ Momentum Scanner", "Les notifications fonctionnent sur cet appareil.", tag="test")
