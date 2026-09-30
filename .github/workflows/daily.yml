@@ -2,7 +2,8 @@ name: Collecte quotidienne
 
 on:
   schedule:
-    - cron: "30 22 * * 1-5"   # lun-ven 22h30 UTC, après la clôture de Wall Street
+    - cron: "35 20 * * 1-5"   # 22h35 à Paris en été : juste après la clôture de Wall Street (22h)
+    - cron: "35 21 * * 1-5"   # idem en hiver (Wall Street ferme à 22h, soit 21h UTC) ; sans effet en double
     - cron: "5 5 * * 2-6"     # rattrapage mar-sam 5h05 UTC (7h05 à Paris) si le calcul du soir a raté ou si Yahoo était en retard
   workflow_dispatch:
     inputs:
@@ -79,7 +80,7 @@ jobs:
           fi
 
       - name: E-mail et notifications des alertes du soir (seulement lors du lancement automatique)
-        if: steps.collect.outcome == 'success' && github.event_name == 'schedule' && github.event.schedule == '30 22 * * 1-5'
+        if: steps.collect.outcome == 'success' && github.event_name == 'schedule' && github.event.schedule != '5 5 * * 2-6'
         continue-on-error: true
         env:
           ALERT_EMAIL_USER: ${{ secrets.ALERT_EMAIL_USER }}

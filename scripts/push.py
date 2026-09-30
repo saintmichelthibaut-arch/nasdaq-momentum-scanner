@@ -254,7 +254,15 @@ def main(cmd: str) -> int:
         send("✅ Momentum Scanner", "Les notifications fonctionnent sur cet appareil.", tag="test")
         return 0
     if cmd == "daily":
+        # une seule série de notifications par séance (le calcul du soir peut tourner deux fois)
+        latest = json.loads((ROOT / "data" / "latest.json").read_text(encoding="utf-8"))
+        day = (latest["meta"].get("market_date") or {}).get("US")
+        mark = ROOT / "data" / "last_digest.txt"
+        if mark.exists() and mark.read_text().strip() == day:
+            print(f"récapitulatif du {day} déjà envoyé")
+            return 0
         msgs = evening_digest()
+        mark.write_text(day or "")
         if not msgs:
             print("rien de notable ce soir : pas de notification")
         for title, body, tag in msgs:
