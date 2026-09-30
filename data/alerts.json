@@ -1,5 +1,5 @@
 {
- "generated_at_utc": "2026-09-30T06:41:13+00:00",
+ "generated_at_utc": "2026-09-30T06:45:35+00:00",
  "market_date": {
   "US": "2026-09-29",
   "EU": "2026-09-29"
@@ -12,6 +12,21 @@
   "volume_accel_above": 70
  },
  "alerts": [
+  {
+   "ticker": "NVTS",
+   "name": "Navitas Semiconductor",
+   "currency": "USD",
+   "price": 11.73,
+   "chg_1d": 0.0,
+   "rvol": 3.138,
+   "score": 33.65,
+   "breakout": false,
+   "triggers": [
+    "rvol",
+    "volume_accel"
+   ],
+   "reason": "le volume accélère depuis 3 séances, volume 3,1 fois la normale"
+  },
   {
    "ticker": "MDB",
    "name": "MongoDB",
