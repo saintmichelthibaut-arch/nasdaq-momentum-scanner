@@ -163,6 +163,60 @@ def drop_open_session(df: pd.DataFrame, market: str, now: datetime) -> tuple[pd.
     return df, False
 
 
+def expected_session(market: str, now: datetime):
+    """Date de la dernière séance clôturée pour ce marché (hors jours fériés)."""
+    tz, close_t = MARKET_CLOSE[market]
+    local = now.astimezone(ZoneInfo(tz))
+    d = local.date()
+    if local.weekday() >= 5 or local.time() < close_t:
+        d = d - pd.Timedelta(days=1)
+    while d.weekday() >= 5:
+        d = d - pd.Timedelta(days=1)
+    return d
+
+
+def fill_missing_sessions(prices: dict, now: datetime) -> list[str]:
+    """Yahoo publie parfois la bougie journalière de la dernière séance avec retard.
+    On la reconstruit alors à partir des vraies cotations 5 minutes de cette séance
+    (ouverture, plus haut, plus bas, clôture, volume cumulé). Elle sera remplacée
+    par la bougie officielle dès que Yahoo la publie."""
+    import yfinance as yf
+    todo = {}
+    for t, df in prices.items():
+        mk = "EU" if t.endswith(".PA") or t == "^FCHI" else "US"
+        exp = expected_session(mk, now)
+        if len(df) and df.index[-1].date() < exp:
+            todo[t] = (mk, exp)
+    if not todo:
+        return []
+    log(f"bougie de la dernière séance manquante chez Yahoo pour {len(todo)} titre(s) : reconstruction depuis les cotations 5 min")
+    try:
+        raw = yf.download(list(todo), period="5d", interval="5m", group_by="ticker", auto_adjust=False,
+                          prepost=False, threads=True, progress=False)
+    except Exception as e:
+        log(f"reconstruction impossible : {e}")
+        return []
+    filled = []
+    for t, (mk, exp) in todo.items():
+        try:
+            sub = (raw[t] if isinstance(raw.columns, pd.MultiIndex) else raw).dropna(subset=["Close"])
+        except KeyError:
+            continue
+        if sub.empty:
+            continue
+        idx = sub.index.tz_convert(MARKET_CLOSE[mk][0]) if sub.index.tz is not None else sub.index
+        day = sub[[i.date() == exp for i in idx]]
+        if day.empty:
+            continue  # jour férié ou données absentes : on ne fabrique rien
+        bar = pd.DataFrame({"open": [float(day["Open"].dropna().iloc[0])], "high": [float(day["High"].max())],
+                            "low": [float(day["Low"].min())], "close": [float(day["Close"].iloc[-1])],
+                            "volume": [float(day["Volume"].fillna(0).sum())]}, index=[pd.Timestamp(exp)])
+        prices[t] = pd.concat([prices[t], bar]).sort_index()
+        filled.append(t)
+    log(f"séance reconstruite pour {len(filled)} titre(s)")
+    return filled
+
+
 def update_prices(cache_path: Path, full: bool, offline: bool) -> tuple[dict, dict]:
     tickers = all_download_tickers()
     cache = {} if full else load_cache(cache_path)
@@ -616,7 +670,8 @@ def main() -> int:
         prices, errors = update_prices(data_dir / "prices.parquet", args.full, args.offline)
         if BENCHMARK not in prices:
             raise RuntimeError(f"benchmark {BENCHMARK} indisponible : {errors.get(BENCHMARK, 'inconnu')}")
-        save_cache(data_dir / "prices.parquet", prices)
+        save_cache(data_dir / "prices.parquet", prices)  # le cache ne garde que les bougies officielles
+        rebuilt = [] if args.offline else fill_missing_sessions(prices, now)
 
         bench = prices[BENCHMARK]["close"]
         local = {m: prices[b]["close"] for m, b in LOCAL_BENCHMARKS.items() if b in prices}
@@ -684,6 +739,7 @@ def main() -> int:
                 "ok_count": len(stocks),
                 "failures": failures,
                 "open_session_dropped": dropped,
+                "session_rebuilt_from_intraday": rebuilt,
                 "benchmarks": {BENCHMARK: bench_info(BENCHMARK),
                                **{b: bench_info(b) for b in LOCAL_BENCHMARKS.values()}},
             },
