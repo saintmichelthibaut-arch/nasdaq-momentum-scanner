@@ -1,8 +1,8 @@
 {
- "generated_at_utc": "2026-09-30T06:51:35+00:00",
+ "generated_at_utc": "2026-10-01T00:08:22+00:00",
  "market_date": {
-  "US": "2026-09-29",
-  "EU": "2026-09-29"
+  "US": "2026-09-30",
+  "EU": "2026-09-30"
  },
  "profile": "swing",
  "rules": {
@@ -13,34 +13,89 @@
  },
  "alerts": [
   {
-   "ticker": "NVTS",
-   "name": "Navitas Semiconductor",
+   "ticker": "SNPS",
+   "name": "Synopsys",
    "currency": "USD",
-   "price": 11.73,
-   "chg_1d": 0.0,
-   "rvol": 3.138,
-   "score": 33.65,
+   "price": 435.07,
+   "chg_1d": 0.0481,
+   "rvol": 2.124,
+   "score": 48.01,
+   "breakout": false,
+   "triggers": [
+    "rvol"
+   ],
+   "reason": "volume 2,1 fois la normale, plafond à 6,9 % (464,98)"
+  },
+  {
+   "ticker": "TLN",
+   "name": "Talen Energy",
+   "currency": "USD",
+   "price": 312.81,
+   "chg_1d": -0.0064,
+   "rvol": 2.907,
+   "score": 47.24,
+   "breakout": false,
+   "triggers": [
+    "rvol"
+   ],
+   "reason": "le volume accélère depuis 4 séances, volume 2,9 fois la normale"
+  },
+  {
+   "ticker": "QRVO",
+   "name": "Qorvo",
+   "currency": "USD",
+   "price": 114.45,
+   "chg_1d": -0.0197,
+   "rvol": 2.454,
+   "score": 42.62,
+   "breakout": false,
+   "triggers": [
+    "rvol"
+   ],
+   "reason": "volume 2,5 fois la normale, plafond à 5,8 % (121,09)"
+  },
+  {
+   "ticker": "FORM",
+   "name": "FormFactor",
+   "currency": "USD",
+   "price": 149.37,
+   "chg_1d": 0.0963,
+   "rvol": 1.57,
+   "score": 38.49,
+   "breakout": true,
+   "triggers": [
+    "breakout_volume"
+   ],
+   "reason": "cassure du plus haut 50 séances à 139,80"
+  },
+  {
+   "ticker": "JBL",
+   "name": "Jabil",
+   "currency": "USD",
+   "price": 286.68,
+   "chg_1d": -0.1009,
+   "rvol": 3.763,
+   "score": 34.45,
    "breakout": false,
    "triggers": [
     "rvol",
     "volume_accel"
    ],
-   "reason": "le volume accélère depuis 3 séances, volume 3,1 fois la normale"
+   "reason": "le volume accélère régulièrement, volume 3,8 fois la normale"
   },
   {
    "ticker": "MDB",
    "name": "MongoDB",
    "currency": "USD",
-   "price": 337.19,
-   "chg_1d": 0.0075,
-   "rvol": 3.27,
-   "score": 27.4,
+   "price": 348.36,
+   "chg_1d": 0.0331,
+   "rvol": 1.808,
+   "score": 24.25,
    "breakout": false,
    "triggers": [
-    "rvol",
     "volume_accel"
    ],
-   "reason": "le volume accélère régulièrement, volume 3,3 fois la normale"
+   "reason": "le volume accélère régulièrement"
   }
  ]
 }
