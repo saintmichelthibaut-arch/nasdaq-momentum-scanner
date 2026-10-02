@@ -1,5 +1,5 @@
 {
- "generated_at_utc": "2026-10-02T00:06:43+00:00",
+ "generated_at_utc": "2026-10-02T13:29:24+00:00",
  "market_date": {
   "US": "2026-10-01",
   "EU": "2026-10-01"
@@ -16,25 +16,55 @@
    "ticker": "SNPS",
    "name": "Synopsys",
    "currency": "USD",
-   "price": 490.53,
+   "price": 490.54,
    "chg_1d": 0.1278,
-   "rvol": 2.852,
-   "score": 71.28,
+   "rvol": 3.319,
+   "score": 72.8,
    "breakout": true,
    "triggers": [
     "rvol",
+    "breakout_volume",
+    "volume_accel"
+   ],
+   "reason": "le volume accélère depuis 3 séances, volume 3,3 fois la normale, cassure du plus haut 50 séances à 464,98"
+  },
+  {
+   "ticker": "SYNA",
+   "name": "Synaptics",
+   "currency": "USD",
+   "price": 106.15,
+   "chg_1d": 0.0468,
+   "rvol": 1.656,
+   "score": 51.0,
+   "breakout": true,
+   "triggers": [
     "breakout_volume"
    ],
-   "reason": "le volume accélère depuis 3 séances, volume 2,9 fois la normale, cassure du plus haut 50 séances à 464,98"
+   "reason": "cassure du plus haut 20 séances à 103,04"
+  },
+  {
+   "ticker": "QRVO",
+   "name": "Qorvo",
+   "currency": "USD",
+   "price": 112.21,
+   "chg_1d": -0.0198,
+   "rvol": 3.207,
+   "score": 40.28,
+   "breakout": false,
+   "triggers": [
+    "rvol",
+    "volume_accel"
+   ],
+   "reason": "le volume accélère depuis 2 séances, volume 3,2 fois la normale, plafond à 7,9 % (121,09)"
   },
   {
    "ticker": "LITE",
    "name": "Lumentum",
    "currency": "USD",
-   "price": 1045.61,
-   "chg_1d": 0.0766,
-   "rvol": 1.557,
-   "score": 31.03,
+   "price": 1045.78,
+   "chg_1d": 0.0767,
+   "rvol": 1.643,
+   "score": 31.47,
    "breakout": true,
    "triggers": [
     "breakout_volume"
