@@ -1,8 +1,8 @@
 {
- "generated_at_utc": "2026-10-01T11:31:51+00:00",
+ "generated_at_utc": "2026-10-02T00:06:43+00:00",
  "market_date": {
-  "US": "2026-09-30",
-  "EU": "2026-09-30"
+  "US": "2026-10-01",
+  "EU": "2026-10-01"
  },
  "profile": "swing",
  "rules": {
@@ -16,86 +16,30 @@
    "ticker": "SNPS",
    "name": "Synopsys",
    "currency": "USD",
-   "price": 434.94,
-   "chg_1d": 0.0478,
-   "rvol": 2.382,
-   "score": 49.22,
-   "breakout": false,
+   "price": 490.53,
+   "chg_1d": 0.1278,
+   "rvol": 2.852,
+   "score": 71.28,
+   "breakout": true,
    "triggers": [
-    "rvol"
+    "rvol",
+    "breakout_volume"
    ],
-   "reason": "volume 2,4 fois la normale, plafond à 6,9 % (464,98)"
+   "reason": "le volume accélère depuis 3 séances, volume 2,9 fois la normale, cassure du plus haut 50 séances à 464,98"
   },
   {
-   "ticker": "TLN",
-   "name": "Talen Energy",
+   "ticker": "LITE",
+   "name": "Lumentum",
    "currency": "USD",
-   "price": 312.69,
-   "chg_1d": -0.0068,
-   "rvol": 3.11,
-   "score": 47.67,
-   "breakout": false,
-   "triggers": [
-    "rvol"
-   ],
-   "reason": "le volume accélère depuis 4 séances, volume 3,1 fois la normale"
-  },
-  {
-   "ticker": "QRVO",
-   "name": "Qorvo",
-   "currency": "USD",
-   "price": 114.48,
-   "chg_1d": -0.0194,
-   "rvol": 3.073,
-   "score": 45.19,
-   "breakout": false,
-   "triggers": [
-    "rvol"
-   ],
-   "reason": "volume 3,1 fois la normale, plafond à 5,8 % (121,09)"
-  },
-  {
-   "ticker": "FORM",
-   "name": "FormFactor",
-   "currency": "USD",
-   "price": 149.31,
-   "chg_1d": 0.0959,
-   "rvol": 1.971,
-   "score": 40.54,
+   "price": 1045.61,
+   "chg_1d": 0.0766,
+   "rvol": 1.557,
+   "score": 31.03,
    "breakout": true,
    "triggers": [
     "breakout_volume"
    ],
-   "reason": "le volume accélère régulièrement, cassure du plus haut 50 séances à 139,80"
-  },
-  {
-   "ticker": "JBL",
-   "name": "Jabil",
-   "currency": "USD",
-   "price": 286.86,
-   "chg_1d": -0.1003,
-   "rvol": 4.123,
-   "score": 34.69,
-   "breakout": false,
-   "triggers": [
-    "rvol",
-    "volume_accel"
-   ],
-   "reason": "le volume accélère régulièrement, volume 4,1 fois la normale"
-  },
-  {
-   "ticker": "MDB",
-   "name": "MongoDB",
-   "currency": "USD",
-   "price": 348.61,
-   "chg_1d": 0.0339,
-   "rvol": 1.934,
-   "score": 24.69,
-   "breakout": false,
-   "triggers": [
-    "volume_accel"
-   ],
-   "reason": "le volume accélère régulièrement"
+   "reason": "cassure du plus haut 50 séances à 1 026,76"
   }
  ]
 }
