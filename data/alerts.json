@@ -1,5 +1,5 @@
 {
- "generated_at_utc": "2026-10-02T23:58:16+00:00",
+ "generated_at_utc": "2026-10-03T05:22:13+00:00",
  "market_date": {
   "US": "2026-10-02",
   "EU": "2026-10-02"
@@ -18,7 +18,7 @@
    "currency": "USD",
    "price": 121.1,
    "chg_1d": 0.1408,
-   "rvol": 12.868,
+   "rvol": 12.869,
    "score": 78.82,
    "breakout": true,
    "triggers": [
@@ -50,8 +50,8 @@
    "currency": "USD",
    "price": 226.27,
    "chg_1d": 0.0522,
-   "rvol": 1.847,
-   "score": 65.34,
+   "rvol": 1.973,
+   "score": 66.45,
    "breakout": true,
    "triggers": [
     "breakout_volume"
@@ -64,29 +64,14 @@
    "currency": "USD",
    "price": 114.17,
    "chg_1d": 0.0175,
-   "rvol": 4.029,
-   "score": 59.14,
+   "rvol": 4.544,
+   "score": 59.39,
    "breakout": false,
    "triggers": [
     "rvol",
     "volume_accel"
    ],
-   "reason": "le volume accélère depuis 3 séances, volume 4,0 fois la normale, plafond à 6,1 % (121,09)"
-  },
-  {
-   "ticker": "ALGM",
-   "name": "Allegro MicroSystems",
-   "currency": "USD",
-   "price": 39.53,
-   "chg_1d": 0.0866,
-   "rvol": 2.419,
-   "score": 59.07,
-   "breakout": true,
-   "triggers": [
-    "rvol",
-    "breakout_volume"
-   ],
-   "reason": "volume 2,4 fois la normale, cassure du plus haut 20 séances à 38,00"
+   "reason": "le volume accélère depuis 3 séances, volume 4,5 fois la normale, plafond à 6,1 % (121,09)"
   },
   {
    "ticker": "STM",
@@ -94,13 +79,28 @@
    "currency": "USD",
    "price": 57.26,
    "chg_1d": 0.0703,
-   "rvol": 1.891,
-   "score": 58.73,
+   "rvol": 1.939,
+   "score": 59.1,
    "breakout": true,
    "triggers": [
     "breakout_volume"
    ],
    "reason": "cassure du plus haut 50 séances à 56,94"
+  },
+  {
+   "ticker": "ALGM",
+   "name": "Allegro MicroSystems",
+   "currency": "USD",
+   "price": 39.53,
+   "chg_1d": 0.0866,
+   "rvol": 2.42,
+   "score": 59.09,
+   "breakout": true,
+   "triggers": [
+    "rvol",
+    "breakout_volume"
+   ],
+   "reason": "volume 2,4 fois la normale, cassure du plus haut 20 séances à 38,00"
   },
   {
    "ticker": "VIAV",
@@ -137,8 +137,8 @@
    "currency": "USD",
    "price": 140.02,
    "chg_1d": 0.0019,
-   "rvol": 2.596,
-   "score": 27.43,
+   "rvol": 2.615,
+   "score": 27.57,
    "breakout": false,
    "triggers": [
     "rvol"
@@ -151,7 +151,7 @@
    "currency": "USD",
    "price": 848.99,
    "chg_1d": -0.1021,
-   "rvol": 3.592,
+   "rvol": 3.601,
    "score": 20.4,
    "breakout": false,
    "triggers": [
@@ -165,7 +165,7 @@
    "currency": "USD",
    "price": 415.29,
    "chg_1d": -0.1022,
-   "rvol": 3.632,
+   "rvol": 3.642,
    "score": 18.5,
    "breakout": false,
    "triggers": [
@@ -179,8 +179,8 @@
    "currency": "USD",
    "price": 268.22,
    "chg_1d": -0.0465,
-   "rvol": 1.752,
-   "score": 14.21,
+   "rvol": 1.756,
+   "score": 14.27,
    "breakout": false,
    "triggers": [
     "volume_accel"
