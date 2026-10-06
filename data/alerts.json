@@ -1,8 +1,8 @@
 {
- "generated_at_utc": "2026-10-03T11:43:15+00:00",
+ "generated_at_utc": "2026-10-06T01:24:01+00:00",
  "market_date": {
-  "US": "2026-10-02",
-  "EU": "2026-10-02"
+  "US": "2026-10-05",
+  "EU": "2026-10-05"
  },
  "profile": "swing",
  "rules": {
@@ -16,47 +16,15 @@
    "ticker": "SYNA",
    "name": "Synaptics",
    "currency": "USD",
-   "price": 121.1,
-   "chg_1d": 0.1408,
-   "rvol": 12.869,
-   "score": 78.82,
+   "price": 119.85,
+   "chg_1d": -0.0103,
+   "rvol": 1.421,
+   "score": 75.29,
    "breakout": true,
    "triggers": [
-    "score",
-    "rvol",
-    "breakout_volume",
     "volume_accel"
    ],
-   "reason": "le volume accélère depuis 3 séances, volume 12,9 fois la normale, cassure du plus haut 50 séances à 119,11, score passé de 52 à 79"
-  },
-  {
-   "ticker": "VECO",
-   "name": "Veeco Instruments",
-   "currency": "USD",
-   "price": 57.38,
-   "chg_1d": 0.0788,
-   "rvol": 2.218,
-   "score": 66.68,
-   "breakout": true,
-   "triggers": [
-    "rvol",
-    "breakout_volume"
-   ],
-   "reason": "volume 2,2 fois la normale, cassure du plus haut 50 séances à 56,04"
-  },
-  {
-   "ticker": "NTAP",
-   "name": "NetApp",
-   "currency": "USD",
-   "price": 226.27,
-   "chg_1d": 0.0522,
-   "rvol": 1.973,
-   "score": 66.45,
-   "breakout": true,
-   "triggers": [
-    "breakout_volume"
-   ],
-   "reason": "cassure du plus haut 52 semaines à 216,81"
+   "reason": "le volume accélère régulièrement, plafond à 7,0 % (128,18)"
   },
   {
    "ticker": "QRVO",
@@ -74,118 +42,32 @@
    "reason": "le volume accélère depuis 3 séances, volume 4,5 fois la normale, plafond à 6,1 % (121,09)"
   },
   {
-   "ticker": "STM",
-   "name": "STMicroelectronics",
+   "ticker": "NU",
+   "name": "Nu Holdings",
    "currency": "USD",
-   "price": 57.26,
-   "chg_1d": 0.0703,
-   "rvol": 1.939,
-   "score": 59.1,
-   "breakout": true,
-   "triggers": [
-    "breakout_volume"
-   ],
-   "reason": "cassure du plus haut 50 séances à 56,94"
-  },
-  {
-   "ticker": "ALGM",
-   "name": "Allegro MicroSystems",
-   "currency": "USD",
-   "price": 39.53,
-   "chg_1d": 0.0866,
-   "rvol": 2.42,
-   "score": 59.09,
-   "breakout": true,
-   "triggers": [
-    "rvol",
-    "breakout_volume"
-   ],
-   "reason": "volume 2,4 fois la normale, cassure du plus haut 20 séances à 38,00"
-  },
-  {
-   "ticker": "VIAV",
-   "name": "Viavi Solutions",
-   "currency": "USD",
-   "price": 47.1,
-   "chg_1d": 0.0518,
-   "rvol": 1.733,
-   "score": 48.69,
-   "breakout": true,
-   "triggers": [
-    "breakout_volume"
-   ],
-   "reason": "cassure du plus haut 50 séances à 46,66"
-  },
-  {
-   "ticker": "UCTT",
-   "name": "Ultra Clean Holdings",
-   "currency": "USD",
-   "price": 72.69,
-   "chg_1d": -0.0757,
-   "rvol": 2.193,
-   "score": 34.17,
-   "breakout": false,
-   "triggers": [
-    "rvol",
-    "volume_accel"
-   ],
-   "reason": "le volume accélère régulièrement, volume 2,2 fois la normale"
-  },
-  {
-   "ticker": "VST",
-   "name": "Vistra",
-   "currency": "USD",
-   "price": 140.02,
-   "chg_1d": 0.0019,
-   "rvol": 2.615,
-   "score": 27.57,
+   "price": 15.2,
+   "chg_1d": 0.1318,
+   "rvol": 2.025,
+   "score": 48.85,
    "breakout": false,
    "triggers": [
     "rvol"
    ],
-   "reason": "volume 2,6 fois la normale"
+   "reason": "volume 2,0 fois la normale, plafond à 6,7 % (16,22)"
   },
   {
-   "ticker": "STX",
-   "name": "Seagate Technology",
+   "ticker": "UMC",
+   "name": "United Microelectronics",
    "currency": "USD",
-   "price": 848.99,
-   "chg_1d": -0.1021,
-   "rvol": 3.601,
-   "score": 20.4,
+   "price": 23.97,
+   "chg_1d": -0.0876,
+   "rvol": 2.755,
+   "score": 24.78,
    "breakout": false,
    "triggers": [
     "rvol"
    ],
-   "reason": "volume 3,6 fois la normale"
-  },
-  {
-   "ticker": "WDC",
-   "name": "Western Digital",
-   "currency": "USD",
-   "price": 415.29,
-   "chg_1d": -0.1022,
-   "rvol": 3.642,
-   "score": 18.5,
-   "breakout": false,
-   "triggers": [
-    "rvol"
-   ],
-   "reason": "volume 3,6 fois la normale"
-  },
-  {
-   "ticker": "APP",
-   "name": "AppLovin",
-   "currency": "USD",
-   "price": 268.22,
-   "chg_1d": -0.0465,
-   "rvol": 1.756,
-   "score": 14.27,
-   "breakout": false,
-   "triggers": [
-    "volume_accel"
-   ],
-   "reason": "le volume accélère depuis 3 séances"
+   "reason": "volume en hausse 3 séances d'affilée, volume 2,8 fois la normale"
   }
  ]
 }
