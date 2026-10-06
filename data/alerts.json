@@ -1,5 +1,5 @@
 {
- "generated_at_utc": "2026-10-06T01:24:01+00:00",
+ "generated_at_utc": "2026-10-06T13:52:07+00:00",
  "market_date": {
   "US": "2026-10-05",
   "EU": "2026-10-05"
@@ -16,58 +16,128 @@
    "ticker": "SYNA",
    "name": "Synaptics",
    "currency": "USD",
-   "price": 119.85,
-   "chg_1d": -0.0103,
-   "rvol": 1.421,
-   "score": 75.29,
+   "price": 119.73,
+   "chg_1d": -0.0113,
+   "rvol": 1.611,
+   "score": 77.35,
    "breakout": true,
    "triggers": [
     "volume_accel"
    ],
-   "reason": "le volume accélère régulièrement, plafond à 7,0 % (128,18)"
+   "reason": "le volume accélère régulièrement, plafond à 7,1 % (128,18)"
   },
   {
-   "ticker": "QRVO",
-   "name": "Qorvo",
+   "ticker": "TWLO",
+   "name": "Twilio",
    "currency": "USD",
-   "price": 114.17,
-   "chg_1d": 0.0175,
-   "rvol": 4.544,
-   "score": 59.39,
+   "price": 300.91,
+   "chg_1d": 0.0215,
+   "rvol": 12.983,
+   "score": 60.98,
    "breakout": false,
    "triggers": [
-    "rvol",
-    "volume_accel"
+    "rvol"
    ],
-   "reason": "le volume accélère depuis 3 séances, volume 4,5 fois la normale, plafond à 6,1 % (121,09)"
+   "reason": "le volume accélère depuis 2 séances, volume 13,0 fois la normale, plafond à 1,7 % (305,95)"
   },
   {
    "ticker": "NU",
    "name": "Nu Holdings",
    "currency": "USD",
-   "price": 15.2,
-   "chg_1d": 0.1318,
-   "rvol": 2.025,
-   "score": 48.85,
+   "price": 15.18,
+   "chg_1d": 0.1303,
+   "rvol": 2.366,
+   "score": 51.56,
    "breakout": false,
    "triggers": [
     "rvol"
    ],
-   "reason": "volume 2,0 fois la normale, plafond à 6,7 % (16,22)"
+   "reason": "volume 2,4 fois la normale, plafond à 6,9 % (16,22)"
+  },
+  {
+   "ticker": "FORM",
+   "name": "FormFactor",
+   "currency": "USD",
+   "price": 147.99,
+   "chg_1d": -0.0078,
+   "rvol": 10.865,
+   "score": 48.67,
+   "breakout": true,
+   "triggers": [
+    "rvol"
+   ],
+   "reason": "le volume accélère depuis 2 séances, volume 10,9 fois la normale, plafond à 2,2 % (151,18)"
+  },
+  {
+   "ticker": "VST",
+   "name": "Vistra",
+   "currency": "USD",
+   "price": 144.89,
+   "chg_1d": 0.0348,
+   "rvol": 2.073,
+   "score": 40.91,
+   "breakout": false,
+   "triggers": [
+    "rvol"
+   ],
+   "reason": "le volume accélère régulièrement, volume 2,1 fois la normale"
+  },
+  {
+   "ticker": "SWKS",
+   "name": "Skyworks Solutions",
+   "currency": "USD",
+   "price": 83.91,
+   "chg_1d": -0.0132,
+   "rvol": 3.936,
+   "score": 39.39,
+   "breakout": false,
+   "triggers": [
+    "rvol",
+    "volume_accel"
+   ],
+   "reason": "le volume accélère depuis 2 séances, volume 3,9 fois la normale"
+  },
+  {
+   "ticker": "CPNG",
+   "name": "Coupang",
+   "currency": "USD",
+   "price": 14.2,
+   "chg_1d": 0.0305,
+   "rvol": 2.15,
+   "score": 30.32,
+   "breakout": false,
+   "triggers": [
+    "rvol"
+   ],
+   "reason": "volume 2,1 fois la normale"
   },
   {
    "ticker": "UMC",
    "name": "United Microelectronics",
    "currency": "USD",
-   "price": 23.97,
-   "chg_1d": -0.0876,
-   "rvol": 2.755,
-   "score": 24.78,
+   "price": 23.92,
+   "chg_1d": -0.0895,
+   "rvol": 2.88,
+   "score": 25.08,
    "breakout": false,
    "triggers": [
     "rvol"
    ],
-   "reason": "volume en hausse 3 séances d'affilée, volume 2,8 fois la normale"
+   "reason": "volume en hausse 3 séances d'affilée, volume 2,9 fois la normale"
+  },
+  {
+   "ticker": "SU.PA",
+   "name": "Schneider Electric",
+   "currency": "EUR",
+   "price": 272.8,
+   "chg_1d": -0.0997,
+   "rvol": 3.247,
+   "score": 13.88,
+   "breakout": false,
+   "triggers": [
+    "rvol"
+   ],
+   "reason": "volume 3,2 fois la normale"
   }
  ]
 }
