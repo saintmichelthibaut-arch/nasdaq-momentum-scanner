@@ -1,5 +1,5 @@
 {
- "generated_at_utc": "2026-10-07T00:01:55+00:00",
+ "generated_at_utc": "2026-10-07T14:10:20+00:00",
  "market_date": {
   "US": "2026-10-06",
   "EU": "2026-10-06"
@@ -13,59 +13,29 @@
  },
  "alerts": [
   {
-   "ticker": "NU",
-   "name": "Nu Holdings",
-   "currency": "USD",
-   "price": 15.66,
-   "chg_1d": 0.0316,
-   "rvol": 3.174,
-   "score": 71.63,
-   "breakout": false,
-   "triggers": [
-    "rvol",
-    "volume_accel"
-   ],
-   "reason": "le volume accélère depuis 2 séances, volume 3,2 fois la normale, plafond à 3,6 % (16,22)"
-  },
-  {
    "ticker": "VST",
    "name": "Vistra",
    "currency": "USD",
-   "price": 160.48,
-   "chg_1d": 0.1076,
-   "rvol": 3.102,
-   "score": 71.62,
+   "price": 160.5,
+   "chg_1d": 0.1077,
+   "rvol": 3.275,
+   "score": 71.74,
    "breakout": true,
    "triggers": [
     "rvol",
     "breakout_volume",
     "volume_accel"
    ],
-   "reason": "le volume accélère régulièrement, volume 3,1 fois la normale, cassure du plus haut 20 séances à 154,65"
-  },
-  {
-   "ticker": "S",
-   "name": "SentinelOne",
-   "currency": "USD",
-   "price": 25.805,
-   "chg_1d": 0.0147,
-   "rvol": 2.439,
-   "score": 70.68,
-   "breakout": true,
-   "triggers": [
-    "rvol",
-    "breakout_volume"
-   ],
-   "reason": "volume 2,4 fois la normale, cassure du plus haut 52 semaines à 25,75"
+   "reason": "le volume accélère régulièrement, volume 3,3 fois la normale, cassure du plus haut 20 séances à 154,65"
   },
   {
    "ticker": "DIOD",
    "name": "Diodes",
    "currency": "USD",
-   "price": 107.85,
-   "chg_1d": 0.0417,
-   "rvol": 1.704,
-   "score": 68.74,
+   "price": 107.74,
+   "chg_1d": 0.0407,
+   "rvol": 1.898,
+   "score": 69.99,
    "breakout": true,
    "triggers": [
     "breakout_volume"
@@ -76,96 +46,67 @@
    "ticker": "CEG",
    "name": "Constellation Energy",
    "currency": "USD",
-   "price": 300.16,
-   "chg_1d": 0.1216,
-   "rvol": 3.881,
-   "score": 62.1,
+   "price": 300.4,
+   "chg_1d": 0.1225,
+   "rvol": 4.354,
+   "score": 62.44,
    "breakout": false,
    "triggers": [
     "rvol"
    ],
-   "reason": "volume 3,9 fois la normale, plafond à 1,9 % (305,80)"
+   "reason": "volume 4,4 fois la normale, plafond à 1,8 % (305,80)"
   },
   {
    "ticker": "TLN",
    "name": "Talen Energy",
    "currency": "USD",
-   "price": 373.04,
-   "chg_1d": 0.1241,
-   "rvol": 2.962,
-   "score": 58.96,
+   "price": 373.11,
+   "chg_1d": 0.1243,
+   "rvol": 3.147,
+   "score": 59.16,
    "breakout": true,
    "triggers": [
     "rvol"
    ],
-   "reason": "volume 3,0 fois la normale"
-  },
-  {
-   "ticker": "NVDA",
-   "name": "NVIDIA",
-   "currency": "USD",
-   "price": 239.17,
-   "chg_1d": 0.0011,
-   "rvol": 2.359,
-   "score": 56.75,
-   "breakout": true,
-   "triggers": [
-    "rvol"
-   ],
-   "reason": "le volume accélère régulièrement, volume 2,4 fois la normale, plafond à 0,4 % (240,10)"
+   "reason": "volume 3,1 fois la normale"
   },
   {
    "ticker": "CIEN",
    "name": "Ciena",
    "currency": "USD",
-   "price": 443.66,
+   "price": 443.65,
    "chg_1d": 0.1385,
-   "rvol": 2.284,
-   "score": 56.35,
+   "rvol": 2.474,
+   "score": 57.18,
    "breakout": true,
    "triggers": [
     "rvol",
     "breakout_volume"
    ],
-   "reason": "volume 2,3 fois la normale, cassure du plus haut 20 séances à 397,47"
+   "reason": "volume 2,5 fois la normale, cassure du plus haut 20 séances à 397,47"
   },
   {
-   "ticker": "NBIS",
-   "name": "Nebius Group",
+   "ticker": "ALAB",
+   "name": "Astera Labs",
    "currency": "USD",
-   "price": 249.78,
-   "chg_1d": 0.074,
-   "rvol": 2.77,
-   "score": 53.04,
-   "breakout": false,
-   "triggers": [
-    "rvol"
-   ],
-   "reason": "volume 2,8 fois la normale"
-  },
-  {
-   "ticker": "MRVL",
-   "name": "Marvell Technology",
-   "currency": "USD",
-   "price": 287.19,
-   "chg_1d": 0.0588,
-   "rvol": 3.506,
-   "score": 52.12,
+   "price": 389.8,
+   "chg_1d": 0.0758,
+   "rvol": 1.596,
+   "score": 54.35,
    "breakout": true,
    "triggers": [
-    "rvol",
     "breakout_volume"
    ],
-   "reason": "volume 3,5 fois la normale, cassure du plus haut 50 séances à 280,00"
+   "reason": "cassure du plus haut 50 séances à 377,87"
   },
   {
    "ticker": "FN",
    "name": "Fabrinet",
    "currency": "USD",
-   "price": 489.385,
-   "chg_1d": 0.0783,
-   "rvol": 1.769,
-   "score": 50.65,
+   "price": 489.16,
+   "chg_1d": 0.0778,
+   "rvol": 1.913,
+   "score": 51.8,
    "breakout": true,
    "triggers": [
     "breakout_volume"
@@ -173,117 +114,34 @@
    "reason": "cassure du plus haut 20 séances à 468,45"
   },
   {
-   "ticker": "TSLA",
-   "name": "Tesla",
+   "ticker": "MRVL",
+   "name": "Marvell Technology",
    "currency": "USD",
-   "price": 380.675,
-   "chg_1d": 0.0051,
-   "rvol": 2.832,
-   "score": 43.99,
-   "breakout": false,
-   "triggers": [
-    "rvol"
-   ],
-   "reason": "volume 2,8 fois la normale, plafond à 6,8 % (406,59)"
-  },
-  {
-   "ticker": "AAOI",
-   "name": "Applied Optoelectronics",
-   "currency": "USD",
-   "price": 130.16,
-   "chg_1d": 0.0707,
-   "rvol": 2.367,
-   "score": 42.94,
+   "price": 287.01,
+   "chg_1d": 0.0581,
+   "rvol": 2.961,
+   "score": 51.61,
    "breakout": true,
    "triggers": [
-    "rvol"
-   ],
-   "reason": "le volume accélère régulièrement, volume 2,4 fois la normale"
-  },
-  {
-   "ticker": "AVGO",
-   "name": "Broadcom",
-   "currency": "USD",
-   "price": 375.91,
-   "chg_1d": 0.037,
-   "rvol": 1.55,
-   "score": 38.86,
-   "breakout": true,
-   "triggers": [
+    "rvol",
     "breakout_volume"
    ],
-   "reason": "cassure du plus haut 20 séances à 372,02"
+   "reason": "volume 3,0 fois la normale, cassure du plus haut 50 séances à 280,00"
   },
   {
-   "ticker": "UMC",
-   "name": "United Microelectronics",
-   "currency": "USD",
-   "price": 23.17,
-   "chg_1d": -0.0314,
-   "rvol": 2.136,
-   "score": 24.51,
+   "ticker": "SU.PA",
+   "name": "Schneider Electric",
+   "currency": "EUR",
+   "price": 260.5,
+   "chg_1d": -0.0451,
+   "rvol": 2.841,
+   "score": 24.49,
    "breakout": false,
    "triggers": [
     "rvol",
     "volume_accel"
    ],
-   "reason": "le volume accélère régulièrement, volume 2,1 fois la normale"
-  },
-  {
-   "ticker": "AEHR",
-   "name": "Aehr Test Systems",
-   "currency": "USD",
-   "price": 92.1552,
-   "chg_1d": -0.1173,
-   "rvol": 2.223,
-   "score": 22.23,
-   "breakout": false,
-   "triggers": [
-    "rvol"
-   ],
-   "reason": "volume 2,2 fois la normale"
-  },
-  {
-   "ticker": "SE",
-   "name": "Sea Limited",
-   "currency": "USD",
-   "price": 96.49,
-   "chg_1d": -0.0037,
-   "rvol": 3.316,
-   "score": 22.2,
-   "breakout": false,
-   "triggers": [
-    "rvol"
-   ],
-   "reason": "volume 3,3 fois la normale"
-  },
-  {
-   "ticker": "BBAI",
-   "name": "BigBear.ai",
-   "currency": "USD",
-   "price": 2.585,
-   "chg_1d": -0.0096,
-   "rvol": 2.934,
-   "score": 16.84,
-   "breakout": false,
-   "triggers": [
-    "rvol"
-   ],
-   "reason": "le volume accélère régulièrement, volume 2,9 fois la normale"
-  },
-  {
-   "ticker": "WDC",
-   "name": "Western Digital",
-   "currency": "USD",
-   "price": 411.09,
-   "chg_1d": -0.0692,
-   "rvol": 2.136,
-   "score": 15.21,
-   "breakout": false,
-   "triggers": [
-    "rvol"
-   ],
-   "reason": "volume 2,1 fois la normale"
+   "reason": "le volume accélère régulièrement, volume 2,8 fois la normale"
   }
  ]
 }
