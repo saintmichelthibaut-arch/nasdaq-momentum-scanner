@@ -1,5 +1,5 @@
 {
- "generated_at_utc": "2026-10-08T00:21:40+00:00",
+ "generated_at_utc": "2026-10-08T14:19:51+00:00",
  "market_date": {
   "US": "2026-10-07",
   "EU": "2026-10-07"
@@ -16,118 +16,72 @@
    "ticker": "VST",
    "name": "Vistra",
    "currency": "USD",
-   "price": 166.66,
-   "chg_1d": 0.0384,
-   "rvol": 3.672,
-   "score": 76.09,
+   "price": 166.72,
+   "chg_1d": 0.0388,
+   "rvol": 1.972,
+   "score": 66.33,
    "breakout": true,
    "triggers": [
-    "score",
-    "rvol",
-    "breakout_volume",
-    "volume_accel"
-   ],
-   "reason": "le volume accélère depuis 2 séances, volume 3,7 fois la normale, cassure du plus haut 50 séances à 162,69, score passé de 72 à 76"
-  },
-  {
-   "ticker": "MRVL",
-   "name": "Marvell Technology",
-   "currency": "USD",
-   "price": 284.73,
-   "chg_1d": -0.0079,
-   "rvol": 3.706,
-   "score": 64.0,
-   "breakout": true,
-   "triggers": [
-    "rvol",
-    "volume_accel"
-   ],
-   "reason": "le volume accélère depuis 2 séances, volume 3,7 fois la normale, plafond à 5,8 % (301,27)"
-  },
-  {
-   "ticker": "NVDA",
-   "name": "NVIDIA",
-   "currency": "USD",
-   "price": 237.36,
-   "chg_1d": -0.0079,
-   "rvol": 4.373,
-   "score": 63.54,
-   "breakout": false,
-   "triggers": [
-    "rvol"
-   ],
-   "reason": "le volume accélère régulièrement, volume 4,4 fois la normale, plafond à 2,5 % (243,37)"
-  },
-  {
-   "ticker": "AMZN",
-   "name": "Amazon",
-   "currency": "USD",
-   "price": 259.88,
-   "chg_1d": 0.014,
-   "rvol": 2.126,
-   "score": 47.26,
-   "breakout": true,
-   "triggers": [
-    "rvol",
     "breakout_volume"
    ],
-   "reason": "volume 2,1 fois la normale, cassure du plus haut 20 séances à 259,49"
+   "reason": "le volume accélère régulièrement, cassure du plus haut 50 séances à 162,69"
   },
   {
-   "ticker": "GOOGL",
-   "name": "Alphabet",
+   "ticker": "CEG",
+   "name": "Constellation Energy",
    "currency": "USD",
-   "price": 350.37,
-   "chg_1d": 0.0077,
-   "rvol": 2.582,
-   "score": 40.26,
+   "price": 299.59,
+   "chg_1d": -0.0027,
+   "rvol": 2.067,
+   "score": 61.94,
    "breakout": false,
    "triggers": [
     "rvol"
    ],
-   "reason": "volume 2,6 fois la normale, plafond à 9,7 % (384,23)"
+   "reason": "le volume accélère régulièrement, volume 2,1 fois la normale, plafond à 3,4 % (309,80)"
   },
   {
-   "ticker": "SPOT",
-   "name": "Spotify",
+   "ticker": "TLN",
+   "name": "Talen Energy",
    "currency": "USD",
-   "price": 512.83,
-   "chg_1d": 0.0506,
-   "rvol": 2.807,
-   "score": 35.38,
-   "breakout": false,
+   "price": 378.32,
+   "chg_1d": 0.014,
+   "rvol": 1.558,
+   "score": 57.54,
+   "breakout": true,
    "triggers": [
-    "rvol"
+    "breakout_volume"
    ],
-   "reason": "volume 2,8 fois la normale"
+   "reason": "cassure du plus haut 50 séances à 377,99"
   },
   {
-   "ticker": "RBLX",
-   "name": "Roblox",
-   "currency": "USD",
-   "price": 46.43,
-   "chg_1d": 0.0191,
-   "rvol": 2.383,
-   "score": 30.72,
+   "ticker": "SU.PA",
+   "name": "Schneider Electric",
+   "currency": "EUR",
+   "price": 254.55,
+   "chg_1d": -0.0228,
+   "rvol": 2.35,
+   "score": 24.05,
    "breakout": false,
    "triggers": [
-    "rvol"
+    "rvol",
+    "volume_accel"
    ],
-   "reason": "volume en hausse 3 séances d'affilée, volume 2,4 fois la normale"
+   "reason": "le volume accélère régulièrement, volume 2,4 fois la normale"
   },
   {
    "ticker": "APLD",
    "name": "Applied Digital",
    "currency": "USD",
-   "price": 23.83,
-   "chg_1d": -0.0596,
-   "rvol": 2.079,
-   "score": 17.53,
+   "price": 23.81,
+   "chg_1d": -0.0604,
+   "rvol": 2.801,
+   "score": 22.32,
    "breakout": false,
    "triggers": [
     "rvol"
    ],
-   "reason": "le volume accélère régulièrement, volume 2,1 fois la normale"
+   "reason": "le volume accélère régulièrement, volume 2,8 fois la normale"
   }
  ]
 }
