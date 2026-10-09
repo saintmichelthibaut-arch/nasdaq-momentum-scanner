@@ -1,8 +1,8 @@
 {
- "generated_at_utc": "2026-10-08T14:19:51+00:00",
+ "generated_at_utc": "2026-10-09T00:35:36+00:00",
  "market_date": {
-  "US": "2026-10-07",
-  "EU": "2026-10-07"
+  "US": "2026-10-08",
+  "EU": "2026-10-08"
  },
  "profile": "swing",
  "rules": {
@@ -13,75 +13,243 @@
  },
  "alerts": [
   {
-   "ticker": "VST",
-   "name": "Vistra",
+   "ticker": "U",
+   "name": "Unity Software",
    "currency": "USD",
-   "price": 166.72,
-   "chg_1d": 0.0388,
-   "rvol": 1.972,
-   "score": 66.33,
+   "price": 45.85,
+   "chg_1d": 0.009,
+   "rvol": 2.94,
+   "score": 74.02,
+   "breakout": true,
+   "triggers": [
+    "rvol"
+   ],
+   "reason": "le volume accélère depuis 4 séances, volume 2,9 fois la normale, plafond à 5,7 % (48,46)"
+  },
+  {
+   "ticker": "FN",
+   "name": "Fabrinet",
+   "currency": "USD",
+   "price": 487.36,
+   "chg_1d": -0.0213,
+   "rvol": 2.255,
+   "score": 63.47,
+   "breakout": true,
+   "triggers": [
+    "rvol"
+   ],
+   "reason": "le volume accélère régulièrement, volume 2,3 fois la normale"
+  },
+  {
+   "ticker": "CIEN",
+   "name": "Ciena",
+   "currency": "USD",
+   "price": 425.73,
+   "chg_1d": -0.0464,
+   "rvol": 2.109,
+   "score": 60.97,
+   "breakout": true,
+   "triggers": [
+    "rvol"
+   ],
+   "reason": "volume 2,1 fois la normale, plafond à 8,7 % (462,69)"
+  },
+  {
+   "ticker": "PLTR",
+   "name": "Palantir",
+   "currency": "USD",
+   "price": 198.72,
+   "chg_1d": 0.0237,
+   "rvol": 1.759,
+   "score": 57.86,
    "breakout": true,
    "triggers": [
     "breakout_volume"
    ],
-   "reason": "le volume accélère régulièrement, cassure du plus haut 50 séances à 162,69"
+   "reason": "cassure du plus haut 100 séances à 194,78"
   },
   {
-   "ticker": "CEG",
-   "name": "Constellation Energy",
+   "ticker": "CPNG",
+   "name": "Coupang",
    "currency": "USD",
-   "price": 299.59,
-   "chg_1d": -0.0027,
-   "rvol": 2.067,
-   "score": 61.94,
+   "price": 15.42,
+   "chg_1d": 0.0412,
+   "rvol": 1.75,
+   "score": 45.71,
+   "breakout": true,
+   "triggers": [
+    "breakout_volume"
+   ],
+   "reason": "cassure du plus haut 20 séances à 15,26"
+  },
+  {
+   "ticker": "ALAB",
+   "name": "Astera Labs",
+   "currency": "USD",
+   "price": 346.9,
+   "chg_1d": -0.0925,
+   "rvol": 2.179,
+   "score": 37.81,
    "breakout": false,
    "triggers": [
     "rvol"
    ],
-   "reason": "le volume accélère régulièrement, volume 2,1 fois la normale, plafond à 3,4 % (309,80)"
+   "reason": "le volume accélère régulièrement, volume 2,2 fois la normale"
   },
   {
-   "ticker": "TLN",
-   "name": "Talen Energy",
+   "ticker": "GOOGL",
+   "name": "Alphabet",
    "currency": "USD",
-   "price": 378.32,
-   "chg_1d": 0.014,
-   "rvol": 1.558,
-   "score": 57.54,
-   "breakout": true,
-   "triggers": [
-    "breakout_volume"
-   ],
-   "reason": "cassure du plus haut 50 séances à 377,99"
-  },
-  {
-   "ticker": "SU.PA",
-   "name": "Schneider Electric",
-   "currency": "EUR",
-   "price": 254.55,
-   "chg_1d": -0.0228,
-   "rvol": 2.35,
-   "score": 24.05,
+   "price": 348.3,
+   "chg_1d": -0.0063,
+   "rvol": 2.405,
+   "score": 35.36,
    "breakout": false,
    "triggers": [
-    "rvol",
-    "volume_accel"
+    "rvol"
    ],
-   "reason": "le volume accélère régulièrement, volume 2,4 fois la normale"
+   "reason": "volume 2,4 fois la normale"
   },
   {
    "ticker": "APLD",
    "name": "Applied Digital",
    "currency": "USD",
-   "price": 23.81,
-   "chg_1d": -0.0604,
-   "rvol": 2.801,
-   "score": 22.32,
+   "price": 23.8501,
+   "chg_1d": 0.0017,
+   "rvol": 2.702,
+   "score": 34.36,
+   "breakout": false,
+   "triggers": [
+    "rvol",
+    "volume_accel"
+   ],
+   "reason": "le volume accélère depuis 2 séances, volume 2,7 fois la normale"
+  },
+  {
+   "ticker": "GFS",
+   "name": "GlobalFoundries",
+   "currency": "USD",
+   "price": 49.4,
+   "chg_1d": 0.0277,
+   "rvol": 2.561,
+   "score": 33.49,
    "breakout": false,
    "triggers": [
     "rvol"
    ],
-   "reason": "le volume accélère régulièrement, volume 2,8 fois la normale"
+   "reason": "volume 2,6 fois la normale"
+  },
+  {
+   "ticker": "NVDA",
+   "name": "NVIDIA",
+   "currency": "USD",
+   "price": 230.57,
+   "chg_1d": -0.0291,
+   "rvol": 2.565,
+   "score": 28.42,
+   "breakout": false,
+   "triggers": [
+    "rvol"
+   ],
+   "reason": "volume 2,6 fois la normale, plafond à 5,5 % (243,37)"
+  },
+  {
+   "ticker": "TSM",
+   "name": "Taiwan Semiconductor",
+   "currency": "USD",
+   "price": 458.05,
+   "chg_1d": -0.03,
+   "rvol": 2.522,
+   "score": 27.09,
+   "breakout": false,
+   "triggers": [
+    "rvol"
+   ],
+   "reason": "volume 2,5 fois la normale, plafond à 6,4 % (487,47)"
+  },
+  {
+   "ticker": "SNOW",
+   "name": "Snowflake",
+   "currency": "USD",
+   "price": 343.56,
+   "chg_1d": 0.0322,
+   "rvol": 2.264,
+   "score": 26.49,
+   "breakout": false,
+   "triggers": [
+    "rvol"
+   ],
+   "reason": "volume 2,3 fois la normale"
+  },
+  {
+   "ticker": "ASML",
+   "name": "ASML Holding",
+   "currency": "USD",
+   "price": 1770.29,
+   "chg_1d": -0.0192,
+   "rvol": 2.27,
+   "score": 24.94,
+   "breakout": false,
+   "triggers": [
+    "rvol"
+   ],
+   "reason": "volume 2,3 fois la normale, plafond à 7,1 % (1 896,35)"
+  },
+  {
+   "ticker": "COHR",
+   "name": "Coherent",
+   "currency": "USD",
+   "price": 302.33,
+   "chg_1d": -0.0963,
+   "rvol": 3.553,
+   "score": 19.59,
+   "breakout": false,
+   "triggers": [
+    "rvol"
+   ],
+   "reason": "volume 3,6 fois la normale"
+  },
+  {
+   "ticker": "AAOI",
+   "name": "Applied Optoelectronics",
+   "currency": "USD",
+   "price": 105.97,
+   "chg_1d": -0.1352,
+   "rvol": 2.183,
+   "score": 18.26,
+   "breakout": false,
+   "triggers": [
+    "rvol"
+   ],
+   "reason": "volume 2,2 fois la normale"
+  },
+  {
+   "ticker": "IREN",
+   "name": "IREN",
+   "currency": "USD",
+   "price": 35.7246,
+   "chg_1d": -0.0766,
+   "rvol": 2.388,
+   "score": 14.36,
+   "breakout": false,
+   "triggers": [
+    "rvol"
+   ],
+   "reason": "le volume accélère depuis 3 séances, volume 2,4 fois la normale"
+  },
+  {
+   "ticker": "WULF",
+   "name": "TeraWulf",
+   "currency": "USD",
+   "price": 13.65,
+   "chg_1d": -0.0521,
+   "rvol": 2.324,
+   "score": 8.96,
+   "breakout": false,
+   "triggers": [
+    "rvol"
+   ],
+   "reason": "volume 2,3 fois la normale"
   }
  ]
 }
