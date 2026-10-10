@@ -1,8 +1,8 @@
 {
- "generated_at_utc": "2026-10-09T14:04:44+00:00",
+ "generated_at_utc": "2026-10-10T00:17:21+00:00",
  "market_date": {
-  "US": "2026-10-08",
-  "EU": "2026-10-08"
+  "US": "2026-10-09",
+  "EU": "2026-10-09"
  },
  "profile": "swing",
  "rules": {
@@ -13,75 +13,207 @@
  },
  "alerts": [
   {
+   "ticker": "SNOW",
+   "name": "Snowflake",
+   "currency": "USD",
+   "price": 368.92,
+   "chg_1d": 0.0743,
+   "rvol": 4.356,
+   "score": 76.5,
+   "breakout": true,
+   "triggers": [
+    "score",
+    "rvol",
+    "breakout_volume"
+   ],
+   "reason": "volume 4,4 fois la normale, cassure du plus haut 20 séances à 349,00, score passé de 21 à 76"
+  },
+  {
    "ticker": "PLTR",
    "name": "Palantir",
    "currency": "USD",
-   "price": 198.78,
-   "chg_1d": 0.024,
-   "rvol": 1.905,
-   "score": 58.84,
+   "price": 209.065,
+   "chg_1d": 0.0517,
+   "rvol": 3.384,
+   "score": 74.24,
+   "breakout": true,
+   "triggers": [
+    "rvol",
+    "breakout_volume",
+    "volume_accel"
+   ],
+   "reason": "le volume accélère depuis 2 séances, volume 3,4 fois la normale, cassure du plus haut 52 semaines à 207,52"
+  },
+  {
+   "ticker": "SNAP",
+   "name": "Snap",
+   "currency": "USD",
+   "price": 6.235,
+   "chg_1d": 0.064,
+   "rvol": 2.543,
+   "score": 65.63,
+   "breakout": true,
+   "triggers": [
+    "rvol",
+    "breakout_volume"
+   ],
+   "reason": "volume 2,5 fois la normale, cassure du plus haut 100 séances à 6,19"
+  },
+  {
+   "ticker": "VST",
+   "name": "Vistra",
+   "currency": "USD",
+   "price": 161.46,
+   "chg_1d": 0.0341,
+   "rvol": 2.048,
+   "score": 64.02,
+   "breakout": true,
+   "triggers": [
+    "rvol"
+   ],
+   "reason": "volume 2,0 fois la normale, plafond à 5,0 % (169,48)"
+  },
+  {
+   "ticker": "CIEN",
+   "name": "Ciena",
+   "currency": "USD",
+   "price": 449.75,
+   "chg_1d": 0.0559,
+   "rvol": 1.504,
+   "score": 62.29,
    "breakout": true,
    "triggers": [
     "breakout_volume"
    ],
-   "reason": "cassure du plus haut 100 séances à 194,78"
+   "reason": "cassure du plus haut 20 séances à 448,00"
   },
   {
-   "ticker": "CPNG",
-   "name": "Coupang",
+   "ticker": "V",
+   "name": "Visa",
    "currency": "USD",
-   "price": 15.41,
-   "chg_1d": 0.0405,
-   "rvol": 1.741,
-   "score": 45.58,
+   "price": 385.52,
+   "chg_1d": 0.0278,
+   "rvol": 1.731,
+   "score": 55.74,
    "breakout": true,
    "triggers": [
     "breakout_volume"
    ],
-   "reason": "cassure du plus haut 20 séances à 15,26"
+   "reason": "volume en hausse 3 séances d'affilée, cassure du plus haut 20 séances à 379,99"
   },
   {
-   "ticker": "APLD",
-   "name": "Applied Digital",
+   "ticker": "TSLA",
+   "name": "Tesla",
    "currency": "USD",
-   "price": 23.85,
-   "chg_1d": 0.0017,
-   "rvol": 2.946,
-   "score": 35.21,
+   "price": 382.71,
+   "chg_1d": 0.0206,
+   "rvol": 2.237,
+   "score": 43.05,
+   "breakout": false,
+   "triggers": [
+    "rvol"
+   ],
+   "reason": "volume 2,2 fois la normale, plafond à 3,3 % (395,31)"
+  },
+  {
+   "ticker": "AAPL",
+   "name": "Apple",
+   "currency": "USD",
+   "price": 336.63,
+   "chg_1d": -0.0111,
+   "rvol": 3.246,
+   "score": 38.16,
+   "breakout": false,
+   "triggers": [
+    "rvol"
+   ],
+   "reason": "volume en hausse 3 séances d'affilée, volume 3,2 fois la normale, plafond à 2,6 % (345,34)"
+  },
+  {
+   "ticker": "ACHR",
+   "name": "Archer Aviation",
+   "currency": "USD",
+   "price": 4.975,
+   "chg_1d": 0.054,
+   "rvol": 2.96,
+   "score": 34.57,
    "breakout": false,
    "triggers": [
     "rvol",
     "volume_accel"
    ],
-   "reason": "le volume accélère depuis 2 séances, volume 2,9 fois la normale"
+   "reason": "le volume accélère régulièrement, volume 3,0 fois la normale"
   },
   {
-   "ticker": "GFS",
-   "name": "GlobalFoundries",
+   "ticker": "NVDA",
+   "name": "NVIDIA",
    "currency": "USD",
-   "price": 49.36,
-   "chg_1d": 0.0268,
-   "rvol": 2.779,
-   "score": 34.44,
+   "price": 229.34,
+   "chg_1d": -0.0049,
+   "rvol": 3.97,
+   "score": 32.93,
    "breakout": false,
    "triggers": [
     "rvol"
    ],
-   "reason": "volume 2,8 fois la normale"
+   "reason": "volume 4,0 fois la normale, plafond à 6,1 % (243,37)"
   },
   {
-   "ticker": "AAOI",
-   "name": "Applied Optoelectronics",
+   "ticker": "SE",
+   "name": "Sea Limited",
    "currency": "USD",
-   "price": 105.9,
-   "chg_1d": -0.1358,
-   "rvol": 2.431,
-   "score": 19.45,
+   "price": 95.28,
+   "chg_1d": 0.0257,
+   "rvol": 2.79,
+   "score": 25.22,
    "breakout": false,
    "triggers": [
     "rvol"
    ],
-   "reason": "le volume accélère régulièrement, volume 2,4 fois la normale"
+   "reason": "le volume accélère depuis 2 séances, volume 2,8 fois la normale"
+  },
+  {
+   "ticker": "ASTS",
+   "name": "AST SpaceMobile",
+   "currency": "USD",
+   "price": 50.9678,
+   "chg_1d": -0.1047,
+   "rvol": 4.637,
+   "score": 24.68,
+   "breakout": false,
+   "triggers": [
+    "rvol",
+    "volume_accel"
+   ],
+   "reason": "le volume accélère depuis 2 séances, volume 4,6 fois la normale"
+  },
+  {
+   "ticker": "MU",
+   "name": "Micron Technology",
+   "currency": "USD",
+   "price": 1028.135,
+   "chg_1d": -0.0074,
+   "rvol": 1.946,
+   "score": 21.82,
+   "breakout": false,
+   "triggers": [
+    "volume_accel"
+   ],
+   "reason": "le volume accélère régulièrement, plafond à 7,8 % (1 108,72)"
+  },
+  {
+   "ticker": "JOBY",
+   "name": "Joby Aviation",
+   "currency": "USD",
+   "price": 5.435,
+   "chg_1d": -0.0548,
+   "rvol": 4.012,
+   "score": 16.55,
+   "breakout": false,
+   "triggers": [
+    "rvol"
+   ],
+   "reason": "le volume accélère depuis 3 séances, volume 4,0 fois la normale"
   }
  ]
 }
