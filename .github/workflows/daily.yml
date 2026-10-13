@@ -134,7 +134,9 @@ jobs:
           fi
           git commit -m "données du $(date -u +%Y-%m-%d) (collecte automatique)"
           for i in 1 2 3 4; do
-            git pull --rebase --autostash origin "${GITHUB_REF_NAME}" && git push origin "HEAD:${GITHUB_REF_NAME}" && exit 0
+            # en cas de conflit sur les fichiers de données, nos données (les plus récentes) l'emportent
+            git pull --rebase --autostash -X theirs origin "${GITHUB_REF_NAME}" && git push origin "HEAD:${GITHUB_REF_NAME}" && exit 0
+            git rebase --abort 2>/dev/null || true
             sleep $((i * 5))
           done
           exit 1
