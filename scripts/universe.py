@@ -243,7 +243,6 @@ UNIVERSE = {
     "TDG": ("TransDigm", "Defense", "core"),
     "PL": ("Planet Labs", "Space", "core"),
     "RDW": ("Redwire", "Space", "core"),
-    "SATS": ("EchoStar", "Space", "core"),
     "IRDM": ("Iridium", "Space", "core"),
     "GSAT": ("Globalstar", "Space", "core"),
     "CCJ": ("Cameco", "Nuclear", "core"),
