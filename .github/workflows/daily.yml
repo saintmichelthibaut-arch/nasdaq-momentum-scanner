@@ -24,6 +24,7 @@ permissions:
   contents: write
   pages: write
   id-token: write
+  actions: write
 
 concurrency:
   group: collect
@@ -49,6 +50,22 @@ jobs:
         with:
           path: .vapid
           key: vapid-key-v1
+
+      - name: Débloquer les lancements coincés « en attente » depuis plus de 90 min
+        # GitHub laisse parfois un lancement en attente indéfiniment : il bloque alors
+        # toutes les mises en ligne suivantes (c'est arrivé du 1er au 13 octobre).
+        continue-on-error: true
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          for st in pending queued waiting; do
+            gh api "repos/${GITHUB_REPOSITORY}/actions/runs?status=${st}&per_page=50" \
+              --jq ".workflow_runs[] | select(.id != ${GITHUB_RUN_ID}) | select((now - (.created_at | fromdateiso8601)) > 5400) | .id" \
+            | while read -r id; do
+                echo "lancement ${id} coincé depuis plus de 90 min : annulation"
+                gh api -X POST "repos/${GITHUB_REPOSITORY}/actions/runs/${id}/cancel" || true
+              done
+          done
 
       - name: Tests des formules
         run: python -m unittest discover -s scripts/tests -v
