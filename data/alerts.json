@@ -1,8 +1,8 @@
 {
- "generated_at_utc": "2026-10-10T12:36:42+00:00",
+ "generated_at_utc": "2026-10-13T02:12:47+00:00",
  "market_date": {
-  "US": "2026-10-09",
-  "EU": "2026-10-09"
+  "US": "2026-10-12",
+  "EU": "2026-10-12"
  },
  "profile": "swing",
  "rules": {
@@ -13,62 +13,18 @@
  },
  "alerts": [
   {
-   "ticker": "SNOW",
-   "name": "Snowflake",
+   "ticker": "AI",
+   "name": "C3.ai",
    "currency": "USD",
-   "price": 368.89,
-   "chg_1d": 0.0742,
-   "rvol": 2.001,
-   "score": 68.02,
+   "price": 11.61,
+   "chg_1d": 0.0069,
+   "rvol": 2.627,
+   "score": 50.85,
    "breakout": true,
    "triggers": [
-    "rvol",
-    "breakout_volume"
+    "rvol"
    ],
-   "reason": "volume 2,0 fois la normale, cassure du plus haut 20 séances à 349,00"
-  },
-  {
-   "ticker": "PLTR",
-   "name": "Palantir",
-   "currency": "USD",
-   "price": 209.05,
-   "chg_1d": 0.0517,
-   "rvol": 1.632,
-   "score": 61.02,
-   "breakout": true,
-   "triggers": [
-    "breakout_volume"
-   ],
-   "reason": "cassure du plus haut 52 semaines à 207,52"
-  },
-  {
-   "ticker": "SNAP",
-   "name": "Snap",
-   "currency": "USD",
-   "price": 6.23,
-   "chg_1d": 0.0631,
-   "rvol": 1.505,
-   "score": 55.04,
-   "breakout": true,
-   "triggers": [
-    "breakout_volume"
-   ],
-   "reason": "cassure du plus haut 100 séances à 6,19"
-  },
-  {
-   "ticker": "ASTS",
-   "name": "AST SpaceMobile",
-   "currency": "USD",
-   "price": 50.965,
-   "chg_1d": -0.1048,
-   "rvol": 4.861,
-   "score": 24.73,
-   "breakout": false,
-   "triggers": [
-    "rvol",
-    "volume_accel"
-   ],
-   "reason": "le volume accélère depuis 2 séances, volume 4,9 fois la normale"
+   "reason": "volume en hausse 3 séances d'affilée, volume 2,6 fois la normale, plafond à 1,2 % (11,75)"
   }
  ]
 }
