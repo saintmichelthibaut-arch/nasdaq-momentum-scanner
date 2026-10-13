@@ -18,6 +18,11 @@ SECTORS = [
     "Software",
     "Quantum",
     "Power/Energy",
+    "Nuclear",
+    "Industrial/Infra",
+    "Defense",
+    "Space",
+    "Robotics",
     "Other",
 ]
 
@@ -190,8 +195,8 @@ UNIVERSE = {
     "CEG": ("Constellation Energy", "Power/Energy", "core"),
     "GEV": ("GE Vernova", "Power/Energy", "core"),
     "TLN": ("Talen Energy", "Power/Energy", "core"),
-    "OKLO": ("Oklo", "Power/Energy", "core"),
-    "SMR": ("NuScale Power", "Power/Energy", "core"),
+    "OKLO": ("Oklo", "Nuclear", "core"),
+    "SMR": ("NuScale Power", "Nuclear", "core"),
     "FSLR": ("First Solar", "Power/Energy", "core"),
     "ENPH": ("Enphase Energy", "Power/Energy", "core"),
     "FLNC": ("Fluence Energy", "Power/Energy", "core"),
@@ -213,21 +218,83 @@ UNIVERSE = {
     "RDDT": ("Reddit", "Other", "core"),
     "PINS": ("Pinterest", "Other", "core"),
     "SNAP": ("Snap", "Other", "core"),
-    "ASTS": ("AST SpaceMobile", "Other", "core"),
-    "RKLB": ("Rocket Lab", "Other", "core"),
-    "LUNR": ("Intuitive Machines", "Other", "core"),
+    "ASTS": ("AST SpaceMobile", "Space", "core"),
+    "RKLB": ("Rocket Lab", "Space", "core"),
+    "LUNR": ("Intuitive Machines", "Space", "core"),
     "JOBY": ("Joby Aviation", "Other", "core"),
     "ACHR": ("Archer Aviation", "Other", "core"),
     "GRAB": ("Grab", "Other", "core"),
     "TOST": ("Toast", "Other", "core"),
     "CPNG": ("Coupang", "Other", "core"),
     "NU": ("Nu Holdings", "Other", "core"),
+    # ── secteurs ajoutés (défense, spatial, nucléaire, robotique, infrastructures) ──
+    "LMT": ("Lockheed Martin", "Defense", "core"),
+    "RTX": ("RTX", "Defense", "core"),
+    "NOC": ("Northrop Grumman", "Defense", "core"),
+    "GD": ("General Dynamics", "Defense", "core"),
+    "LHX": ("L3Harris", "Defense", "core"),
+    "KTOS": ("Kratos Defense", "Defense", "core"),
+    "AVAV": ("AeroVironment", "Defense", "core"),
+    "LDOS": ("Leidos", "Defense", "core"),
+    "HII": ("Huntington Ingalls", "Defense", "core"),
+    "AXON": ("Axon Enterprise", "Defense", "core"),
+    "CW": ("Curtiss-Wright", "Defense", "core"),
+    "BAH": ("Booz Allen Hamilton", "Defense", "core"),
+    "TDG": ("TransDigm", "Defense", "core"),
+    "PL": ("Planet Labs", "Space", "core"),
+    "RDW": ("Redwire", "Space", "core"),
+    "SATS": ("EchoStar", "Space", "core"),
+    "IRDM": ("Iridium", "Space", "core"),
+    "GSAT": ("Globalstar", "Space", "core"),
+    "CCJ": ("Cameco", "Nuclear", "core"),
+    "LEU": ("Centrus Energy", "Nuclear", "core"),
+    "BWXT": ("BWX Technologies", "Nuclear", "core"),
+    "NNE": ("Nano Nuclear Energy", "Nuclear", "core"),
+    "UEC": ("Uranium Energy", "Nuclear", "core"),
+    "ISRG": ("Intuitive Surgical", "Robotics", "core"),
+    "SYM": ("Symbotic", "Robotics", "core"),
+    "ROK": ("Rockwell Automation", "Robotics", "core"),
+    "ZBRA": ("Zebra Technologies", "Robotics", "core"),
+    "CGNX": ("Cognex", "Robotics", "core"),
+    "GLW": ("Corning", "Networking", "core"),
+    "APH": ("Amphenol", "Networking", "core"),
+    "IPGP": ("IPG Photonics", "Networking", "core"),
+    "TSEM": ("Tower Semiconductor", "Semiconductors", "core"),
+    "AKAM": ("Akamai", "Cloud", "core"),
+    "PWR": ("Quanta Services", "Industrial/Infra", "core"),
+    "MTZ": ("MasTec", "Industrial/Infra", "core"),
+    "EME": ("EMCOR", "Industrial/Infra", "core"),
+    "FIX": ("Comfort Systems USA", "Industrial/Infra", "core"),
+    "PRIM": ("Primoris", "Industrial/Infra", "core"),
+    "STRL": ("Sterling Infrastructure", "Industrial/Infra", "core"),
+    "DY": ("Dycom", "Industrial/Infra", "core"),
+    "TT": ("Trane Technologies", "Industrial/Infra", "core"),
+    "MOD": ("Modine", "Industrial/Infra", "core"),
+    "NVT": ("nVent Electric", "Industrial/Infra", "core"),
+    "HUBB": ("Hubbell", "Industrial/Infra", "core"),
+    "POWL": ("Powell Industries", "Industrial/Infra", "core"),
+    "HWM": ("Howmet Aerospace", "Industrial/Infra", "core"),
+    "ATI": ("ATI", "Industrial/Infra", "core"),
+    "CRS": ("Carpenter Technology", "Industrial/Infra", "core"),
+    "KEYS": ("Keysight", "Industrial/Infra", "core"),
+    "TDY": ("Teledyne", "Industrial/Infra", "core"),
+    "PH": ("Parker-Hannifin", "Industrial/Infra", "core"),
+    "NRG": ("NRG Energy", "Power/Energy", "core"),
+    "AMSC": ("American Superconductor", "Power/Energy", "core"),
 }
 
 # Indices de référence. QQQ = benchmark principal pour tous les titres.
 # ^FCHI (CAC 40) = benchmark local pour les titres cotés à Paris.
 BENCHMARK = "QQQ"
 LOCAL_BENCHMARKS = {"EU": "^FCHI"}
+# Références supplémentaires (stratégie A : force relative vs S&P 500 et ETF du secteur)
+SP500 = "SPY"
+SECTOR_ETF = {
+    "Semiconductors": "SMH", "Semi Equipment": "SMH", "Memory": "SMH", "AI/Data Center": "SMH",
+    "Software": "IGV", "Cloud": "IGV", "Cybersecurity": "CIBR",
+    "Defense": "ITA", "Space": "ITA", "Nuclear": "URA", "Power/Energy": "XLU",
+    "Industrial/Infra": "XLI", "Robotics": "BOTZ",
+}
 
 
 def market_of(ticker: str) -> str:
@@ -242,7 +309,7 @@ def currency_of(ticker: str) -> str:
 def all_download_tickers() -> list[str]:
     """Titres + benchmarks, sans doublon."""
     out = list(UNIVERSE.keys())
-    for b in [BENCHMARK, *LOCAL_BENCHMARKS.values()]:
+    for b in [BENCHMARK, *LOCAL_BENCHMARKS.values(), SP500, *sorted(set(SECTOR_ETF.values()))]:
         if b not in out:
             out.append(b)
     return out

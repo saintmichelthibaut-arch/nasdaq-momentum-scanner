@@ -60,6 +60,11 @@ jobs:
           key: prices-${{ github.run_id }}
           restore-keys: prices-
 
+      - name: Fondamentaux, résultats, analystes et actualités (une fois par jour)
+        continue-on-error: true
+        timeout-minutes: 10
+        run: python scripts/fundamentals.py
+
       - name: Collecte (yfinance → indicateurs → score)
         id: collect
         run: |

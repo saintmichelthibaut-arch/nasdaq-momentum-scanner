@@ -285,6 +285,9 @@ details.adv summary::-webkit-details-marker { display: none; }
 .kv > div { display: flex; justify-content: space-between; gap: 10px; padding: 8px 16px; border-bottom: 1px solid var(--line); font-size: 13px; min-width: 0; }
 .kv > div span:first-child { color: var(--fg-3); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 .kv > div span:last-child { font-family: var(--mono); white-space: nowrap; }
+.kv.kv2 { grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); }
+.kv.kv2 > div span:first-child { white-space: normal; }
+.kv.kv2 > div span:last-child { text-align: right; }
 svg text { font-family: var(--mono); font-size: 11.5px; fill: var(--fg-3); }
 .layers { display: flex; flex-wrap: wrap; gap: 6px; align-items: center; }
 .layers .pill-btn { display: inline-flex; align-items: center; gap: 7px; font-size: 12.5px; padding: 5px 11px; }
@@ -442,6 +445,7 @@ tbody tr:hover td { background: color-mix(in srgb, var(--accent) 6%, transparent
     </div>
     <nav class="tabs" role="tablist" id="tabs">
       <button role="tab" data-tab="today" aria-selected="true"><svg class="ti" viewBox="0 0 24 24" aria-hidden="true"><path d="M3 12l9-8 9 8M5 10v10h5v-6h4v6h5V10"/></svg><span class="lg">Aujourd'hui</span><span class="sm">Accueil</span></button>
+      <button role="tab" data-tab="strat" aria-selected="false"><svg class="ti" viewBox="0 0 24 24" aria-hidden="true"><path d="M3 5l5 9 4-5 4 6 5-10M3 19h18"/></svg><span class="lg">Rebonds &amp; explosions</span><span class="sm">Stratégies</span></button>
       <button role="tab" data-tab="all" aria-selected="false"><svg class="ti" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 6h16M4 12h16M4 18h10"/></svg><span class="lg">Toutes les actions</span><span class="sm">Actions</span></button>
       <button role="tab" data-tab="sectors" aria-selected="false"><svg class="ti" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 4h7v7H4zM13 4h7v7h-7zM4 13h7v7H4zM13 13h7v7h-7z"/></svg><span class="lg">Secteurs</span><span class="sm">Secteurs</span></button>
       <button role="tab" data-tab="backtest" aria-selected="false"><svg class="ti" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 19h16M6 16l4-5 3 3 5-7"/></svg><span class="lg">Ça marche ? (backtest)</span><span class="sm">Backtest</span></button>
@@ -465,7 +469,7 @@ const store = {
   get(k, d) { try { const v = localStorage.getItem("nms2." + k); return v == null ? d : JSON.parse(v); } catch (e) { return d; } },
   set(k, v) { try { localStorage.setItem("nms2." + k, JSON.stringify(v)); } catch (e) { /* stockage indisponible */ } },
 };
-const TABS = ["today", "all", "sectors", "backtest", "help"];
+const TABS = ["today", "strat", "all", "sectors", "backtest", "help"];
 const S = {
   data: null, status: null, live: null, backtest: null, backtestErr: null, series: {}, openT: null,
   profile: store.get("profile", null),
@@ -540,10 +544,10 @@ function subBars(st) {
   return `<div class="subs3">${one("Prix", c.price_momentum, "Le cours monte-t-il, et de plus en plus ?")}${one("Volume", c.volume_momentum, "Les échanges augmentent-ils, surtout de façon régulière ?")}${one("Cassure", c.breakout_potential, "Proche de franchir un plafond, ou vient de le faire avec force")}</div>`;
 }
 function starBtn(t, big) { const on = S.watch.has(t); return `<button type="button" class="star" data-star="${esc(t)}" aria-pressed="${on}" title="${on ? "Retirer de" : "Ajouter à"} ma liste"${big ? ' style="font-size:22px"' : ""}>${on ? "★" : "☆"}</button>`; }
-function card(st, slot, why) {
-  const s = sc(st);
-  return `<article class="card" data-t="${esc(st.ticker)}" tabindex="0" aria-label="${esc(st.ticker)}, score ${isNum(s.total) ? s.total.toFixed(0) : "N/A"}">
-    <div class="c-top"><div class="c-id"><div class="c-tk">${esc(st.ticker)}${starBtn(st.ticker)}</div><div class="c-name">${esc(st.name)} · ${esc(st.sector)}</div></div>${ring(s.total)}</div>
+function card(st, slot, why, ringVal) {
+  const s = sc(st), rv = ringVal === undefined ? s.total : ringVal;
+  return `<article class="card" data-t="${esc(st.ticker)}" tabindex="0" aria-label="${esc(st.ticker)}, score ${isNum(rv) ? rv.toFixed(0) : "N/A"}">
+    <div class="c-top"><div class="c-id"><div class="c-tk">${esc(st.ticker)}${starBtn(st.ticker)}</div><div class="c-name">${esc(st.name)} · ${esc(st.sector)}</div></div>${ring(rv)}</div>
     ${(() => { const q = quote(st); return `<div class="c-price"><span class="px">${money(q.price, st.currency)}</span>${pctChip(q.chg)}${liveChip(q)}</div>`; })()}
     ${priceSpark(st)}
     ${slot ? `<div class="c-slot">${slot}</div>` : ""}
@@ -633,7 +637,7 @@ function render() {
   const banners = bn.length ? `<div class="banners">${bn.map((b) => `<div class="banner ${b.cls}"><span class="ic">!</span><div><b>${esc(b.t)}</b>${esc(b.d)}</div></div>`).join("")}</div>` : "";
   const main = $("#main");
   if (!S.data) { main.innerHTML = banners + noData(); return; }
-  const views = { today: todayView, all: allView, sectors: sectorsView, backtest: backtestView, help: helpView };
+  const views = { today: todayView, strat: stratView, all: allView, sectors: sectorsView, backtest: backtestView, help: helpView };
   main.innerHTML = banners + views[S.tab]();
   if (S.tab === "all") bindAll();
   if (S.tab === "backtest" && !S.backtest && !S.backtestErr) loadBacktest();
@@ -696,7 +700,10 @@ function todayView() {
 
   const liveSec = liveOk() ? `<section class="sec" id="live">${secHead("En séance", "live", `Relevé toutes les 3 minutes environ pendant les bourses de Paris (9h – 17h30) et New York (15h30 – 22h) (dernier : ${esc(new Date(S.live.generated_at_utc).toLocaleTimeString("fr-FR", { hour: "2-digit", minute: "2-digit" }))}). Volume estimé sur toute la séance, cassures et fortes variations. Ce sont des signaux provisoires, à confirmer à la clôture ; les scores sont recalculés le soir.`)}
     ${(S.live.alerts || []).length ? `<div class="alerts">${S.live.alerts.map((a) => `<div class="alert" data-t="${esc(a.ticker)}"><div class="tk">${esc(a.ticker)}</div><div class="chips"><span class="num">${money(a.price, a.currency)}</span> ${pctChip(a.chg_1d)} ${isNum(a.rvol) ? `<span class="chip ${a.rvol >= 2 ? "warn" : ""}">volume estimé ×${fr(a.rvol, 1)}</span>` : ""} <span class="chip acc">${esc(a.time)}</span> ${a.breakout ? '<span class="chip up">cassure</span>' : ""}</div><div class="why">→ ${esc(a.reason)}</div></div>`).join("")}</div>` : `<div class="empty">Aucun signal en séance pour l'instant.</div>`}</section>` : "";
-  return kpis + liveSec + alerts + bb + accSec + surgeSec + topS + `<div class="two">${nnSec}${muSec}</div>`;
+  const rvT = ((D.sections.strategy || {}).reversal || []).map((t) => T[t]).filter(Boolean);
+  const rbSec = D.sections.strategy ? `<section class="sec priority" id="rb">${secHead("🟢 Rebonds après correction", "stratégie B", "Actions qui ont fortement corrigé depuis leur plus haut et qui repartent : plusieurs hausses d'affilée, volume, résistance cassée.", `<span class="tag">★ Priorité</span><button type="button" class="more" data-tabgo="strat">Tout voir</button>`)}
+    ${cardGrid("rbT", rvT, (st) => card(st, rbSlot(st), rbStory(st), stB(st).score), "Aucun retournement confirmé à la dernière séance. Voir l'onglet Stratégies pour les actions en stabilisation.")}</section>` : "";
+  return kpis + liveSec + rbSec + alerts + bb + accSec + surgeSec + topS + `<div class="two">${nnSec}${muSec}</div>`;
 }
 function alertRow(a) {
   const trig = { score: "score > " + S.data.meta.config.alerts.score_above, rvol: "volume anormal", breakout_volume: "cassure + volume", volume_accel: "volume qui accélère" };
@@ -838,6 +845,131 @@ function sectorsView() {
     <div class="tks">${r.tickers.map((t) => `<button type="button" data-open="${esc(t)}">${esc(t)}</button>`).join("")}</div></div>`).join("")}</div></section>`;
 }
 
+// ── Stratégies A (avant explosion) et B (rebond après correction) ─────────────
+const PHASE_CLS = { reversal: "up", stabilizing: "warn", knife: "down" };
+const SIG_L = {
+  end_of_decline: ["Fin de la baisse", { no_new_low: "Plus de nouveau plus-bas depuis 5 séances ou plus", higher_low: "Creux plus haut que le précédent", double_bottom: "Double creux : le support a tenu deux fois", volatility_down: "Les variations se calment", seller_volume_down: "Moins de volume sur les séances de baisse (vendeurs fatigués)" }],
+  momentum: ["Reprise du momentum", { up_streak2: "Au moins 2 séances de hausse d'affilée", closes_near_high: "Clôtures proches des plus hauts du jour", volume_rising: "Volume au-dessus de la moyenne pendant la hausse", rsi_rising: "RSI qui remonte", macd_turning: "MACD qui se retourne à la hausse", macd_cross: "Croisement haussier du MACD (10 dernières séances)", above_sma20: "Cours au-dessus de la moyenne 20 jours" }],
+  confirmation: ["Confirmation", { break_5d_high: "Casse le plus haut des 5 dernières séances", break_10d_high: "Casse le plus haut des 10 dernières séances", break_20d_high: "Casse le plus haut des 20 dernières séances", reclaim_sma20: "Reprend sa moyenne 20 jours", reclaim_sma50: "Reprend sa moyenne 50 jours", breakout_with_volume: "Cassure accompagnée de volume" }],
+};
+const B_HELP = { correction: "plus la baisse depuis le plus haut est forte, plus le potentiel de rebond est grand", stabilisation: "la baisse s'arrête : plus de nouveaux plus-bas", sequence: "plusieurs séances de hausse d'affilée (compte plus qu'un seul gros jour)", volume: "les acheteurs reviennent avec du volume", momentum: "RSI, MACD, moyennes 20 et 50 jours", breakout: "franchit ses plus hauts des 5, 10 ou 20 dernières séances", fundamentals: "croissance, résultats, analystes (si Yahoo les fournit)" };
+const A_HELP = { catalyst: "résultats, relèvements d'analystes, objectifs de cours, saut de cours sur volume", volume: "volume vs moyennes 20 et 50 jours", relative_strength: "vs Nasdaq, S&P 500, ETF du secteur et concurrents", technical: "moyennes, RSI, résistances, plus hauts", positioning: "vendeurs à découvert : carburant possible pour une hausse", rotation: "plusieurs actions du secteur accélèrent en même temps", quality: "croissance, marges, trésorerie, dette, valorisation" };
+const stB = (st) => (st.strategy && st.strategy.B) || null;
+const stA = (st) => (st.strategy && st.strategy.A) || null;
+const ddmm = (s) => (s ? `${s.slice(8, 10)}/${s.slice(5, 7)}` : "N/A");
+function phaseChip(b) { return b ? `<span class="chip ${PHASE_CLS[b.phase] || ""}">${esc(b.phase_label)}</span>` : naSpan("historique trop court"); }
+function rbStory(st) {
+  const b = stB(st); if (!b) return "";
+  let t = `Plus haut le ${ddmm(b.ath_date)} → ${fr(b.max_drawdown * 100, 0)} % en ${b.correction_sessions} séances → creux le ${ddmm(b.low_date)}`;
+  if (b.sessions_since_low > 0) t += ` → ${sgn(b.rebound_from_low)}${fr(b.rebound_from_low * 100, 0)} % depuis`;
+  if (b.up_streak >= 2) t += `, ${b.up_streak} hausses d'affilée`;
+  const c = b.signals.confirmation;
+  if (c.break_20d_high) t += ", casse son plus haut 20 j"; else if (c.break_10d_high) t += ", casse son plus haut 10 j"; else if (c.break_5d_high) t += ", casse son plus haut 5 j";
+  return t + ".";
+}
+function rbSlot(st) {
+  const b = stB(st), cur = st.currency;
+  return `<div style="display:flex;justify-content:space-between;gap:8px;align-items:center"><span>Plus haut ${money(b.ath, cur)}</span>${phaseChip(b)}</div>
+    <div style="display:flex;justify-content:space-between;gap:8px"><span>Correction</span><b class="num" style="color:var(--fg)">${fr(b.drawdown * 100, 1)} % <span class="faint" style="font-weight:400">(max ${fr(b.max_drawdown * 100, 0)} %)</span></b></div>
+    <div style="display:flex;justify-content:space-between;gap:8px"><span>${b.up_streak} hausse(s) d'affilée · ${b.up_sessions5}/5 séances</span>${b.crdo.flag ? '<span class="chip acc">🧬 CRDO</span>' : ""}${b.quality_dip.flag ? '<span class="chip acc">💎 quality</span>' : ""}</div>
+    ${spark((b.hist || []).filter(isNum), 240, 24, "var(--accent)")}`;
+}
+function exSlot(st) {
+  const a = stA(st), mx = S.data.meta.strategy_config.a_max;
+  const top = Object.keys(a.points).sort((x, y) => a.points[y] / mx[y] - a.points[x] / mx[x]).slice(0, 3);
+  return `<div style="display:flex;gap:6px;flex-wrap:wrap">${top.map((k) => `<span class="chip">${esc(S.data.meta.strategy_config.a_labels[k])} ${fr(a.points[k], 0)}/${mx[k]}</span>`).join("")}</div>`;
+}
+function stratView() {
+  const D = S.data, T = byT(), m = D.meta, ss = D.sections.strategy;
+  if (!ss) return `<div class="empty">Les stratégies apparaîtront après la prochaine mise à jour des données.</div>`;
+  const L = (k) => (ss[k] || []).map((t) => T[t]).filter(Boolean);
+  const rev = L("reversal"), stab = L("stabilizing"), qd = L("quality_dip"), crdo = L("crdo_like"), knife = L("knife"), ex = L("explosion"), all = L("corrected");
+  const fm = m.fundamentals || {};
+  const fAge = fm.generated_at_utc ? `Fondamentaux, résultats et analystes relevés sur Yahoo le ${esc(fmtDateTime(fm.generated_at_utc))} (${fm.count} actions).` : "Fondamentaux pas encore relevés : les critères qui en dépendent sont en N/A et rapportent 0 point.";
+  const cfg = m.strategy_config;
+  const intro = `<section class="box prose" style="margin-bottom:6px"><p style="margin:0"><b>Stratégie B — rebond après correction (prioritaire).</b> Des actions qui ont chuté d'au moins ${fr(-cfg.min_correction * 100, 0)} % depuis leur plus haut, <b>puis</b> arrêtent de baisser et repartent : plusieurs séances de hausse, volume qui revient, résistance cassée. Une action simplement « massacrée » n'est pas un signal.</p>
+    <p style="margin:8px 0 0"><b>Stratégie A — avant explosion.</b> Catalyseur réel + volume + force relative + secteur qui accélère, sur une action encore peu avancée.</p>
+    <p class="faint" style="margin:8px 0 0;font-size:12.5px">Seules les actions liquides sont classées (cours ≥ ${cfg.min_price} $, plus de ${fr(cfg.min_dollar_volume / 1e6, 0)} M échangés par jour, capitalisation ≥ ${fr(cfg.min_market_cap / 1e9, 0)} Md). ${fAge} Le « plus haut » est le plus haut des 5 dernières années.</p></section>`;
+  const kpis = `<div class="kpis">
+    <button type="button" class="kpi" data-jump="s-rev"><div class="l">🟢 Retournements confirmés</div><div class="v">${rev.length}</div><div class="s">${esc(rev.slice(0, 3).map((s) => s.ticker).join(", ")) || "aucun aujourd'hui"}</div></button>
+    <button type="button" class="kpi" data-jump="s-qd"><div class="l">💎 Quality dip · 🧬 CRDO</div><div class="v">${qd.length} · ${crdo.length}</div><div class="s">${esc([...new Set([...qd, ...crdo].map((s) => s.ticker))].slice(0, 3).join(", ")) || "aucune aujourd'hui"}</div></button>
+    <button type="button" class="kpi" data-jump="s-stab"><div class="l">🟡 En stabilisation</div><div class="v">${stab.length}</div><div class="s">à surveiller</div></button>
+    <button type="button" class="kpi" data-jump="s-ex"><div class="l">💥 Avant explosion ≥ 70</div><div class="v">${ex.filter((s) => stA(s).score >= 70).length}</div><div class="s">${esc(ex.slice(0, 3).map((s) => s.ticker).join(", "))}</div></button></div>`;
+  const bCard = (st) => card(st, rbSlot(st), rbStory(st), stB(st).score);
+  const secRev = `<section class="sec priority" id="s-rev">${secHead("🟢 Retournement après correction", "stratégie B · signal", "Forte correction, la baisse s'est arrêtée, puis plusieurs séances de hausse avec du volume et une résistance cassée. C'est la configuration recherchée.", `<span class="tag">★ Priorité</span>${moreBtn("rev", rev.length)}`)}
+    ${cardGrid("rev", rev, bCard, "Aucun retournement confirmé à la dernière séance.")}</section>`;
+  const secQd = `<section class="sec" id="s-qd">${secHead("💎 Quality dip", "solide + corrigée + rebondit", "Entreprise toujours solide (croissance, bilan, analystes positifs), qui a fortement corrigé et commence à rebondir. Beaucoup plus intéressant qu'une action simplement massacrée.", moreBtn("qd", qd.length))}
+    ${cardGrid("qd", qd, bCard, fm.generated_at_utc ? "Aucune action ne coche tous les critères aujourd'hui." : "En attente du premier relevé des fondamentaux.")}</section>`;
+  const secCrdo = `<section class="sec">${secHead("🧬 Profil « CRDO »", "CRDO-like", "Plus haut récent, chute rapide d'au moins 25 % en 3 à 8 semaines, base, creux plus haut, plusieurs hausses avec volume, moyenne 20 jours reprise. Au moins 9 des 12 critères.", moreBtn("crdo", crdo.length))}
+    ${cardGrid("crdo", crdo, bCard, "Aucune action ne présente ce profil aujourd'hui.")}</section>`;
+  const secStab = `<section class="sec" id="s-stab">${secHead("🟡 Stabilisation", "watchlist", "La baisse s'est arrêtée (plus de nouveaux plus-bas) mais le retournement n'est pas encore confirmé. À surveiller : on attend des séances de hausse avec volume et une cassure.", moreBtn("stab", stab.length))}
+    ${cardGrid("stab", stab, bCard, "Aucune action en stabilisation.")}</section>`;
+  const secEx = `<section class="sec" id="s-ex">${secHead("💥 Avant explosion", "stratégie A", "Catalyseur (25) + volume (15) + force relative (15) + technique (15) + vendeurs à découvert (10) + secteur qui accélère (10) + qualité (10). Score réduit si l'action est déjà trop montée.", moreBtn("ex", ex.length))}
+    ${cardGrid("ex", ex, (st) => card(st, exSlot(st), (stA(st).catalysts || [])[0] || "", stA(st).score), "Aucun score calculé.")}</section>`;
+  const row = (st) => { const b = stB(st); return `<tr data-t="${esc(st.ticker)}"><td><b>${esc(st.ticker)}</b> <span class="faint">${esc(st.name)}</span></td><td class="n">${money(b.ath, st.currency)} <span class="faint">${ddmm(b.ath_date)}</span></td><td class="n">${money(b.close, st.currency)}</td><td class="n">${pct(b.drawdown, 1)}</td><td class="n">${pct(b.max_drawdown, 0)}</td><td>${phaseChip(b)}</td><td class="n">${b.up_streak}</td><td class="n"><b>${fr(b.score, 0)}</b></td></tr>`; };
+  const shownAll = S.expanded.rball ? all : all.slice(0, 15);
+  const secAll = `<section class="sec">${secHead("Toutes les actions en correction", "≥ 20 % sous le plus haut", "Classées par score rebond. 🔴 = couteau qui tombe : nouveaux plus-bas récents, pas de signal.", moreBtn("rball", all.length, 15))}
+    <div class="panel"><div class="tbl-wrap"><table><thead><tr><th>Action</th><th class="n">Plus haut</th><th class="n">Cours</th><th class="n">Correction</th><th class="n">Max</th><th>Phase</th><th class="n">Hausses</th><th class="n">Score B</th></tr></thead><tbody>${shownAll.map(row).join("") || '<tr><td colspan="8" class="muted">Aucune action en correction de 20 % ou plus.</td></tr>'}</tbody></table></div></div>
+    ${knife.length ? `<p class="faint" style="font-size:12.5px;margin:8px 0 0">🔴 À éviter pour l'instant (la baisse continue) : ${knife.map((s) => `<a href="#" data-open="${esc(s.ticker)}">${esc(s.ticker)}</a>`).join(", ")}.</p>` : ""}
+    ${(ss.excluded || []).length ? `<p class="faint" style="font-size:12.5px;margin:6px 0 0">Non classées (trop petites ou peu liquides) : ${ss.excluded.map((e) => `${esc(e.ticker)} (${esc(e.reasons.join(", "))})`).join(" · ")}.</p>` : ""}</section>`;
+  return intro + kpis + secRev + `<div class="two">${secQd}${secCrdo}</div>` + secStab + secEx + secAll;
+}
+function ptsRows(pts, mx, labels, help, notes) {
+  return Object.keys(mx).map((k) => `<div class="why-row"><div class="l">${esc(labels[k])}<small>${esc((notes && notes[k]) || help[k] || "")}</small></div><div class="bar"><i style="width:${(100 * (pts[k] || 0) / mx[k]).toFixed(0)}%"></i></div><span class="v">${fr(pts[k], 0)}/${mx[k]}</span></div>`).join("");
+}
+function sheetStrategies(st) {
+  const b = stB(st), a = stA(st), cfg = S.data.meta.strategy_config, cur = st.currency, liq = st.strategy && st.strategy.liquidity;
+  if (!st.strategy) return "";
+  const warn = liq && !liq.eligible ? `<p class="faint" style="font-size:12.5px;margin:0">⚠ Non classée dans les listes : ${esc(liq.reasons.join(", "))}.</p>` : "";
+  let bBox;
+  if (!b) bBox = `<section class="box"><h3>Rebond après correction (stratégie B)</h3><p class="muted">Historique trop court pour mesurer la correction.</p></section>`;
+  else {
+    const groups = Object.entries(SIG_L).map(([g, [title, labs]]) => `<div><div class="faint" style="font-size:12px;margin:6px 0 2px;font-weight:600">${title}</div>${Object.entries(labs).map(([k, l]) => { const ok = b.signals[g][k]; return `<div class="check ${ok ? "ok" : "ko"}"><i>${ok ? "✓" : "–"}</i>${esc(l)}</div>`; }).join("")}</div>`).join("");
+    const chk = (r) => `<div class="check ${r.ok ? "ok" : "ko"}"><i>${r.ok === null ? "?" : r.ok ? "✓" : "–"}</i>${esc(r.label)}${r.ok === null ? ' <span class="na" title="Information non disponible chez Yahoo">N/A</span>' : ""}</div>`;
+    bBox = `<section class="box"><h3>Rebond après correction (stratégie B) ${phaseChip(b)}</h3>
+      <div class="kv kv2" style="margin-bottom:6px"><div><span>Plus haut (5 ans)</span><span>${money(b.ath, cur)} · ${ddmm(b.ath_date)}</span></div><div><span>Cours</span><span>${money(b.close, cur)}</span></div><div><span>Correction actuelle</span><span>${pct(b.drawdown, 1)}</span></div><div><span>Correction maximale</span><span>${pct(b.max_drawdown, 1)}</span></div><div><span>Creux</span><span>${money(b.low, cur)} · ${ddmm(b.low_date)}</span></div><div><span>Rebond depuis le creux</span><span>${pct(b.rebound_from_low, 1)}</span></div><div><span>Durée de la baisse</span><span>${b.correction_sessions} séances</span></div><div><span>Séances depuis le creux</span><span>${b.sessions_since_low}</span></div></div>
+      <p class="muted" style="margin:0 0 8px;font-size:13px">${esc(rbStory(st))}</p>
+      ${b.score === null ? `<p class="muted" style="margin:0">${esc(b.phase === "recovered" ? "Elle est déjà revenue à moins de 8 % de son plus haut : la correction est effacée." : "Pas de correction de 20 % ou plus : hors stratégie B.")}</p>` : `${ptsRows(b.points, cfg.b_max, cfg.b_labels, B_HELP, b.notes)}
+      <div class="why-row" style="border-top:1px solid var(--line);padding-top:10px"><div class="l"><b>Score rebond</b><small>${esc(b.notes.total || `évolution sur ${(b.hist || []).length} séances`)}</small></div><div>${spark((b.hist || []).filter(isNum), 90, 26, "var(--accent)")}</div><span class="v" style="font-size:16px;font-weight:600">${fr(b.score, 0)}</span></div>`}
+      <details class="adv" style="margin-top:8px"><summary>Les signaux de retournement</summary>${groups}</details>
+      <details class="adv"><summary>Profil « CRDO » : ${b.crdo.count}/12 ${b.crdo.flag ? "✓" : ""}</summary>${b.crdo.checks.map(chk).join("")}</details>
+      <details class="adv"><summary>Quality dip : ${b.quality_dip.flag === null ? "N/A" : b.quality_dip.flag ? "oui ✓" : "non"}</summary>${b.quality_dip.checks.length ? b.quality_dip.checks.map(chk).join("") : `<p class="muted" style="margin:0">${esc(b.quality_dip.why || "")}</p>`}</details>
+      ${warn}</section>`;
+  }
+  const aBox = !a || !isNum(a.score) ? `<section class="box"><h3>Avant explosion (stratégie A)</h3><p class="muted">${esc((a && a.error) || "Non calculé.")}</p></section>` : `<section class="box"><h3>Avant explosion (stratégie A) <span class="chip ${a.score >= 70 ? "up" : a.score >= 55 ? "acc" : ""}">${fr(a.score, 0)}/100</span></h3>
+      ${ptsRows(a.points, cfg.a_max, cfg.a_labels, A_HELP, a.notes)}
+      ${a.notes.total ? `<p class="faint" style="font-size:12.5px;margin:6px 0 0">${esc(a.notes.total)}</p>` : ""}
+      <div class="kv kv2" style="margin-top:8px"><div><span>vs S&P 500 (1 mois)</span><span>${pts(a.rs_spy_20d)}</span></div><div><span>vs ETF du secteur${a.etf ? ` (${esc(a.etf)})` : ""}</span><span>${a.etf ? pts(a.rs_etf_20d) : naSpan("pas d'ETF de référence pour ce secteur")}</span></div><div><span>Rang dans son secteur</span><span>${isNum(a.peer_percentile) ? `meilleure que ${fr(a.peer_percentile * 100, 0)} %` : naSpan("secteur trop petit")}</span></div><div><span>Secteur qui accélère</span><span>${isNum(a.sector_breadth) ? fr(a.sector_breadth * 100, 0) + " %" : naSpan("secteur trop petit")}</span></div></div>
+      <div style="margin-top:8px"><div class="faint" style="font-size:12px;font-weight:600;margin-bottom:4px">Catalyseurs détectés</div>${(a.catalysts || []).length ? a.catalysts.map((c) => `<div class="check ${c.startsWith("⚠") ? "ko" : "ok"}"><i>${c.startsWith("⚠") ? "!" : "✓"}</i>${esc(c)}</div>`).join("") : '<p class="muted" style="margin:0;font-size:13px">Aucun catalyseur daté détecté (résultats, analystes, saut de cours sur volume).</p>'}</div>
+      ${warn}</section>`;
+  return `<div class="grid2">${bBox}${aBox}</div><section class="box" id="fundSlot">${fundHTML(st)}</section>`;
+}
+function bigNum(v, cur) { if (!isNum(v)) return naSpan("non fourni par Yahoo"); const a = Math.abs(v), s = a >= 1e12 ? fr(v / 1e12, 2) + " 000 Md" : a >= 1e9 ? fr(v / 1e9, 1) + " Md" : a >= 1e6 ? fr(v / 1e6, 0) + " M" : fr(v, 0); return `<span class="num">${s} ${cur === "EUR" ? "€" : "$"}</span>`; }
+function safeUrl(u) { return typeof u === "string" && /^https?:\/\//i.test(u) ? u : null; }
+function fundHTML(st) {
+  const f = st.fundamentals, cur = st.currency, full = (S.series[st.ticker] || {}).fundamentals;
+  if (!f) return `<h3>Fondamentaux, analystes et actualités</h3><p class="muted" style="margin:0">Pas encore relevés pour cette action (le relevé se fait chaque soir). En attendant, ces critères sont en N/A et ne rapportent aucun point.</p>`;
+  const nf = (k) => naSpan("non fourni par Yahoo pour ce titre");
+  const px = st.price.close, up = isNum(f.target_mean) && isNum(px) ? f.target_mean / px - 1 : null;
+  const kv = [["Capitalisation", bigNum(f.market_cap, cur)], ["Croissance du CA (1 an)", isNum(f.revenue_growth) ? pct(f.revenue_growth, 0) : nf()], ["Croissance des bénéfices", isNum(f.earnings_growth) ? pct(f.earnings_growth, 0) : nf()],
+    ["Marge opérationnelle", isNum(f.operating_margin) ? pct(f.operating_margin, 0) : nf()], ["Trésorerie", bigNum(f.total_cash, cur)], ["Dette", bigNum(f.total_debt, cur)], ["Cash-flow libre", bigNum(f.free_cashflow, cur)],
+    ["PER attendu", isNum(f.forward_pe) ? fx(f.forward_pe, 1) : nf()], ["Prix / chiffre d'affaires", isNum(f.price_to_sales) ? fx(f.price_to_sales, 1) : nf()],
+    ["Analystes (1 = achat fort, 5 = vente)", isNum(f.recommendation_mean) ? `${fx(f.recommendation_mean, 1)}/5${isNum(f.analyst_count) ? ` <span class="faint">· ${f.analyst_count}</span>` : ""}` : nf()],
+    ["Objectif de cours moyen", isNum(f.target_mean) ? `${money(f.target_mean, cur)} ${pctChip(up, 0)}` : nf()],
+    ["Vente à découvert (% du flottant)", isNum(f.short_pct_float) ? pct(f.short_pct_float, 1).replace("+", "") : nf()], ["Jours pour couvrir", isNum(f.short_ratio) ? fx(f.short_ratio, 1) : nf()],
+    ["Prochains résultats", f.next_earnings ? esc(fmtDayY(f.next_earnings)) : nf()]];
+  let extra = "";
+  if (full) {
+    const E = full.earnings || [], A = full.analyst_actions || [], N = full.news || [];
+    extra = `<div class="grid2" style="margin-top:10px">
+      <div><div class="faint" style="font-size:12px;font-weight:600;margin-bottom:4px">Dernières publications de résultats</div>${E.length ? `<div class="tbl-wrap"><table><thead><tr><th>Date</th><th class="n">BPA attendu</th><th class="n">BPA publié</th><th class="n">Surprise</th></tr></thead><tbody>${E.map((e) => `<tr style="cursor:default"><td>${esc(fmtDayY(e.date))}</td><td class="n">${fx(e.eps_estimate, 2)}</td><td class="n">${fx(e.eps_actual, 2)}</td><td class="n ${cls3(e.surprise)}">${isNum(e.surprise) ? sgn(e.surprise) + fr(e.surprise, 1) + " %" : naSpan()}</td></tr>`).join("")}</tbody></table></div>` : '<p class="muted" style="margin:0;font-size:13px">Non fourni par Yahoo.</p>'}
+        <div class="faint" style="font-size:12px;font-weight:600;margin:10px 0 4px">Analystes (90 derniers jours)</div>${A.length ? A.slice(0, 8).map((x) => `<div class="chg-row"><span>${esc(x.firm || "?")}<br><span class="faint" style="font-size:12px">${esc(fmtDayY(x.date))}</span></span><span class="was">${esc(x.from || "")}${x.from ? " → " : ""}${esc(x.to || "")}</span><span class="chip ${x.action === "up" ? "up" : x.action === "down" ? "down" : ""}">${esc({ up: "relève", down: "abaisse", init: "initie", main: "maintient", reit: "réitère" }[x.action] || x.action || "")}${isNum(x.pt) ? ` · ${isNum(x.pt_prior) && x.pt_prior !== x.pt ? fr(x.pt_prior, 0) + "→" : ""}${fr(x.pt, 0)}` : ""}</span></div>`).join("") : '<p class="muted" style="margin:0;font-size:13px">Aucune action d\'analyste relevée.</p>'}</div>
+      <div><div class="faint" style="font-size:12px;font-weight:600;margin-bottom:4px">Actualités récentes (titres Yahoo, non interprétés)</div>${N.length ? N.map((n) => { const u = safeUrl(n.url); return `<div style="padding:5px 0;border-bottom:1px solid var(--line);font-size:13px">${u ? `<a href="${esc(u)}" target="_blank" rel="noopener noreferrer">${esc(n.title)}</a>` : esc(n.title)}<div class="faint" style="font-size:11.5px">${esc(n.source || "")}${n.date ? " · " + esc(fmtDayY(n.date.slice(0, 10))) : ""}</div></div>`; }).join("") : '<p class="muted" style="margin:0;font-size:13px">Aucune actualité fournie par Yahoo.</p>'}</div></div>`;
+  } else extra = `<p class="faint" style="font-size:12.5px;margin:8px 0 0">Chargement des résultats, analystes et actualités…</p>`;
+  return `<h3>Fondamentaux, analystes et actualités</h3><p class="hint">Source Yahoo Finance, relevé le ${esc(fmtDateTime(f.fetched_at_utc))}. Options (activité inhabituelle, calls/puts) : non collectées.</p>
+    <div class="kv kv2">${kv.map(([k, v]) => `<div><span>${esc(k)}</span><span>${v}</span></div>`).join("")}</div>${extra}`;
+}
+
 // ── Fiche titre ──────────────────────────────────────────────
 async function openSheet(t) {
   const st = byT()[t]; if (!st) return;
@@ -845,6 +977,7 @@ async function openSheet(t) {
   $("#sheetRoot").innerHTML = `<div class="sheet-bg" id="sheetBg"><article class="sheet" role="dialog" aria-modal="true" aria-label="Fiche ${esc(t)}">${sheetHTML(st)}</article></div>`;
   document.body.style.overflow = "hidden";
   if (!S.series[t]) { try { S.series[t] = await getJSON(`data/series/${t.replace("^", "_")}.json`); } catch (e) { S.series[t] = { error: e.message }; } }
+  const fs = $("#fundSlot"); if (fs && S.openT === t) fs.innerHTML = fundHTML(st);
   drawChart();
 }
 function closeSheet() { $("#sheetRoot").innerHTML = ""; document.body.style.overflow = ""; S.openT = null; }
@@ -919,6 +1052,7 @@ function sheetHTML(st) {
     <div id="layerBar" class="layers" role="group" aria-label="Lignes affichées sur le graphique">${layerButtons()}</div>
     <div id="chartSlot"><div class="empty">Chargement du graphique…</div></div>
     <p class="faint" style="margin:0;font-size:12px">Sous le cours : le volume échangé, le RSI (au-dessus de 70 = surchauffe, sous 30 = survente) et le MACD (barres vertes = élan haussier).</p></section>
+  ${sheetStrategies(st)}
   <div class="grid2">
     <section class="box"><h3>Pourquoi ce score</h3><p class="hint">Chaque critère est noté sur 100. Le poids indique son importance dans ton style.</p>
       ${comps.map((k) => { const v = st.score.components[k]; return `<div class="why-row"><div class="l">${esc(PLAIN[k] ? PLAIN[k][0] : k)} <span class="faint num" style="font-size:11px">· poids ${w[k]} %</span><small>${esc(PLAIN[k] ? PLAIN[k][1] : "")}</small></div><div class="bar"><i style="width:${isNum(v) ? v : 0}%"></i></div><span class="v">${isNum(v) ? v.toFixed(0) : "N/A"}</span></div>`; }).join("")}
@@ -1118,14 +1252,19 @@ function helpView() {
     ["Surchauffe", `Une action déjà très montée (RSI au-dessus de ${m.config.overextension.rsi_start}, cours très loin de sa moyenne 50 jours, ou plus de +${m.config.overextension.ret_1y_start * 100} % sur 1 an) voit son score réduit : l'outil cherche le début du mouvement, pas la fin.`],
     ["Le score accélère", "Le signal central : une action dont le score passe de 42 à 76 en quelques séances est souvent plus intéressante qu'une action stable à 95."],
     ["Cassure", "Le cours dépasse son plus haut des 20, 50 ou 100 dernières séances, ou d'un an. La force de la cassure tient compte du volume, de la taille de la bougie, d'une clôture près du haut et du nombre de séances tenues."],
+    ["Stratégie B : rebond après correction", "L'action a chuté d'au moins 20 % depuis son plus haut (5 ans). On ne l'achète pas parce qu'elle a baissé : on attend que la baisse s'arrête (plus de nouveaux plus-bas, creux plus haut), puis plusieurs séances de hausse avec du volume et une résistance cassée. Score sur 100 : correction 15, stabilisation 15, séquence de hausse 20, volume 15, momentum 15, cassure 10, fondamentaux 10."],
+    ["🔴 / 🟡 / 🟢", "🔴 Couteau qui tombe : nouveaux plus-bas récents, pas de signal (score plafonné à 25). 🟡 Stabilisation : la baisse s'est arrêtée, à surveiller. 🟢 Retournement : séances de hausse, volume, cours au-dessus de la moyenne 20 jours et plus haut récent cassé."],
+    ["💎 Quality dip", "Entreprise solide (chiffre d'affaires en croissance d'au moins 10 %, pas de dégradation, bilan sain, analystes positifs) qui a fortement corrigé et commence à rebondir. Nécessite les fondamentaux Yahoo : sinon N/A."],
+    ["🧬 Profil CRDO", "Plus haut récent, chute d'au moins 25 % en 3 à 8 semaines, base, plus de nouveaux plus-bas, creux plus haut, 2-3 hausses, volume au-dessus de la moyenne, moyenne 20 jours reprise, résistance proche, secteur fort, pas de dégradation. Au moins 9 critères sur 12."],
+    ["Stratégie A : avant explosion", "Catalyseur réel et daté (résultats meilleurs que prévu, relèvements d'analystes, objectifs de cours relevés, saut de cours sur gros volume) 25, volume 15, force relative (Nasdaq, S&P 500, ETF du secteur, concurrents) 15, technique 15, vendeurs à découvert 10, secteur qui accélère 10, qualité 10. Les options ne sont pas collectées."],
     ["Inhabituel (σ)", "Comparé au comportement propre de chaque action sur 3 mois. « 3 σ » veut dire très rare pour cette action."],
   ];
   const prof = Object.entries(m.profiles).map(([k, pr]) => `<tr style="cursor:default"><td><b>${esc(k === "standard" ? "Équilibré" : pr.label)}</b></td><td class="muted" style="white-space:normal">${Object.entries(pr.weights).map(([c, w]) => `${esc(PLAIN[c] ? PLAIN[c][0] : c)} <b class="num" style="color:var(--fg)">${w}</b>`).join(" · ")}</td></tr>`).join("");
   return `<section class="sec">${secHead("Comment lire la page", "guide", "Les mots utilisés, en clair.")}<div class="gloss">${G.map(([t, d]) => `<div class="box"><h3>${esc(t)}</h3><p>${esc(d)}</p></div>`).join("")}</div></section>
   <section class="sec">${secHead("D'où viennent les chiffres", "données", "")}<div class="box prose">
-    <p>Chaque soir de semaine vers 22h30 UTC (0h30 à Paris en été), un robot GitHub télécharge les cours de la séance sur Yahoo Finance, calcule tout et enregistre le résultat. Cette page ne fait que l'afficher : rien n'est inventé ni complété. Une valeur absente s'affiche <span class="na">N/A</span> ; passe la souris dessus pour savoir pourquoi.</p>
+    <p>Chaque soir de semaine vers 22h35 (heure de Paris), juste après la clôture de Wall Street, un robot GitHub télécharge les cours de la séance, les fondamentaux, les avis d'analystes et les actualités sur Yahoo Finance, calcule tout et enregistre le résultat. Pendant les séances, les prix sont relevés toutes les 3 minutes environ. Cette page ne fait que l'afficher : rien n'est inventé ni complété. Une valeur absente s'affiche <span class="na">N/A</span> ; passe la souris dessus pour savoir pourquoi.</p>
     <p>Dernière mise à jour : ${m.ok_count} actions sur ${m.universe_count}. Historique du score : ${m.history.files} séances.</p>
-    <p><b>Limites :</b> données de fin de séance seulement, rien en direct. Le backtest est optimiste, car la liste d'actions a été choisie aujourd'hui en connaissant leur parcours. Un bon score signale une configuration intéressante, pas une hausse garantie.</p></div></section>
+    <p><b>Limites :</b> les scores sont recalculés le soir ; en séance, seuls les prix, volumes et alertes bougent (cotations Yahoo, parfois quelques minutes de retard). Le backtest est optimiste, car la liste d'actions a été choisie aujourd'hui en connaissant leur parcours. Un bon score signale une configuration intéressante, pas une hausse garantie.</p></div></section>
   <section class="sec">${secHead("Les pondérations", "weights", "Le poids de chaque critère selon le style. Modifiable dans le fichier config/weights.json du dépôt GitHub.")}<div class="panel"><div class="tbl-wrap"><table><tbody>${prof}</tbody></table></div></div></section>`;
 }
 

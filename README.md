@@ -35,6 +35,7 @@ Si une collecte échoue (Yahoo indisponible, par exemple), GitHub t'envoie un e-
 | **Momentum Acceleration** | Trié par **progression du score** sur 5 séances, pas par score absolu. |
 | **New Names to Watch** | Entrées récentes dans le haut du classement. |
 | **Next MU / SNDK** | Profil A (amélioration progressive) et profil B (accélération confirmée), avec une phrase chiffrée qui explique ce qui correspond. |
+| **Rebonds & explosions** (onglet Stratégies) | **Stratégie B — rebond après correction** (prioritaire) : actions ≥ 20 % sous leur plus haut 5 ans, classées 🔴 couteau qui tombe / 🟡 stabilisation / 🟢 retournement, avec un score rebond sur 100 (correction 15, stabilisation 15, séquence de hausse 20, volume 15, momentum 15, cassure 10, fondamentaux 10), les listes **💎 Quality dip** et **🧬 profil CRDO** (12 critères). **Stratégie A — avant explosion** : catalyseur 25, volume 15, force relative 15, technique 15, vente à découvert 10, rotation sectorielle 10, qualité 10. Seules les actions liquides sont classées (cours ≥ 5 $, > 20 M échangés par jour, capitalisation ≥ 1 Md). |
 | **Heatmap secteurs** | Performance jour / 5 j / 1 mois, RVOL moyen, score moyen, progression du score. |
 
 - **Swing / Standard / Long terme** (en haut à droite) : change la pondération du score. *Swing* pour toi, *Long terme* pour ton père.
@@ -69,18 +70,18 @@ Exception : **SNDK** n'est coté que depuis février 2025. Certains indicateurs 
 
 **Disponible et utilisé :** cours quotidiens (ouverture, haut, bas, clôture, volume) ajustés des splits et dividendes, sur plusieurs années, pour les actions US, les actions de Paris (`.PA`), le QQQ et le CAC 40 (`^FCHI`).
 
+**Utilisé depuis l'ajout des stratégies A et B** (`scripts/fundamentals.py`, une fois par soir, `data/fundamentals.json`) : capitalisation, croissance, marges, trésorerie, dette, cash-flow libre, valorisation, recommandation et objectif moyen des analystes, relèvements / abaissements et objectifs de cours relevés (90 jours), dates et surprises des derniers résultats, prochaine publication, vente à découvert (% du flottant, jours pour couvrir), titres des dernières actualités. Chaque titre garde la date de son relevé ; si Yahoo ne répond pas, le critère concerné est en N/A et rapporte 0 point.
+
 **Non utilisé :**
-- Intraday fiable sur longue durée : l'outil travaille en fin de journée uniquement.
-- Carnet d'ordres, flux d'options, positions vendeuses à jour : absents ou peu fiables dans yfinance.
-- Fondamentaux et estimations d'analystes : partiels et irréguliers. Ils sont exclus pour ne jamais afficher une donnée douteuse.
+- Carnet d'ordres, flux d'options (activité inhabituelle, calls/puts) : absents ou peu fiables dans yfinance.
+- Le contenu des actualités n'est pas interprété : seuls les titres sont affichés.
 - Yahoo n'a pas d'API officielle. Un changement de leur côté peut casser la collecte un soir : elle s'arrête alors proprement, et la page le signale.
 
 ---
 
 ## Ce qui n'est pas implémenté, et pourquoi
 
-- **Envoi d'alertes par e-mail** : `data/alerts.json` est prêt, mais il faudrait un compte d'envoi (SMTP) et un secret GitHub. Je ne l'ai pas activé sans ton accord.
-- **Données en séance** : yfinance n'est pas fiable pour ça, et un robot qui tourne une fois par soir n'en a pas besoin.
+- **Backtest des stratégies A et B** : le score rebond est calculé séance par séance sans regarder le futur, mais les fondamentaux ne sont connus qu'à partir de leur premier relevé : un backtest honnête de B n'est possible que sur la partie prix.
 - **Correction du biais du survivant dans le backtest** : il faudrait l'historique des compositions passées du Nasdaq, que yfinance ne fournit pas. Le biais est signalé en toutes lettres dans les résultats.
 - **Change EUR/USD** : les titres de Paris sont analysés en euros, sans conversion.
 
@@ -96,15 +97,19 @@ scripts/collect.py            collecte yfinance → indicateurs → score → JS
 scripts/indicators.py         indicateurs (sans look-ahead : la valeur à T n'utilise que les séances ≤ T)
 scripts/scoring.py            sous-scores, pénalité de surchauffe, profils
 scripts/signals.py            breakouts, anomalies, explications, profils MU/SNDK, What changed
+scripts/strategies.py         stratégie A (avant explosion) et B (rebond après correction, quality dip, profil CRDO)
+scripts/fundamentals.py       fondamentaux, résultats, analystes, vente à découvert, actualités (Yahoo)
 scripts/backtest.py           backtest hebdomadaire top 10
 scripts/tests/                tests des formules (lancés avant chaque collecte)
 data/latest.json              snapshot du jour (lu par la page)
+data/fundamentals.json        dernier relevé des fondamentaux, avec sa date
 data/alerts.json              alertes du jour
 data/status.json              résultat de la dernière tentative de collecte
 data/history/AAAA-MM-JJ.json  un fichier par jour
 data/series/TICKER.json       1 an de cours + indicateurs pour les graphiques
 data/backtest/results.json    résultats du backtest
-.github/workflows/daily.yml   collecte lun-ven 22h30 UTC + lancement manuel + publication de la page
+.github/workflows/daily.yml   collecte lun-ven 22h35 (Paris) + rattrapage 7h05 + publication de la page
+.github/workflows/live.yml    cotations en séance toutes les ~3 minutes + notifications
 ```
 
 `data/prices.parquet` (cache des cours) est conservé dans le cache de GitHub Actions et pas dans le dépôt, sinon le dépôt grossirait de plusieurs Mo chaque jour. S'il disparaît, la collecte suivante retélécharge simplement l'historique.

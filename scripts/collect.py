@@ -30,8 +30,9 @@ sys.path.insert(0, str(Path(__file__).resolve().parent))
 import indicators as ind  # noqa: E402
 import scoring as sc  # noqa: E402
 import signals as sg  # noqa: E402
+import strategies as stg  # noqa: E402
 from signals import num  # noqa: E402
-from universe import BENCHMARK, LOCAL_BENCHMARKS, UNIVERSE, all_download_tickers, meta  # noqa: E402
+from universe import BENCHMARK, LOCAL_BENCHMARKS, SECTOR_ETF, SP500, UNIVERSE, all_download_tickers, meta  # noqa: E402
 
 ROOT = Path(__file__).resolve().parent.parent
 HISTORY_PERIOD = "5y"        # amorçage : 5 ans (2 ans minimum pour SMA200/52s + profondeur de backtest)
@@ -454,7 +455,98 @@ def series_payload(t: str, x: pd.DataFrame, s: pd.DataFrame, stock: dict) -> dic
         "levels": sg.sr_levels(x),
         "breakout_levels": stock["breakout_levels"],
         "resistance_60d": stock["setup"]["resistance"],
+        "fundamentals": stock.pop("_fund_full", None),
     }
+
+
+# ── stratégies A et B ───────────────────────────────────────────────────────
+
+FUND_KEYS = ("market_cap", "revenue_growth", "earnings_growth", "operating_margin", "gross_margin",
+             "total_cash", "total_debt", "free_cashflow", "recommendation_mean", "recommendation_key",
+             "analyst_count", "target_mean", "forward_pe", "price_to_sales", "short_pct_float",
+             "short_ratio", "short_date", "next_earnings")
+
+
+def load_fundamentals(data_dir: Path) -> dict:
+    try:
+        return json.loads((data_dir / "fundamentals.json").read_text(encoding="utf-8"))
+    except Exception:
+        return {"stocks": {}}
+
+
+def ret_at(series: pd.Series | None, when: pd.Timestamp, n: int = 21):
+    if series is None:
+        return None
+    s = series.loc[:when]
+    if len(s) <= n or (when - s.index[-1]).days > 5:
+        return None
+    return num(s.iloc[-1] / s.iloc[-1 - n] - 1)
+
+
+def add_strategies(results: dict, stocks: dict, prices: dict, fdb: dict) -> None:
+    bench5 = ret_at(prices[BENCHMARK]["close"], prices[BENCHMARK].index[-1], 5)
+    by_sec: dict[str, list] = {}
+    for st in stocks.values():
+        by_sec.setdefault(st["sector"], []).append(st)
+    sec_ctx = {}
+    for sec, L in by_sec.items():
+        brd = [1.0 if (s["price"]["chg_5d"] is not None and bench5 is not None and s["price"]["chg_5d"] > bench5
+                       and (s["volume"]["rvol5_50"] or 0) >= 1.1) else 0.0 for s in L]
+        rs6 = [s["rs"]["rs_6m"] for s in L if s["rs"]["rs_6m"] is not None]
+        sec_ctx[sec] = {"breadth": float(np.mean(brd)) if len(L) >= 3 else None,
+                        "strong": (float(np.median(rs6)) > 0) if len(rs6) >= 3 else None,
+                        "r1m": sorted(s["price"]["chg_1m"] for s in L if s["price"]["chg_1m"] is not None)}
+    for t, (df, x, s) in results.items():
+        st = stocks[t]
+        f = (fdb.get("stocks") or {}).get(t)
+        if f and not f.get("fetched_at_utc"):
+            f = None
+        sc_ = sec_ctx[st["sector"]]
+        when = x.index[-1]
+        r1m = st["price"]["chg_1m"]
+        peer = None
+        if r1m is not None and len(sc_["r1m"]) >= 4:
+            peer = float(np.searchsorted(sc_["r1m"], r1m, side="right") - 1) / (len(sc_["r1m"]) - 1)
+        etf = SECTOR_ETF.get(st["sector"]) if st["market"] == "US" else None
+        ctx = {"spy_ret20": ret_at(prices.get(SP500, {}).get("close") if SP500 in prices else None, when),
+               "etf": etf, "etf_ret20": ret_at(prices[etf]["close"], when) if etf in prices else None,
+               "peer_pct": peer, "sector_breadth": sc_["breadth"]}
+        try:
+            a = stg.strategy_a(x, s.iloc[-1], f, ctx)
+        except Exception as e:
+            traceback.print_exc()
+            a = {"score": None, "error": f"{type(e).__name__}: {e}"}
+        try:
+            b = stg.strategy_b(x, f, sc_["strong"])
+        except Exception:
+            traceback.print_exc()
+            b = None
+        st["strategy"] = {"A": a, "B": b, "liquidity": stg.liquidity(x, f)}
+        st["fundamentals"] = ({k: f.get(k) for k in FUND_KEYS} | {"fetched_at_utc": f.get("fetched_at_utc")}) if f else None
+        st["_fund_full"] = {k: f.get(k) for k in ("eps_history", "earnings", "analyst_actions", "news", "fetched_at_utc")} if f else None
+
+
+def strategy_sections(stocks: dict, n: int = 30) -> dict:
+    S = [st for st in stocks.values() if st.get("strategy") and st["strategy"]["liquidity"]["eligible"]]
+    B = [st for st in S if st["strategy"]["B"] and st["strategy"]["B"]["score"] is not None]
+    by_b = lambda L: [st["ticker"] for st in sorted(L, key=lambda st: -st["strategy"]["B"]["score"])]  # noqa: E731
+    ph = lambda p: [st for st in B if st["strategy"]["B"]["phase"] == p]  # noqa: E731
+    A = [st for st in S if _n_ok(st["strategy"]["A"].get("score"))]
+    return {
+        "explosion": [st["ticker"] for st in sorted(A, key=lambda st: -st["strategy"]["A"]["score"])][:n],
+        "reversal": by_b(ph("reversal")),
+        "stabilizing": by_b(ph("stabilizing")),
+        "knife": by_b(ph("knife")),
+        "quality_dip": by_b([st for st in B if st["strategy"]["B"]["quality_dip"].get("flag")]),
+        "crdo_like": by_b([st for st in B if st["strategy"]["B"]["crdo"]["flag"]]),
+        "corrected": by_b(B),
+        "excluded": [{"ticker": st["ticker"], "reasons": st["strategy"]["liquidity"]["reasons"]}
+                     for st in stocks.values() if st.get("strategy") and not st["strategy"]["liquidity"]["eligible"]],
+    }
+
+
+def _n_ok(v) -> bool:
+    return v is not None and not (isinstance(v, float) and math.isnan(v))
 
 
 # ── sections, secteurs, alertes ─────────────────────────────────────────────
@@ -619,7 +711,15 @@ def snapshot_at(results: dict, date: pd.Timestamp, profiles) -> dict:
     return snap
 
 
-def write_history(results: dict, cal: pd.DatetimeIndex, cfg: dict, hist_dir: Path, now: datetime) -> dict:
+def _merge_extra(snap: dict, extra: dict | None) -> dict:
+    for t, e in (extra or {}).items():
+        if t in snap:
+            snap[t].update(e)
+    return snap
+
+
+def write_history(results: dict, cal: pd.DatetimeIndex, cfg: dict, hist_dir: Path, now: datetime,
+                  extra: dict | None = None) -> dict:
     hist_dir.mkdir(parents=True, exist_ok=True)
     profiles = list(cfg["profiles"])
     today = cal[-1]
@@ -639,7 +739,7 @@ def write_history(results: dict, cal: pd.DatetimeIndex, cfg: dict, hist_dir: Pat
             "backfilled": not is_today,
             "generated_at_utc": now.isoformat(timespec="seconds"),
             "note": "recalculé depuis prices.parquet avec les données disponibles à cette date" if not is_today else "snapshot de la collecte du jour",
-            "stocks": snapshot_at(results, d, profiles),
+            "stocks": _merge_extra(snapshot_at(results, d, profiles), extra if is_today else None),
         }, compact=True)
         written += 1
     files = sorted(hist_dir.glob("*.json"))
@@ -701,13 +801,21 @@ def main() -> int:
         if not stocks:
             raise RuntimeError("aucun titre n'a pu être calculé")
 
+        fdb = load_fundamentals(data_dir)
+        add_strategies(results, stocks, prices, fdb)
+
         bench_df, _ = drop_open_session(prices[BENCHMARK], "US", now)
         cal = bench_df.index
         new_by_profile = {p: new_names(score_matrix(results, cal[-40:], p), cfg) for p in cfg["profiles"]}
         sections = build_sections(stocks, cfg, new_by_profile)
         sectors = build_sectors(stocks, cfg)
         alerts = build_alerts(stocks, cfg)
-        hist_info = write_history(results, cal, cfg, data_dir / "history", now)
+        sections["strategy"] = strategy_sections(stocks)
+        extra = {t: {"rb": (st["strategy"]["B"] or {}).get("phase"), "rbs": num((st["strategy"]["B"] or {}).get("score"), 1),
+                     "crdo": bool((st["strategy"]["B"] or {}).get("crdo", {}).get("flag")),
+                     "qd": bool(((st["strategy"]["B"] or {}).get("quality_dip") or {}).get("flag")),
+                     "sa": num(st["strategy"]["A"].get("score"), 1)} for t, st in stocks.items() if st.get("strategy")}
+        hist_info = write_history(results, cal, cfg, data_dir / "history", now, extra)
 
         for t, (df, x, s) in results.items():
             write_json(data_dir / "series" / f"{t.replace('^', '_')}.json", series_payload(t, x, s, stocks[t]), compact=True)
@@ -741,7 +849,13 @@ def main() -> int:
                 "open_session_dropped": dropped,
                 "session_rebuilt_from_intraday": rebuilt,
                 "benchmarks": {BENCHMARK: bench_info(BENCHMARK),
-                               **{b: bench_info(b) for b in LOCAL_BENCHMARKS.values()}},
+                               **{b: bench_info(b) for b in LOCAL_BENCHMARKS.values()},
+                               **{b: bench_info(b) for b in [SP500, *sorted(set(SECTOR_ETF.values()))]}},
+                "fundamentals": {"generated_at_utc": fdb.get("generated_at_utc"), "source": fdb.get("source"),
+                                 "count": sum(1 for v in (fdb.get("stocks") or {}).values() if v.get("fetched_at_utc"))},
+                "strategy_config": {"min_correction": stg.MIN_CORRECTION, "min_price": stg.MIN_PRICE,
+                                    "min_dollar_volume": stg.MIN_DOLLAR_VOL, "min_market_cap": stg.MIN_MCAP,
+                                    "b_max": stg.B_MAX, "b_labels": stg.B_LABELS, "a_max": stg.A_MAX, "a_labels": stg.A_LABELS},
             },
             "stocks": sorted(stocks.values(), key=lambda st: -_key(st["score"]["profiles"][cfg["default_profile"]]["total"])),
             "sections": sections,

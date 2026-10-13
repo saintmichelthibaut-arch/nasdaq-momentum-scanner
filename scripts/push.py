@@ -283,6 +283,7 @@ def evening_digest() -> list[tuple[str, str, str]]:
     stocks = d["stocks"]
     day = (d["meta"].get("market_date") or {}).get("US")
     prev_bb = set()
+    snap = {}
     hist = sorted((ROOT / "data" / "history").glob("*.json"))
     prev_files = [h for h in hist if h.stem < (day or "")]
     if prev_files:
@@ -309,6 +310,21 @@ def evening_digest() -> list[tuple[str, str, str]]:
                              for s in stocks if (s["volume"]["rvol"] or 0) >= 2], "soir-volume")
     add("🆕 Nouvelles venues dans le top", [f"{r['ticker']} · rang {r['rank']}" for r in d["sections"]["swing"].get("new_names", []) if r["entered_days_ago"] == 0], "soir-new")
     add("⚠️ Inhabituel", [f"{s['ticker']} · {a['label']}" for s in stocks for a in s["anomalies"] if a["kind"] != "volume"], "soir-anomalies")
+    strat = [s for s in stocks if s.get("strategy") and s["strategy"]["liquidity"]["eligible"]]
+    B = lambda s: s["strategy"]["B"] or {}  # noqa: E731
+
+    def bline(s):
+        b = B(s)
+        return (f"{s['ticker']} · {_pct(b.get('max_drawdown'))} depuis le plus haut, {b.get('up_streak', 0)} hausse(s) d'affilée, "
+                f"score rebond {b.get('score') or 0:.0f}/100")
+    add("🟢 Rebond confirmé (stratégie B)", [bline(s) for s in sorted(strat, key=lambda s: -(B(s).get("score") or 0))
+                                           if B(s).get("phase") == "reversal" and (snap.get(s["ticker"]) or {}).get("rb") != "reversal"], "soir-rebond")
+    add("💎 Quality dip", [bline(s) for s in strat if (B(s).get("quality_dip") or {}).get("flag") and not (snap.get(s["ticker"]) or {}).get("qd")], "soir-qdip")
+    add("🧬 Profil CRDO", [f"{s['ticker']} · {B(s)['crdo']['count']}/12 critères · {_pct(B(s).get('max_drawdown'))} depuis le plus haut"
+                          for s in strat if (B(s).get("crdo") or {}).get("flag") and not (snap.get(s["ticker"]) or {}).get("crdo")], "soir-crdo")
+    add("💥 Avant explosion (stratégie A)", [f"{s['ticker']} · score {s['strategy']['A']['score']:.0f}/100" + (f" · {s['strategy']['A']['catalysts'][0]}" if s["strategy"]["A"].get("catalysts") else "")
+                                           for s in sorted(strat, key=lambda s: -(s["strategy"]["A"].get("score") or 0))
+                                           if (s["strategy"]["A"].get("score") or 0) >= 70 and ((snap.get(s["ticker"]) or {}).get("sa") or 0) < 70], "soir-explosion")
     mu = [f"{s['ticker']} · ressemble à {'MU' if k == 'A' else 'SNDK'} à {s['similarity'][k]['score']:.0f}/100"
           for s in stocks for k in ("A", "B") if s["similarity"][k]["score"] >= 70]
     add("🔮 Prochain MU / SNDK", mu, "soir-mu")
