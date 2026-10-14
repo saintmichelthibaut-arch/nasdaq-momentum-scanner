@@ -1,8 +1,8 @@
 {
- "generated_at_utc": "2026-10-14T10:04:32+00:00",
+ "generated_at_utc": "2026-10-14T23:23:32+00:00",
  "market_date": {
-  "US": "2026-10-13",
-  "EU": "2026-10-13"
+  "US": "2026-10-14",
+  "EU": "2026-10-14"
  },
  "profile": "swing",
  "rules": {
@@ -13,55 +13,100 @@
  },
  "alerts": [
   {
-   "ticker": "GTLB",
-   "name": "GitLab",
+   "ticker": "GFS",
+   "name": "GlobalFoundries",
    "currency": "USD",
-   "price": 51.95,
-   "chg_1d": -0.0725,
-   "rvol": 2.436,
-   "score": 37.62,
+   "price": 48.94,
+   "chg_1d": 0.048,
+   "rvol": 3.065,
+   "score": 49.49,
    "breakout": false,
    "triggers": [
     "rvol"
    ],
-   "reason": "volume 2,4 fois la normale, plafond à 9,0 % (56,64)"
-  },
-  {
-   "ticker": "PDD",
-   "name": "PDD Holdings",
-   "currency": "USD",
-   "price": 81.96,
-   "chg_1d": 0.0129,
-   "rvol": 1.581,
-   "score": 37.55,
-   "breakout": true,
-   "triggers": [
-    "breakout_volume"
-   ],
-   "reason": "cassure du plus haut 20 séances à 81,58"
+   "reason": "volume 3,1 fois la normale"
   },
   {
    "ticker": "S",
    "name": "SentinelOne",
    "currency": "USD",
-   "price": 24.01,
-   "chg_1d": -0.0643,
-   "rvol": 3.164,
-   "score": 27.44,
+   "price": 22.82,
+   "chg_1d": -0.0496,
+   "rvol": 3.193,
+   "score": 35.56,
+   "breakout": false,
+   "triggers": [
+    "rvol",
+    "volume_accel"
+   ],
+   "reason": "le volume accélère depuis 2 séances, volume 3,2 fois la normale"
+  },
+  {
+   "ticker": "CAMT",
+   "name": "Camtek",
+   "currency": "USD",
+   "price": 135.72,
+   "chg_1d": -0.0494,
+   "rvol": 4.738,
+   "score": 24.87,
+   "breakout": false,
+   "triggers": [
+    "rvol",
+    "volume_accel"
+   ],
+   "reason": "le volume accélère depuis 3 séances, volume 4,7 fois la normale"
+  },
+  {
+   "ticker": "ONTO",
+   "name": "Onto Innovation",
+   "currency": "USD",
+   "price": 241.41,
+   "chg_1d": -0.084,
+   "rvol": 2.328,
+   "score": 18.36,
+   "breakout": false,
+   "triggers": [
+    "rvol",
+    "volume_accel"
+   ],
+   "reason": "le volume accélère depuis 3 séances, volume 2,3 fois la normale"
+  },
+  {
+   "ticker": "CRWV",
+   "name": "CoreWeave",
+   "currency": "USD",
+   "price": 65.78,
+   "chg_1d": -0.1546,
+   "rvol": 3.54,
+   "score": 13.6,
    "breakout": false,
    "triggers": [
     "rvol"
    ],
-   "reason": "volume 3,2 fois la normale"
+   "reason": "volume 3,5 fois la normale"
   },
   {
-   "ticker": "UCTT",
-   "name": "Ultra Clean Holdings",
+   "ticker": "AFRM",
+   "name": "Affirm",
    "currency": "USD",
-   "price": 61.02,
-   "chg_1d": -0.0392,
-   "rvol": 2.545,
-   "score": 13.05,
+   "price": 70.51,
+   "chg_1d": -0.0947,
+   "rvol": 2.028,
+   "score": 13.52,
+   "breakout": false,
+   "triggers": [
+    "rvol"
+   ],
+   "reason": "volume 2,0 fois la normale"
+  },
+  {
+   "ticker": "CIFR",
+   "name": "Cipher Mining",
+   "currency": "USD",
+   "price": 9.94,
+   "chg_1d": -0.1235,
+   "rvol": 2.459,
+   "score": 12.82,
    "breakout": false,
    "triggers": [
     "rvol"
@@ -69,32 +114,60 @@
    "reason": "volume 2,5 fois la normale"
   },
   {
-   "ticker": "CIFR",
-   "name": "Cipher Mining",
+   "ticker": "ASML",
+   "name": "ASML Holding",
    "currency": "USD",
-   "price": 11.34,
-   "chg_1d": -0.1277,
-   "rvol": 3.865,
-   "score": 9.88,
+   "price": 1650.0,
+   "chg_1d": -0.0394,
+   "rvol": 2.04,
+   "score": 12.22,
    "breakout": false,
    "triggers": [
     "rvol"
    ],
-   "reason": "volume 3,9 fois la normale"
+   "reason": "volume 2,0 fois la normale"
   },
   {
-   "ticker": "BBAI",
-   "name": "BigBear.ai",
+   "ticker": "NBIS",
+   "name": "Nebius Group",
    "currency": "USD",
-   "price": 2.39,
-   "chg_1d": 0.0391,
-   "rvol": 2.265,
-   "score": 6.86,
+   "price": 186.01,
+   "chg_1d": -0.1008,
+   "rvol": 2.047,
+   "score": 9.61,
    "breakout": false,
    "triggers": [
     "rvol"
    ],
-   "reason": "volume 2,3 fois la normale"
+   "reason": "volume en hausse 3 séances d'affilée, volume 2,0 fois la normale"
+  },
+  {
+   "ticker": "POWL",
+   "name": "Powell Industries",
+   "currency": "USD",
+   "price": 169.53,
+   "chg_1d": -0.0725,
+   "rvol": 2.089,
+   "score": 6.7,
+   "breakout": false,
+   "triggers": [
+    "rvol"
+   ],
+   "reason": "volume en hausse 3 séances d'affilée, volume 2,1 fois la normale"
+  },
+  {
+   "ticker": "WULF",
+   "name": "TeraWulf",
+   "currency": "USD",
+   "price": 11.54,
+   "chg_1d": -0.1264,
+   "rvol": 2.075,
+   "score": 5.35,
+   "breakout": false,
+   "triggers": [
+    "rvol"
+   ],
+   "reason": "volume en hausse 3 séances d'affilée, volume 2,1 fois la normale"
   }
  ]
 }

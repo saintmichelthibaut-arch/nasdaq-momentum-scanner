@@ -1,7 +1,7 @@
 {
- "last_attempt_utc": "2026-10-14T10:04:32+00:00",
+ "last_attempt_utc": "2026-10-14T23:23:32+00:00",
  "ok": true,
  "ok_count": 239,
- "failed_count": 0,
+ "failed_count": 1,
  "message": "239/239 titres calculés"
 }
