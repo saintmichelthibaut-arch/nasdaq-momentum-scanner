@@ -1,5 +1,5 @@
 {
- "generated_at_utc": "2026-10-13T23:49:55+00:00",
+ "generated_at_utc": "2026-10-14T00:35:12+00:00",
  "market_date": {
   "US": "2026-10-13",
   "EU": "2026-10-13"
@@ -13,55 +13,238 @@
  },
  "alerts": [
   {
-   "ticker": "GTLB",
-   "name": "GitLab",
+   "ticker": "MSFT",
+   "name": "Microsoft",
    "currency": "USD",
-   "price": 51.95,
-   "chg_1d": -0.0725,
-   "rvol": 2.415,
-   "score": 37.52,
+   "price": 543.73,
+   "chg_1d": 0.0048,
+   "rvol": 3.401,
+   "score": 58.01,
+   "breakout": true,
+   "triggers": [
+    "rvol"
+   ],
+   "reason": "volume 3,4 fois la normale"
+  },
+  {
+   "ticker": "VEEV",
+   "name": "Veeva Systems",
+   "currency": "USD",
+   "price": 301.74,
+   "chg_1d": 0.0199,
+   "rvol": 2.252,
+   "score": 57.1,
+   "breakout": true,
+   "triggers": [
+    "rvol",
+    "breakout_volume"
+   ],
+   "reason": "volume 2,3 fois la normale, cassure du plus haut 100 séances à 300,63"
+  },
+  {
+   "ticker": "META",
+   "name": "Meta Platforms",
+   "currency": "USD",
+   "price": 762.47,
+   "chg_1d": 0.0263,
+   "rvol": 2.191,
+   "score": 49.21,
    "breakout": false,
    "triggers": [
     "rvol"
    ],
-   "reason": "volume 2,4 fois la normale, plafond à 9,0 % (56,64)"
+   "reason": "volume 2,2 fois la normale, plafond à 2,3 % (779,82)"
   },
   {
-   "ticker": "PDD",
-   "name": "PDD Holdings",
+   "ticker": "NOW",
+   "name": "ServiceNow",
    "currency": "USD",
-   "price": 81.96,
-   "chg_1d": 0.0129,
-   "rvol": 1.577,
-   "score": 37.52,
-   "breakout": true,
+   "price": 138.62,
+   "chg_1d": -0.0121,
+   "rvol": 2.037,
+   "score": 43.32,
+   "breakout": false,
    "triggers": [
-    "breakout_volume"
+    "rvol"
    ],
-   "reason": "cassure du plus haut 20 séances à 81,58"
+   "reason": "volume 2,0 fois la normale, plafond à 7,9 % (149,60)"
+  },
+  {
+   "ticker": "ANET",
+   "name": "Arista Networks",
+   "currency": "USD",
+   "price": 204.51,
+   "chg_1d": -0.0302,
+   "rvol": 3.43,
+   "score": 40.57,
+   "breakout": false,
+   "triggers": [
+    "rvol"
+   ],
+   "reason": "volume 3,4 fois la normale, plafond à 6,3 % (217,41)"
+  },
+  {
+   "ticker": "GOOGL",
+   "name": "Alphabet",
+   "currency": "USD",
+   "price": 353.78,
+   "chg_1d": 0.003,
+   "rvol": 2.619,
+   "score": 37.3,
+   "breakout": false,
+   "triggers": [
+    "rvol"
+   ],
+   "reason": "volume 2,6 fois la normale, plafond à 8,6 % (384,23)"
+  },
+  {
+   "ticker": "CLS",
+   "name": "Celestica",
+   "currency": "USD",
+   "price": 357.44,
+   "chg_1d": 0.0286,
+   "rvol": 2.177,
+   "score": 34.92,
+   "breakout": false,
+   "triggers": [
+    "rvol"
+   ],
+   "reason": "volume 2,2 fois la normale"
+  },
+  {
+   "ticker": "GTLB",
+   "name": "GitLab",
+   "currency": "USD",
+   "price": 51.87,
+   "chg_1d": -0.0739,
+   "rvol": 2.206,
+   "score": 34.1,
+   "breakout": false,
+   "triggers": [
+    "rvol"
+   ],
+   "reason": "volume 2,2 fois la normale, plafond à 9,2 % (56,64)"
+  },
+  {
+   "ticker": "NVDA",
+   "name": "NVIDIA",
+   "currency": "USD",
+   "price": 228.52,
+   "chg_1d": 0.0097,
+   "rvol": 3.662,
+   "score": 32.23,
+   "breakout": false,
+   "triggers": [
+    "rvol"
+   ],
+   "reason": "volume 3,7 fois la normale, plafond à 6,5 % (243,37)"
+  },
+  {
+   "ticker": "BABA",
+   "name": "Alibaba",
+   "currency": "USD",
+   "price": 110.86,
+   "chg_1d": 0.0007,
+   "rvol": 3.101,
+   "score": 32.13,
+   "breakout": false,
+   "triggers": [
+    "rvol"
+   ],
+   "reason": "volume 3,1 fois la normale"
   },
   {
    "ticker": "S",
    "name": "SentinelOne",
    "currency": "USD",
-   "price": 24.01,
-   "chg_1d": -0.0643,
-   "rvol": 3.164,
-   "score": 27.44,
+   "price": 23.99,
+   "chg_1d": -0.0651,
+   "rvol": 3.258,
+   "score": 27.41,
    "breakout": false,
    "triggers": [
     "rvol"
    ],
-   "reason": "volume 3,2 fois la normale"
+   "reason": "volume 3,3 fois la normale"
   },
   {
-   "ticker": "UCTT",
-   "name": "Ultra Clean Holdings",
+   "ticker": "FN",
+   "name": "Fabrinet",
    "currency": "USD",
-   "price": 61.02,
-   "chg_1d": -0.0392,
-   "rvol": 2.456,
-   "score": 12.44,
+   "price": 428.06,
+   "chg_1d": -0.0621,
+   "rvol": 2.448,
+   "score": 25.89,
+   "breakout": false,
+   "triggers": [
+    "rvol"
+   ],
+   "reason": "volume 2,4 fois la normale"
+  },
+  {
+   "ticker": "ASML",
+   "name": "ASML Holding",
+   "currency": "USD",
+   "price": 1717.08,
+   "chg_1d": -0.0189,
+   "rvol": 3.079,
+   "score": 21.48,
+   "breakout": false,
+   "triggers": [
+    "rvol"
+   ],
+   "reason": "volume 3,1 fois la normale"
+  },
+  {
+   "ticker": "FIX",
+   "name": "Comfort Systems USA",
+   "currency": "USD",
+   "price": 1626.83,
+   "chg_1d": -0.0068,
+   "rvol": 3.772,
+   "score": 15.38,
+   "breakout": false,
+   "triggers": [
+    "rvol"
+   ],
+   "reason": "volume 3,8 fois la normale"
+  },
+  {
+   "ticker": "PL",
+   "name": "Planet Labs",
+   "currency": "USD",
+   "price": 15.155,
+   "chg_1d": -0.0504,
+   "rvol": 2.354,
+   "score": 15.11,
+   "breakout": false,
+   "triggers": [
+    "rvol"
+   ],
+   "reason": "volume 2,4 fois la normale"
+  },
+  {
+   "ticker": "UEC",
+   "name": "Uranium Energy",
+   "currency": "USD",
+   "price": 8.25,
+   "chg_1d": -0.0657,
+   "rvol": 3.305,
+   "score": 12.76,
+   "breakout": false,
+   "triggers": [
+    "rvol"
+   ],
+   "reason": "volume 3,3 fois la normale"
+  },
+  {
+   "ticker": "IONQ",
+   "name": "IonQ",
+   "currency": "USD",
+   "price": 34.725,
+   "chg_1d": -0.0426,
+   "rvol": 2.475,
+   "score": 12.73,
    "breakout": false,
    "triggers": [
     "rvol"
@@ -69,32 +252,60 @@
    "reason": "volume 2,5 fois la normale"
   },
   {
-   "ticker": "CIFR",
-   "name": "Cipher Mining",
+   "ticker": "BBAI",
+   "name": "BigBear.ai",
    "currency": "USD",
-   "price": 11.34,
-   "chg_1d": -0.1277,
-   "rvol": 3.858,
-   "score": 9.88,
+   "price": 2.395,
+   "chg_1d": 0.0413,
+   "rvol": 4.208,
+   "score": 12.1,
    "breakout": false,
    "triggers": [
     "rvol"
    ],
-   "reason": "volume 3,9 fois la normale"
+   "reason": "volume 4,2 fois la normale"
   },
   {
-   "ticker": "BBAI",
-   "name": "BigBear.ai",
+   "ticker": "CW",
+   "name": "Curtiss-Wright",
    "currency": "USD",
-   "price": 2.39,
-   "chg_1d": 0.0391,
-   "rvol": 2.271,
-   "score": 6.88,
+   "price": 502.14,
+   "chg_1d": -0.004,
+   "rvol": 3.043,
+   "score": 11.57,
+   "breakout": false,
+   "triggers": [
+    "rvol"
+   ],
+   "reason": "volume 3,0 fois la normale"
+  },
+  {
+   "ticker": "UCTT",
+   "name": "Ultra Clean Holdings",
+   "currency": "USD",
+   "price": 60.99,
+   "chg_1d": -0.0397,
+   "rvol": 2.276,
+   "score": 11.2,
    "breakout": false,
    "triggers": [
     "rvol"
    ],
    "reason": "volume 2,3 fois la normale"
+  },
+  {
+   "ticker": "CIFR",
+   "name": "Cipher Mining",
+   "currency": "USD",
+   "price": 11.335,
+   "chg_1d": -0.1281,
+   "rvol": 3.484,
+   "score": 9.44,
+   "breakout": false,
+   "triggers": [
+    "rvol"
+   ],
+   "reason": "volume 3,5 fois la normale"
   }
  ]
 }
