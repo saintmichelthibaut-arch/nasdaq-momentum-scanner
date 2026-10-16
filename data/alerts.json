@@ -1,5 +1,5 @@
 {
- "generated_at_utc": "2026-10-16T22:58:25+00:00",
+ "generated_at_utc": "2026-10-16T23:50:50+00:00",
  "market_date": {
   "US": "2026-10-16",
   "EU": "2026-10-16"
@@ -12,6 +12,21 @@
   "volume_accel_above": 70
  },
  "alerts": [
+  {
+   "ticker": "QRVO",
+   "name": "Qorvo",
+   "currency": "USD",
+   "price": 114.17,
+   "chg_1d": 0.0573,
+   "rvol": 7.435,
+   "score": 74.7,
+   "breakout": true,
+   "triggers": [
+    "rvol",
+    "volume_accel"
+   ],
+   "reason": "le volume accélère régulièrement, volume 7,4 fois la normale, plafond à 5,6 % (120,52)"
+  },
   {
    "ticker": "VRNS",
    "name": "Varonis",
@@ -120,7 +135,7 @@
    "price": 165.14,
    "chg_1d": -0.0333,
    "rvol": 2.031,
-   "score": 20.29,
+   "score": 20.3,
    "breakout": false,
    "triggers": [
     "rvol",
