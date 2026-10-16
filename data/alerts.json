@@ -1,5 +1,5 @@
 {
- "generated_at_utc": "2026-10-15T23:49:16+00:00",
+ "generated_at_utc": "2026-10-16T09:40:20+00:00",
  "market_date": {
   "US": "2026-10-15",
   "EU": "2026-10-15"
@@ -18,8 +18,8 @@
    "currency": "USD",
    "price": 148.57,
    "chg_1d": 0.0614,
-   "rvol": 1.663,
-   "score": 77.72,
+   "rvol": 1.664,
+   "score": 77.73,
    "breakout": true,
    "triggers": [
     "score",
@@ -29,13 +29,28 @@
    "reason": "le volume accélère depuis 4 séances, cassure du plus haut 20 séances à 148,14, score passé de 43 à 78"
   },
   {
+   "ticker": "QRVO",
+   "name": "Qorvo",
+   "currency": "USD",
+   "price": 114.17,
+   "chg_1d": 0.0573,
+   "rvol": 7.435,
+   "score": 74.7,
+   "breakout": true,
+   "triggers": [
+    "rvol",
+    "volume_accel"
+   ],
+   "reason": "le volume accélère régulièrement, volume 7,4 fois la normale, plafond à 5,6 % (120,52)"
+  },
+  {
    "ticker": "PAYC",
    "name": "Paycom",
    "currency": "USD",
    "price": 252.87,
    "chg_1d": 0.058,
-   "rvol": 1.521,
-   "score": 60.5,
+   "rvol": 1.523,
+   "score": 60.51,
    "breakout": true,
    "triggers": [
     "breakout_volume"
@@ -48,8 +63,8 @@
    "currency": "USD",
    "price": 313.03,
    "chg_1d": 0.0527,
-   "rvol": 1.792,
-   "score": 54.52,
+   "rvol": 1.793,
+   "score": 54.74,
    "breakout": true,
    "triggers": [
     "breakout_volume"
@@ -77,7 +92,7 @@
    "price": 240.5,
    "chg_1d": 0.0126,
    "rvol": 1.931,
-   "score": 35.38,
+   "score": 35.37,
    "breakout": false,
    "triggers": [
     "volume_accel"
@@ -90,14 +105,14 @@
    "currency": "USD",
    "price": 69.69,
    "chg_1d": 0.0594,
-   "rvol": 3.627,
-   "score": 29.11,
+   "rvol": 3.659,
+   "score": 29.13,
    "breakout": false,
    "triggers": [
     "rvol",
     "volume_accel"
    ],
-   "reason": "le volume accélère depuis 3 séances, volume 3,6 fois la normale"
+   "reason": "le volume accélère depuis 3 séances, volume 3,7 fois la normale"
   },
   {
    "ticker": "HPE",
@@ -105,8 +120,8 @@
    "currency": "USD",
    "price": 58.63,
    "chg_1d": -0.071,
-   "rvol": 1.72,
-   "score": 24.13,
+   "rvol": 1.722,
+   "score": 24.15,
    "breakout": false,
    "triggers": [
     "volume_accel"
@@ -119,8 +134,8 @@
    "currency": "USD",
    "price": 188.41,
    "chg_1d": 0.0129,
-   "rvol": 2.703,
-   "score": 23.84,
+   "rvol": 2.721,
+   "score": 23.93,
    "breakout": false,
    "triggers": [
     "rvol",
@@ -149,8 +164,8 @@
    "currency": "USD",
    "price": 12.62,
    "chg_1d": 0.0936,
-   "rvol": 3.699,
-   "score": 22.41,
+   "rvol": 3.709,
+   "score": 22.42,
    "breakout": false,
    "triggers": [
     "rvol",
@@ -179,7 +194,7 @@
    "currency": "USD",
    "price": 501.59,
    "chg_1d": -0.0445,
-   "rvol": 2.326,
+   "rvol": 2.327,
    "score": 21.91,
    "breakout": false,
    "triggers": [
@@ -194,8 +209,8 @@
    "currency": "USD",
    "price": 430.01,
    "chg_1d": -0.0372,
-   "rvol": 1.879,
-   "score": 21.29,
+   "rvol": 1.882,
+   "score": 21.33,
    "breakout": false,
    "triggers": [
     "volume_accel"
@@ -217,13 +232,27 @@
    "reason": "le volume accélère depuis 3 séances"
   },
   {
+   "ticker": "COHU",
+   "name": "Cohu",
+   "currency": "USD",
+   "price": 54.9,
+   "chg_1d": -0.0573,
+   "rvol": 1.525,
+   "score": 20.68,
+   "breakout": false,
+   "triggers": [
+    "volume_accel"
+   ],
+   "reason": "le volume accélère depuis 4 séances"
+  },
+  {
    "ticker": "VRT",
    "name": "Vertiv Holdings",
    "currency": "USD",
    "price": 214.75,
    "chg_1d": -0.0363,
-   "rvol": 2.832,
-   "score": 20.17,
+   "rvol": 2.848,
+   "score": 20.25,
    "breakout": false,
    "triggers": [
     "rvol",
@@ -237,14 +266,14 @@
    "currency": "USD",
    "price": 30.39,
    "chg_1d": -0.0056,
-   "rvol": 2.544,
-   "score": 20.16,
+   "rvol": 2.556,
+   "score": 20.22,
    "breakout": false,
    "triggers": [
     "rvol",
     "volume_accel"
    ],
-   "reason": "le volume accélère depuis 4 séances, volume 2,5 fois la normale"
+   "reason": "le volume accélère depuis 4 séances, volume 2,6 fois la normale"
   },
   {
    "ticker": "MKSI",
@@ -268,7 +297,7 @@
    "price": 170.82,
    "chg_1d": 0.0076,
    "rvol": 2.332,
-   "score": 19.88,
+   "score": 19.89,
    "breakout": false,
    "triggers": [
     "rvol",
@@ -282,8 +311,8 @@
    "currency": "USD",
    "price": 1481.27,
    "chg_1d": -0.0392,
-   "rvol": 2.501,
-   "score": 19.49,
+   "rvol": 2.505,
+   "score": 19.51,
    "breakout": false,
    "triggers": [
     "rvol",
@@ -297,13 +326,28 @@
    "currency": "USD",
    "price": 144.21,
    "chg_1d": -0.1001,
-   "rvol": 2.789,
-   "score": 18.34,
+   "rvol": 2.799,
+   "score": 18.41,
    "breakout": false,
    "triggers": [
     "rvol"
    ],
    "reason": "volume 2,8 fois la normale"
+  },
+  {
+   "ticker": "DELL",
+   "name": "Dell Technologies",
+   "currency": "USD",
+   "price": 473.39,
+   "chg_1d": -0.068,
+   "rvol": 2.339,
+   "score": 18.38,
+   "breakout": false,
+   "triggers": [
+    "rvol",
+    "volume_accel"
+   ],
+   "reason": "le volume accélère depuis 3 séances, volume 2,3 fois la normale"
   },
   {
    "ticker": "KLAC",
@@ -312,27 +356,12 @@
    "price": 174.46,
    "chg_1d": -0.0243,
    "rvol": 1.481,
-   "score": 18.32,
+   "score": 18.33,
    "breakout": false,
    "triggers": [
     "volume_accel"
    ],
    "reason": "le volume accélère régulièrement"
-  },
-  {
-   "ticker": "DELL",
-   "name": "Dell Technologies",
-   "currency": "USD",
-   "price": 473.39,
-   "chg_1d": -0.068,
-   "rvol": 2.33,
-   "score": 18.32,
-   "breakout": false,
-   "triggers": [
-    "rvol",
-    "volume_accel"
-   ],
-   "reason": "le volume accélère depuis 3 séances, volume 2,3 fois la normale"
   },
   {
    "ticker": "DOCN",
@@ -355,13 +384,13 @@
    "currency": "USD",
    "price": 422.25,
    "chg_1d": -0.018,
-   "rvol": 2.242,
-   "score": 17.94,
+   "rvol": 2.251,
+   "score": 17.99,
    "breakout": false,
    "triggers": [
     "rvol"
    ],
-   "reason": "le volume accélère depuis 2 séances, volume 2,2 fois la normale"
+   "reason": "le volume accélère depuis 2 séances, volume 2,3 fois la normale"
   },
   {
    "ticker": "NVT",
@@ -369,13 +398,13 @@
    "currency": "USD",
    "price": 145.73,
    "chg_1d": -0.0458,
-   "rvol": 2.604,
-   "score": 17.29,
+   "rvol": 2.66,
+   "score": 17.57,
    "breakout": false,
    "triggers": [
     "rvol"
    ],
-   "reason": "le volume accélère depuis 3 séances, volume 2,6 fois la normale"
+   "reason": "le volume accélère depuis 3 séances, volume 2,7 fois la normale"
   },
   {
    "ticker": "ETN",
@@ -397,8 +426,8 @@
    "currency": "USD",
    "price": 34.35,
    "chg_1d": 0.0933,
-   "rvol": 1.828,
-   "score": 16.96,
+   "rvol": 1.838,
+   "score": 17.12,
    "breakout": false,
    "triggers": [
     "volume_accel"
@@ -406,13 +435,27 @@
    "reason": "le volume accélère depuis 2 séances"
   },
   {
+   "ticker": "ICHR",
+   "name": "Ichor Holdings",
+   "currency": "USD",
+   "price": 46.65,
+   "chg_1d": -0.0253,
+   "rvol": 1.573,
+   "score": 16.63,
+   "breakout": false,
+   "triggers": [
+    "volume_accel"
+   ],
+   "reason": "le volume accélère depuis 4 séances"
+  },
+  {
    "ticker": "ANET",
    "name": "Arista Networks",
    "currency": "USD",
    "price": 185.58,
    "chg_1d": -0.0504,
-   "rvol": 2.008,
-   "score": 16.07,
+   "rvol": 2.01,
+   "score": 16.09,
    "breakout": false,
    "triggers": [
     "rvol"
@@ -435,27 +478,13 @@
    "reason": "le volume accélère depuis 4 séances, volume 2,5 fois la normale"
   },
   {
-   "ticker": "ICHR",
-   "name": "Ichor Holdings",
-   "currency": "USD",
-   "price": 46.65,
-   "chg_1d": -0.0253,
-   "rvol": 1.512,
-   "score": 15.28,
-   "breakout": false,
-   "triggers": [
-    "volume_accel"
-   ],
-   "reason": "le volume accélère régulièrement"
-  },
-  {
    "ticker": "CLS",
    "name": "Celestica",
    "currency": "USD",
    "price": 315.25,
    "chg_1d": -0.025,
-   "rvol": 1.792,
-   "score": 15.08,
+   "rvol": 1.794,
+   "score": 15.09,
    "breakout": false,
    "triggers": [
     "volume_accel"
@@ -468,8 +497,8 @@
    "currency": "USD",
    "price": 231.95,
    "chg_1d": -0.0392,
-   "rvol": 1.723,
-   "score": 14.03,
+   "rvol": 1.724,
+   "score": 14.06,
    "breakout": false,
    "triggers": [
     "volume_accel"
@@ -482,8 +511,8 @@
    "currency": "USD",
    "price": 55.25,
    "chg_1d": -0.0664,
-   "rvol": 2.222,
-   "score": 11.82,
+   "rvol": 2.23,
+   "score": 11.87,
    "breakout": false,
    "triggers": [
     "rvol"
@@ -496,8 +525,8 @@
    "currency": "USD",
    "price": 55.67,
    "chg_1d": -0.0279,
-   "rvol": 2.191,
-   "score": 9.04,
+   "rvol": 2.192,
+   "score": 9.05,
    "breakout": false,
    "triggers": [
     "rvol"
