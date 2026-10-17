@@ -1,5 +1,5 @@
 {
- "generated_at_utc": "2026-10-16T23:50:50+00:00",
+ "generated_at_utc": "2026-10-17T09:12:27+00:00",
  "market_date": {
   "US": "2026-10-16",
   "EU": "2026-10-16"
@@ -33,13 +33,13 @@
    "currency": "USD",
    "price": 48.72,
    "chg_1d": 0.0292,
-   "rvol": 22.578,
+   "rvol": 22.721,
    "score": 63.26,
    "breakout": false,
    "triggers": [
     "rvol"
    ],
-   "reason": "le volume accélère depuis 3 séances, volume 22,6 fois la normale, plafond à 3,3 % (50,31)"
+   "reason": "le volume accélère depuis 3 séances, volume 22,7 fois la normale, plafond à 3,3 % (50,31)"
   },
   {
    "ticker": "LHX",
@@ -105,7 +105,7 @@
    "currency": "USD",
    "price": 187.26,
    "chg_1d": -0.102,
-   "rvol": 2.067,
+   "rvol": 2.068,
    "score": 25.92,
    "breakout": false,
    "triggers": [
@@ -119,8 +119,8 @@
    "currency": "USD",
    "price": 61.39,
    "chg_1d": -0.1191,
-   "rvol": 2.478,
-   "score": 24.5,
+   "rvol": 2.492,
+   "score": 24.53,
    "breakout": false,
    "triggers": [
     "rvol",
@@ -135,7 +135,7 @@
    "price": 165.14,
    "chg_1d": -0.0333,
    "rvol": 2.031,
-   "score": 20.3,
+   "score": 20.29,
    "breakout": false,
    "triggers": [
     "rvol",
@@ -149,8 +149,8 @@
    "currency": "USD",
    "price": 42.11,
    "chg_1d": -0.0973,
-   "rvol": 2.23,
-   "score": 19.75,
+   "rvol": 2.235,
+   "score": 19.79,
    "breakout": false,
    "triggers": [
     "rvol",
@@ -159,13 +159,27 @@
    "reason": "le volume accélère depuis 5 séances, volume 2,2 fois la normale"
   },
   {
+   "ticker": "NET",
+   "name": "Cloudflare",
+   "currency": "USD",
+   "price": 296.3,
+   "chg_1d": -0.0633,
+   "rvol": 1.434,
+   "score": 18.37,
+   "breakout": false,
+   "triggers": [
+    "volume_accel"
+   ],
+   "reason": "le volume accélère régulièrement"
+  },
+  {
    "ticker": "STRL",
    "name": "Sterling Infrastructure",
    "currency": "USD",
    "price": 424.36,
    "chg_1d": -0.0491,
-   "rvol": 1.956,
-   "score": 18.31,
+   "rvol": 1.957,
+   "score": 18.32,
    "breakout": false,
    "triggers": [
     "volume_accel"
@@ -178,8 +192,8 @@
    "currency": "USD",
    "price": 306.84,
    "chg_1d": -0.0843,
-   "rvol": 2.052,
-   "score": 18.2,
+   "rvol": 2.053,
+   "score": 18.21,
    "breakout": false,
    "triggers": [
     "rvol"
@@ -187,27 +201,13 @@
    "reason": "le volume accélère depuis 3 séances, volume 2,1 fois la normale"
   },
   {
-   "ticker": "NET",
-   "name": "Cloudflare",
-   "currency": "USD",
-   "price": 296.3,
-   "chg_1d": -0.0633,
-   "rvol": 1.424,
-   "score": 18.15,
-   "breakout": false,
-   "triggers": [
-    "volume_accel"
-   ],
-   "reason": "le volume accélère régulièrement"
-  },
-  {
    "ticker": "NBIS",
    "name": "Nebius Group",
    "currency": "USD",
    "price": 165.47,
    "chg_1d": -0.1218,
-   "rvol": 1.904,
-   "score": 17.1,
+   "rvol": 1.914,
+   "score": 17.31,
    "breakout": false,
    "triggers": [
     "volume_accel"
