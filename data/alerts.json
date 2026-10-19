@@ -1,8 +1,8 @@
 {
- "generated_at_utc": "2026-10-17T09:12:27+00:00",
+ "generated_at_utc": "2026-10-19T23:55:05+00:00",
  "market_date": {
-  "US": "2026-10-16",
-  "EU": "2026-10-16"
+  "US": "2026-10-19",
+  "EU": "2026-10-19"
  },
  "profile": "swing",
  "rules": {
@@ -12,6 +12,22 @@
   "volume_accel_above": 70
  },
  "alerts": [
+  {
+   "ticker": "VRNS",
+   "name": "Varonis",
+   "currency": "USD",
+   "price": 48.7,
+   "chg_1d": -0.0004,
+   "rvol": 2.3,
+   "score": 79.36,
+   "breakout": false,
+   "triggers": [
+    "score",
+    "rvol",
+    "volume_accel"
+   ],
+   "reason": "le volume accélère régulièrement, volume 2,3 fois la normale, plafond à 3,3 % (50,31), score passé de 63 à 79"
+  },
   {
    "ticker": "QRVO",
    "name": "Qorvo",
@@ -28,99 +44,27 @@
    "reason": "le volume accélère régulièrement, volume 7,4 fois la normale, plafond à 5,6 % (120,52)"
   },
   {
-   "ticker": "VRNS",
-   "name": "Varonis",
+   "ticker": "TXN",
+   "name": "Texas Instruments",
    "currency": "USD",
-   "price": 48.72,
-   "chg_1d": 0.0292,
-   "rvol": 22.721,
-   "score": 63.26,
-   "breakout": false,
-   "triggers": [
-    "rvol"
-   ],
-   "reason": "le volume accélère depuis 3 séances, volume 22,7 fois la normale, plafond à 3,3 % (50,31)"
-  },
-  {
-   "ticker": "LHX",
-   "name": "L3Harris",
-   "currency": "USD",
-   "price": 248.51,
-   "chg_1d": 0.0333,
-   "rvol": 2.093,
-   "score": 52.17,
-   "breakout": false,
-   "triggers": [
-    "rvol",
-    "volume_accel"
-   ],
-   "reason": "le volume accélère depuis 5 séances, volume 2,1 fois la normale"
-  },
-  {
-   "ticker": "TENB",
-   "name": "Tenable",
-   "currency": "USD",
-   "price": 37.2,
-   "chg_1d": -0.0539,
-   "rvol": 2.566,
-   "score": 34.45,
-   "breakout": false,
-   "triggers": [
-    "rvol"
-   ],
-   "reason": "le volume accélère depuis 2 séances, volume 2,6 fois la normale"
-  },
-  {
-   "ticker": "MCHP",
-   "name": "Microchip Technology",
-   "currency": "USD",
-   "price": 73.85,
-   "chg_1d": -0.0055,
-   "rvol": 2.085,
-   "score": 30.04,
-   "breakout": false,
-   "triggers": [
-    "rvol",
-    "volume_accel"
-   ],
-   "reason": "le volume accélère depuis 3 séances, volume 2,1 fois la normale"
-  },
-  {
-   "ticker": "ROK",
-   "name": "Rockwell Automation",
-   "currency": "USD",
-   "price": 426.23,
-   "chg_1d": 0.01,
-   "rvol": 1.79,
-   "score": 26.04,
+   "price": 276.15,
+   "chg_1d": -0.0012,
+   "rvol": 1.792,
+   "score": 34.6,
    "breakout": false,
    "triggers": [
     "volume_accel"
    ],
-   "reason": "le volume accélère depuis 2 séances"
-  },
-  {
-   "ticker": "OKTA",
-   "name": "Okta",
-   "currency": "USD",
-   "price": 187.26,
-   "chg_1d": -0.102,
-   "rvol": 2.068,
-   "score": 25.92,
-   "breakout": false,
-   "triggers": [
-    "rvol"
-   ],
-   "reason": "volume 2,1 fois la normale"
+   "reason": "le volume accélère depuis 2 séances, plafond à 8,2 % (298,75)"
   },
   {
    "ticker": "CRWV",
    "name": "CoreWeave",
    "currency": "USD",
-   "price": 61.39,
-   "chg_1d": -0.1191,
-   "rvol": 2.492,
-   "score": 24.53,
+   "price": 61.12,
+   "chg_1d": -0.0044,
+   "rvol": 2.536,
+   "score": 19.8,
    "breakout": false,
    "triggers": [
     "rvol",
@@ -129,90 +73,18 @@
    "reason": "le volume accélère régulièrement, volume 2,5 fois la normale"
   },
   {
-   "ticker": "POWL",
-   "name": "Powell Industries",
+   "ticker": "AMBA",
+   "name": "Ambarella",
    "currency": "USD",
-   "price": 165.14,
-   "chg_1d": -0.0333,
-   "rvol": 2.031,
-   "score": 20.29,
-   "breakout": false,
-   "triggers": [
-    "rvol",
-    "volume_accel"
-   ],
-   "reason": "le volume accélère régulièrement, volume 2,0 fois la normale"
-  },
-  {
-   "ticker": "ICHR",
-   "name": "Ichor Holdings",
-   "currency": "USD",
-   "price": 42.11,
-   "chg_1d": -0.0973,
-   "rvol": 2.235,
-   "score": 19.79,
-   "breakout": false,
-   "triggers": [
-    "rvol",
-    "volume_accel"
-   ],
-   "reason": "le volume accélère depuis 5 séances, volume 2,2 fois la normale"
-  },
-  {
-   "ticker": "NET",
-   "name": "Cloudflare",
-   "currency": "USD",
-   "price": 296.3,
-   "chg_1d": -0.0633,
-   "rvol": 1.434,
-   "score": 18.37,
+   "price": 62.76,
+   "chg_1d": 0.0172,
+   "rvol": 1.756,
+   "score": 16.93,
    "breakout": false,
    "triggers": [
     "volume_accel"
    ],
-   "reason": "le volume accélère régulièrement"
-  },
-  {
-   "ticker": "STRL",
-   "name": "Sterling Infrastructure",
-   "currency": "USD",
-   "price": 424.36,
-   "chg_1d": -0.0491,
-   "rvol": 1.957,
-   "score": 18.32,
-   "breakout": false,
-   "triggers": [
-    "volume_accel"
-   ],
-   "reason": "le volume accélère régulièrement"
-  },
-  {
-   "ticker": "SNOW",
-   "name": "Snowflake",
-   "currency": "USD",
-   "price": 306.84,
-   "chg_1d": -0.0843,
-   "rvol": 2.053,
-   "score": 18.21,
-   "breakout": false,
-   "triggers": [
-    "rvol"
-   ],
-   "reason": "le volume accélère depuis 3 séances, volume 2,1 fois la normale"
-  },
-  {
-   "ticker": "NBIS",
-   "name": "Nebius Group",
-   "currency": "USD",
-   "price": 165.47,
-   "chg_1d": -0.1218,
-   "rvol": 1.914,
-   "score": 17.31,
-   "breakout": false,
-   "triggers": [
-    "volume_accel"
-   ],
-   "reason": "le volume accélère régulièrement"
+   "reason": "le volume accélère depuis 4 séances"
   }
  ]
 }
