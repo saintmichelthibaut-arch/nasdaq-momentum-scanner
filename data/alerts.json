@@ -1,8 +1,8 @@
 {
- "generated_at_utc": "2026-10-20T09:57:34+00:00",
+ "generated_at_utc": "2026-10-20T23:20:52+00:00",
  "market_date": {
-  "US": "2026-10-19",
-  "EU": "2026-10-19"
+  "US": "2026-10-20",
+  "EU": "2026-10-20"
  },
  "profile": "swing",
  "rules": {
@@ -16,60 +16,132 @@
    "ticker": "VRNS",
    "name": "Varonis",
    "currency": "USD",
-   "price": 48.7,
+   "price": 48.68,
    "chg_1d": -0.0004,
-   "rvol": 2.318,
-   "score": 79.42,
+   "rvol": 2.066,
+   "score": 77.46,
    "breakout": false,
    "triggers": [
-    "score",
     "rvol",
     "volume_accel"
    ],
-   "reason": "le volume accélère régulièrement, volume 2,3 fois la normale, plafond à 3,3 % (50,31), score passé de 63 à 79"
+   "reason": "le volume accélère régulièrement, volume 2,1 fois la normale, plafond à 3,4 % (50,31)"
   },
   {
-   "ticker": "TXN",
-   "name": "Texas Instruments",
+   "ticker": "ISRG",
+   "name": "Intuitive Surgical",
    "currency": "USD",
-   "price": 276.15,
-   "chg_1d": -0.0012,
-   "rvol": 1.833,
-   "score": 34.97,
+   "price": 438.0,
+   "chg_1d": 0.0111,
+   "rvol": 1.609,
+   "score": 57.09,
+   "breakout": true,
+   "triggers": [
+    "breakout_volume"
+   ],
+   "reason": "le volume accélère régulièrement, cassure du plus haut 50 séances à 434,89"
+  },
+  {
+   "ticker": "TDY",
+   "name": "Teledyne",
+   "currency": "USD",
+   "price": 632.21,
+   "chg_1d": 0.0201,
+   "rvol": 2.729,
+   "score": 56.71,
+   "breakout": true,
+   "triggers": [
+    "rvol",
+    "breakout_volume"
+   ],
+   "reason": "volume 2,7 fois la normale, cassure du plus haut 20 séances à 626,76"
+  },
+  {
+   "ticker": "RTX",
+   "name": "RTX",
+   "currency": "USD",
+   "price": 193.34,
+   "chg_1d": 0.0064,
+   "rvol": 2.29,
+   "score": 53.15,
    "breakout": false,
    "triggers": [
+    "rvol",
     "volume_accel"
    ],
-   "reason": "le volume accélère depuis 2 séances, plafond à 8,2 % (298,75)"
+   "reason": "le volume accélère régulièrement, volume 2,3 fois la normale"
+  },
+  {
+   "ticker": "NOC",
+   "name": "Northrop Grumman",
+   "currency": "USD",
+   "price": 534.0,
+   "chg_1d": 0.0457,
+   "rvol": 2.029,
+   "score": 50.17,
+   "breakout": true,
+   "triggers": [
+    "rvol",
+    "breakout_volume"
+   ],
+   "reason": "volume 2,0 fois la normale, cassure du plus haut 20 séances à 529,00"
+  },
+  {
+   "ticker": "SE",
+   "name": "Sea Limited",
+   "currency": "USD",
+   "price": 80.43,
+   "chg_1d": -0.0909,
+   "rvol": 4.186,
+   "score": 20.66,
+   "breakout": false,
+   "triggers": [
+    "rvol",
+    "volume_accel"
+   ],
+   "reason": "le volume accélère depuis 3 séances, volume 4,2 fois la normale"
   },
   {
    "ticker": "CRWV",
    "name": "CoreWeave",
    "currency": "USD",
-   "price": 61.12,
-   "chg_1d": -0.0044,
-   "rvol": 2.544,
-   "score": 20.02,
+   "price": 62.13,
+   "chg_1d": 0.0165,
+   "rvol": 2.15,
+   "score": 14.02,
    "breakout": false,
    "triggers": [
-    "rvol",
-    "volume_accel"
+    "rvol"
    ],
-   "reason": "le volume accélère régulièrement, volume 2,5 fois la normale"
+   "reason": "volume 2,1 fois la normale"
   },
   {
-   "ticker": "AMBA",
-   "name": "Ambarella",
+   "ticker": "HWM",
+   "name": "Howmet Aerospace",
    "currency": "USD",
-   "price": 62.76,
-   "chg_1d": 0.0172,
-   "rvol": 1.756,
-   "score": 16.93,
+   "price": 211.63,
+   "chg_1d": -0.0382,
+   "rvol": 2.165,
+   "score": 11.44,
    "breakout": false,
    "triggers": [
-    "volume_accel"
+    "rvol"
    ],
-   "reason": "le volume accélère depuis 4 séances"
+   "reason": "volume 2,2 fois la normale"
+  },
+  {
+   "ticker": "TSEM",
+   "name": "Tower Semiconductor",
+   "currency": "USD",
+   "price": 183.78,
+   "chg_1d": -0.0825,
+   "rvol": 2.21,
+   "score": 8.63,
+   "breakout": false,
+   "triggers": [
+    "rvol"
+   ],
+   "reason": "volume 2,2 fois la normale"
   }
  ]
 }
