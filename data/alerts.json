@@ -1,8 +1,8 @@
 {
- "generated_at_utc": "2026-10-22T10:01:30+00:00",
+ "generated_at_utc": "2026-10-22T23:32:36+00:00",
  "market_date": {
-  "US": "2026-10-21",
-  "EU": "2026-10-21"
+  "US": "2026-10-22",
+  "EU": "2026-10-22"
  },
  "profile": "swing",
  "rules": {
@@ -13,148 +13,488 @@
  },
  "alerts": [
   {
-   "ticker": "VRNS",
-   "name": "Varonis",
+   "ticker": "SPOT",
+   "name": "Spotify",
    "currency": "USD",
-   "price": 48.69,
-   "chg_1d": 0.0002,
-   "rvol": 1.985,
-   "score": 83.77,
-   "breakout": false,
-   "triggers": [
-    "volume_accel"
-   ],
-   "reason": "le volume accélère régulièrement, plafond à 3,3 % (50,31)"
-  },
-  {
-   "ticker": "QRVO",
-   "name": "Qorvo",
-   "currency": "USD",
-   "price": 114.17,
-   "chg_1d": 0.0573,
-   "rvol": 7.435,
-   "score": 74.7,
+   "price": 583.66,
+   "chg_1d": 0.111,
+   "rvol": 3.234,
+   "score": 70.76,
    "breakout": true,
    "triggers": [
     "rvol",
+    "breakout_volume",
     "volume_accel"
    ],
-   "reason": "le volume accélère régulièrement, volume 7,4 fois la normale, plafond à 5,6 % (120,52)"
+   "reason": "le volume accélère depuis 3 séances, volume 3,2 fois la normale, cassure du plus haut 100 séances à 576,00"
   },
   {
-   "ticker": "TDY",
-   "name": "Teledyne",
+   "ticker": "IBM",
+   "name": "IBM",
    "currency": "USD",
-   "price": 630.1,
-   "chg_1d": -0.0033,
-   "rvol": 2.925,
-   "score": 70.0,
+   "price": 252.11,
+   "chg_1d": 0.0026,
+   "rvol": 2.11,
+   "score": 68.71,
    "breakout": true,
    "triggers": [
     "rvol",
-    "volume_accel"
+    "breakout_volume"
    ],
-   "reason": "le volume accélère depuis 2 séances, volume 2,9 fois la normale"
+   "reason": "le volume accélère depuis 3 séances, volume 2,1 fois la normale, cassure du plus haut 50 séances à 251,82"
   },
   {
-   "ticker": "ISRG",
-   "name": "Intuitive Surgical",
+   "ticker": "LMT",
+   "name": "Lockheed Martin",
    "currency": "USD",
-   "price": 428.12,
-   "chg_1d": -0.0226,
-   "rvol": 2.364,
-   "score": 68.77,
+   "price": 589.91,
+   "chg_1d": 0.0696,
+   "rvol": 2.571,
+   "score": 65.59,
+   "breakout": true,
+   "triggers": [
+    "rvol",
+    "breakout_volume"
+   ],
+   "reason": "volume 2,6 fois la normale, cassure du plus haut 20 séances à 559,48"
+  },
+  {
+   "ticker": "QLYS",
+   "name": "Qualys",
+   "currency": "USD",
+   "price": 208.2,
+   "chg_1d": 0.0585,
+   "rvol": 1.88,
+   "score": 62.84,
+   "breakout": true,
+   "triggers": [
+    "breakout_volume"
+   ],
+   "reason": "cassure du plus haut 52 semaines à 206,25"
+  },
+  {
+   "ticker": "NOW",
+   "name": "ServiceNow",
+   "currency": "USD",
+   "price": 157.0,
+   "chg_1d": 0.0253,
+   "rvol": 1.624,
+   "score": 59.73,
+   "breakout": true,
+   "triggers": [
+    "breakout_volume"
+   ],
+   "reason": "volume en hausse 3 séances d'affilée, cassure du plus haut 100 séances à 154,20"
+  },
+  {
+   "ticker": "ADBE",
+   "name": "Adobe",
+   "currency": "USD",
+   "price": 270.55,
+   "chg_1d": 0.0607,
+   "rvol": 1.641,
+   "score": 54.95,
+   "breakout": true,
+   "triggers": [
+    "breakout_volume"
+   ],
+   "reason": "cassure du plus haut 20 séances à 257,63"
+  },
+  {
+   "ticker": "APPF",
+   "name": "AppFolio",
+   "currency": "USD",
+   "price": 217.33,
+   "chg_1d": 0.0006,
+   "rvol": 3.009,
+   "score": 47.92,
+   "breakout": false,
+   "triggers": [
+    "rvol"
+   ],
+   "reason": "le volume accélère depuis 3 séances, volume 3,0 fois la normale, plafond à 8,9 % (236,58)"
+  },
+  {
+   "ticker": "TXN",
+   "name": "Texas Instruments",
+   "currency": "USD",
+   "price": 279.5,
+   "chg_1d": -0.0181,
+   "rvol": 2.51,
+   "score": 41.92,
    "breakout": false,
    "triggers": [
     "rvol",
     "volume_accel"
    ],
-   "reason": "le volume accélère depuis 2 séances, volume 2,4 fois la normale, plafond à 2,9 % (440,40)"
+   "reason": "le volume accélère depuis 2 séances, volume 2,5 fois la normale, plafond à 6,9 % (298,75)"
   },
   {
-   "ticker": "AMBA",
-   "name": "Ambarella",
+   "ticker": "NXPI",
+   "name": "NXP Semiconductors",
    "currency": "USD",
-   "price": 66.0,
-   "chg_1d": 0.044,
-   "rvol": 2.381,
-   "score": 34.0,
+   "price": 237.79,
+   "chg_1d": -0.0189,
+   "rvol": 2.25,
+   "score": 39.26,
    "breakout": false,
    "triggers": [
     "rvol"
    ],
-   "reason": "volume 2,4 fois la normale"
-  },
-  {
-   "ticker": "SMCI",
-   "name": "Super Micro Computer",
-   "currency": "USD",
-   "price": 35.57,
-   "chg_1d": 0.0955,
-   "rvol": 2.419,
-   "score": 30.15,
-   "breakout": false,
-   "triggers": [
-    "rvol"
-   ],
-   "reason": "volume 2,4 fois la normale"
-  },
-  {
-   "ticker": "SE",
-   "name": "Sea Limited",
-   "currency": "USD",
-   "price": 77.94,
-   "chg_1d": -0.031,
-   "rvol": 3.01,
-   "score": 24.5,
-   "breakout": false,
-   "triggers": [
-    "rvol",
-    "volume_accel"
-   ],
-   "reason": "le volume accélère régulièrement, volume 3,0 fois la normale"
-  },
-  {
-   "ticker": "NFLX",
-   "name": "Netflix",
-   "currency": "USD",
-   "price": 65.04,
-   "chg_1d": -0.0531,
-   "rvol": 2.757,
-   "score": 18.19,
-   "breakout": false,
-   "triggers": [
-    "rvol"
-   ],
-   "reason": "le volume accélère depuis 2 séances, volume 2,8 fois la normale"
+   "reason": "volume 2,2 fois la normale, plafond à 7,7 % (256,17)"
   },
   {
    "ticker": "FLEX",
    "name": "Flex",
    "currency": "USD",
-   "price": 86.25,
-   "chg_1d": -0.0142,
-   "rvol": 2.33,
-   "score": 14.16,
+   "price": 76.69,
+   "chg_1d": -0.1108,
+   "rvol": 2.708,
+   "score": 24.37,
    "breakout": false,
    "triggers": [
-    "rvol"
+    "rvol",
+    "volume_accel"
    ],
-   "reason": "volume en hausse 3 séances d'affilée, volume 2,3 fois la normale"
+   "reason": "le volume accélère depuis 4 séances, volume 2,7 fois la normale"
   },
   {
    "ticker": "HWM",
    "name": "Howmet Aerospace",
    "currency": "USD",
-   "price": 208.15,
-   "chg_1d": -0.0164,
-   "rvol": 2.201,
-   "score": 11.23,
+   "price": 193.29,
+   "chg_1d": -0.0714,
+   "rvol": 2.335,
+   "score": 19.92,
+   "breakout": false,
+   "triggers": [
+    "rvol",
+    "volume_accel"
+   ],
+   "reason": "le volume accélère depuis 3 séances, volume 2,3 fois la normale"
+  },
+  {
+   "ticker": "PWR",
+   "name": "Quanta Services",
+   "currency": "USD",
+   "price": 552.44,
+   "chg_1d": -0.081,
+   "rvol": 2.004,
+   "score": 19.33,
+   "breakout": false,
+   "triggers": [
+    "rvol",
+    "volume_accel"
+   ],
+   "reason": "le volume accélère depuis 4 séances, volume 2,0 fois la normale"
+  },
+  {
+   "ticker": "LRCX",
+   "name": "Lam Research",
+   "currency": "USD",
+   "price": 230.15,
+   "chg_1d": -0.1176,
+   "rvol": 2.628,
+   "score": 17.4,
+   "breakout": false,
+   "triggers": [
+    "rvol"
+   ],
+   "reason": "le volume accélère depuis 2 séances, volume 2,6 fois la normale"
+  },
+  {
+   "ticker": "ADI",
+   "name": "Analog Devices",
+   "currency": "USD",
+   "price": 385.76,
+   "chg_1d": -0.0498,
+   "rvol": 2.197,
+   "score": 17.02,
+   "breakout": false,
+   "triggers": [
+    "rvol"
+   ],
+   "reason": "volume 2,2 fois la normale, plafond à 9,6 % (422,67)"
+  },
+  {
+   "ticker": "GEV",
+   "name": "GE Vernova",
+   "currency": "USD",
+   "price": 827.42,
+   "chg_1d": -0.1064,
+   "rvol": 2.674,
+   "score": 15.59,
+   "breakout": false,
+   "triggers": [
+    "rvol"
+   ],
+   "reason": "le volume accélère depuis 2 séances, volume 2,7 fois la normale"
+  },
+  {
+   "ticker": "EME",
+   "name": "EMCOR",
+   "currency": "USD",
+   "price": 660.41,
+   "chg_1d": -0.0554,
+   "rvol": 1.809,
+   "score": 14.74,
+   "breakout": false,
+   "triggers": [
+    "volume_accel"
+   ],
+   "reason": "le volume accélère depuis 3 séances"
+  },
+  {
+   "ticker": "FIX",
+   "name": "Comfort Systems USA",
+   "currency": "USD",
+   "price": 1279.37,
+   "chg_1d": -0.087,
+   "rvol": 2.355,
+   "score": 14.26,
+   "breakout": false,
+   "triggers": [
+    "rvol"
+   ],
+   "reason": "le volume accélère régulièrement, volume 2,4 fois la normale"
+  },
+  {
+   "ticker": "META",
+   "name": "Meta Platforms",
+   "currency": "USD",
+   "price": 648.85,
+   "chg_1d": -0.0698,
+   "rvol": 2.075,
+   "score": 13.94,
+   "breakout": false,
+   "triggers": [
+    "rvol"
+   ],
+   "reason": "volume en hausse 3 séances d'affilée, volume 2,1 fois la normale"
+  },
+  {
+   "ticker": "CRS",
+   "name": "Carpenter Technology",
+   "currency": "USD",
+   "price": 292.26,
+   "chg_1d": -0.2062,
+   "rvol": 3.965,
+   "score": 12.23,
+   "breakout": false,
+   "triggers": [
+    "rvol"
+   ],
+   "reason": "volume 4,0 fois la normale"
+  },
+  {
+   "ticker": "PH",
+   "name": "Parker-Hannifin",
+   "currency": "USD",
+   "price": 893.21,
+   "chg_1d": -0.0678,
+   "rvol": 2.45,
+   "score": 11.25,
+   "breakout": false,
+   "triggers": [
+    "rvol"
+   ],
+   "reason": "volume 2,5 fois la normale"
+  },
+  {
+   "ticker": "NVT",
+   "name": "nVent Electric",
+   "currency": "USD",
+   "price": 127.67,
+   "chg_1d": -0.1263,
+   "rvol": 2.765,
+   "score": 10.92,
+   "breakout": false,
+   "triggers": [
+    "rvol"
+   ],
+   "reason": "volume 2,8 fois la normale"
+  },
+  {
+   "ticker": "ATI",
+   "name": "ATI",
+   "currency": "USD",
+   "price": 161.84,
+   "chg_1d": -0.1043,
+   "rvol": 2.956,
+   "score": 10.89,
+   "breakout": false,
+   "triggers": [
+    "rvol"
+   ],
+   "reason": "volume 3,0 fois la normale"
+  },
+  {
+   "ticker": "ICHR",
+   "name": "Ichor Holdings",
+   "currency": "USD",
+   "price": 37.86,
+   "chg_1d": -0.1264,
+   "rvol": 2.387,
+   "score": 10.19,
+   "breakout": false,
+   "triggers": [
+    "rvol"
+   ],
+   "reason": "volume 2,4 fois la normale"
+  },
+  {
+   "ticker": "NOK",
+   "name": "Nokia",
+   "currency": "USD",
+   "price": 7.88,
+   "chg_1d": -0.1481,
+   "rvol": 3.038,
+   "score": 10.03,
+   "breakout": false,
+   "triggers": [
+    "rvol"
+   ],
+   "reason": "volume en hausse 3 séances d'affilée, volume 3,0 fois la normale"
+  },
+  {
+   "ticker": "COHU",
+   "name": "Cohu",
+   "currency": "USD",
+   "price": 46.26,
+   "chg_1d": -0.1633,
+   "rvol": 2.073,
+   "score": 9.12,
+   "breakout": false,
+   "triggers": [
+    "rvol"
+   ],
+   "reason": "volume 2,1 fois la normale"
+  },
+  {
+   "ticker": "KLAC",
+   "name": "KLA Corp",
+   "currency": "USD",
+   "price": 147.83,
+   "chg_1d": -0.0955,
+   "rvol": 2.205,
+   "score": 9.0,
    "breakout": false,
    "triggers": [
     "rvol"
    ],
    "reason": "volume 2,2 fois la normale"
+  },
+  {
+   "ticker": "ENTG",
+   "name": "Entegris",
+   "currency": "USD",
+   "price": 128.31,
+   "chg_1d": -0.1312,
+   "rvol": 2.254,
+   "score": 8.8,
+   "breakout": false,
+   "triggers": [
+    "rvol"
+   ],
+   "reason": "volume 2,3 fois la normale"
+  },
+  {
+   "ticker": "TSEM",
+   "name": "Tower Semiconductor",
+   "currency": "USD",
+   "price": 167.71,
+   "chg_1d": -0.1152,
+   "rvol": 2.019,
+   "score": 8.65,
+   "breakout": false,
+   "triggers": [
+    "rvol"
+   ],
+   "reason": "volume 2,0 fois la normale"
+  },
+  {
+   "ticker": "SIMO",
+   "name": "Silicon Motion",
+   "currency": "USD",
+   "price": 187.96,
+   "chg_1d": -0.1545,
+   "rvol": 2.46,
+   "score": 8.58,
+   "breakout": false,
+   "triggers": [
+    "rvol"
+   ],
+   "reason": "volume 2,5 fois la normale"
+  },
+  {
+   "ticker": "TER",
+   "name": "Teradyne",
+   "currency": "USD",
+   "price": 308.75,
+   "chg_1d": -0.1063,
+   "rvol": 2.331,
+   "score": 7.54,
+   "breakout": false,
+   "triggers": [
+    "rvol"
+   ],
+   "reason": "volume 2,3 fois la normale"
+  },
+  {
+   "ticker": "POWL",
+   "name": "Powell Industries",
+   "currency": "USD",
+   "price": 150.71,
+   "chg_1d": -0.1151,
+   "rvol": 2.004,
+   "score": 7.52,
+   "breakout": false,
+   "triggers": [
+    "rvol"
+   ],
+   "reason": "volume 2,0 fois la normale"
+  },
+  {
+   "ticker": "MPWR",
+   "name": "Monolithic Power Systems",
+   "currency": "USD",
+   "price": 1167.9301,
+   "chg_1d": -0.0899,
+   "rvol": 2.25,
+   "score": 6.89,
+   "breakout": false,
+   "triggers": [
+    "rvol"
+   ],
+   "reason": "volume 2,2 fois la normale"
+  },
+  {
+   "ticker": "AMAT",
+   "name": "Applied Materials",
+   "currency": "USD",
+   "price": 375.58,
+   "chg_1d": -0.0816,
+   "rvol": 2.021,
+   "score": 6.5,
+   "breakout": false,
+   "triggers": [
+    "rvol"
+   ],
+   "reason": "volume 2,0 fois la normale"
+  },
+  {
+   "ticker": "MKSI",
+   "name": "MKS Instruments",
+   "currency": "USD",
+   "price": 196.11,
+   "chg_1d": -0.0925,
+   "rvol": 2.084,
+   "score": 5.94,
+   "breakout": false,
+   "triggers": [
+    "rvol"
+   ],
+   "reason": "volume 2,1 fois la normale"
   }
  ]
 }
