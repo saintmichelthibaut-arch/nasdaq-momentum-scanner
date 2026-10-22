@@ -1,5 +1,5 @@
 {
- "generated_at_utc": "2026-10-21T23:35:14+00:00",
+ "generated_at_utc": "2026-10-22T00:10:01+00:00",
  "market_date": {
   "US": "2026-10-21",
   "EU": "2026-10-21"
@@ -16,130 +16,242 @@
    "ticker": "VRNS",
    "name": "Varonis",
    "currency": "USD",
-   "price": 48.69,
-   "chg_1d": 0.0002,
-   "rvol": 1.957,
-   "score": 83.69,
+   "price": 48.675,
+   "chg_1d": -0.0001,
+   "rvol": 1.78,
+   "score": 79.13,
    "breakout": false,
    "triggers": [
     "volume_accel"
    ],
-   "reason": "le volume accélère régulièrement, plafond à 3,3 % (50,31)"
+   "reason": "le volume accélère régulièrement, plafond à 3,4 % (50,31)"
   },
   {
-   "ticker": "TDY",
-   "name": "Teledyne",
+   "ticker": "TSLA",
+   "name": "Tesla",
    "currency": "USD",
-   "price": 630.1,
-   "chg_1d": -0.0033,
-   "rvol": 2.924,
-   "score": 70.0,
-   "breakout": true,
+   "price": 386.555,
+   "chg_1d": 0.0344,
+   "rvol": 6.728,
+   "score": 69.48,
+   "breakout": false,
    "triggers": [
-    "rvol",
-    "volume_accel"
+    "rvol"
    ],
-   "reason": "le volume accélère depuis 2 séances, volume 2,9 fois la normale"
+   "reason": "volume 6,7 fois la normale, plafond à 0,5 % (388,56)"
   },
   {
    "ticker": "ISRG",
    "name": "Intuitive Surgical",
    "currency": "USD",
-   "price": 428.12,
-   "chg_1d": -0.0226,
-   "rvol": 2.315,
-   "score": 68.51,
+   "price": 428.05,
+   "chg_1d": -0.0227,
+   "rvol": 2.065,
+   "score": 66.61,
    "breakout": false,
    "triggers": [
     "rvol",
     "volume_accel"
    ],
-   "reason": "le volume accélère depuis 2 séances, volume 2,3 fois la normale, plafond à 2,9 % (440,40)"
+   "reason": "le volume accélère depuis 2 séances, volume 2,1 fois la normale, plafond à 2,9 % (440,40)"
   },
   {
-   "ticker": "AMBA",
-   "name": "Ambarella",
+   "ticker": "TDY",
+   "name": "Teledyne",
    "currency": "USD",
-   "price": 66.0,
-   "chg_1d": 0.044,
-   "rvol": 2.379,
-   "score": 33.99,
+   "price": 630.18,
+   "chg_1d": -0.0032,
+   "rvol": 8.161,
+   "score": 64.56,
+   "breakout": true,
+   "triggers": [
+    "rvol",
+    "volume_accel"
+   ],
+   "reason": "le volume accélère depuis 2 séances, volume 8,2 fois la normale"
+  },
+  {
+   "ticker": "ROK",
+   "name": "Rockwell Automation",
+   "currency": "USD",
+   "price": 438.51,
+   "chg_1d": 0.0251,
+   "rvol": 2.02,
+   "score": 37.65,
    "breakout": false,
    "triggers": [
     "rvol"
    ],
-   "reason": "volume 2,4 fois la normale"
+   "reason": "volume 2,0 fois la normale"
   },
   {
    "ticker": "SMCI",
    "name": "Super Micro Computer",
    "currency": "USD",
-   "price": 35.57,
-   "chg_1d": 0.0955,
-   "rvol": 2.416,
-   "score": 30.13,
+   "price": 35.55,
+   "chg_1d": 0.0949,
+   "rvol": 4.148,
+   "score": 35.93,
    "breakout": false,
    "triggers": [
     "rvol"
    ],
-   "reason": "volume 2,4 fois la normale"
+   "reason": "le volume accélère depuis 2 séances, volume 4,1 fois la normale"
   },
   {
-   "ticker": "SE",
-   "name": "Sea Limited",
+   "ticker": "NVDA",
+   "name": "NVIDIA",
    "currency": "USD",
-   "price": 77.94,
-   "chg_1d": -0.031,
-   "rvol": 2.946,
-   "score": 24.34,
-   "breakout": false,
-   "triggers": [
-    "rvol",
-    "volume_accel"
-   ],
-   "reason": "le volume accélère régulièrement, volume 2,9 fois la normale"
-  },
-  {
-   "ticker": "NFLX",
-   "name": "Netflix",
-   "currency": "USD",
-   "price": 65.04,
-   "chg_1d": -0.0531,
-   "rvol": 2.75,
-   "score": 18.14,
+   "price": 221.87,
+   "chg_1d": 0.0249,
+   "rvol": 5.592,
+   "score": 35.72,
    "breakout": false,
    "triggers": [
     "rvol"
    ],
-   "reason": "le volume accélère depuis 2 séances, volume 2,8 fois la normale"
+   "reason": "volume 5,6 fois la normale, plafond à 9,7 % (243,37)"
   },
   {
-   "ticker": "FLEX",
-   "name": "Flex",
+   "ticker": "AMBA",
+   "name": "Ambarella",
    "currency": "USD",
-   "price": 86.25,
-   "chg_1d": -0.0142,
-   "rvol": 2.329,
-   "score": 14.16,
-   "breakout": false,
-   "triggers": [
-    "rvol"
-   ],
-   "reason": "volume en hausse 3 séances d'affilée, volume 2,3 fois la normale"
-  },
-  {
-   "ticker": "HWM",
-   "name": "Howmet Aerospace",
-   "currency": "USD",
-   "price": 208.15,
-   "chg_1d": -0.0164,
-   "rvol": 2.201,
-   "score": 11.23,
+   "price": 65.935,
+   "chg_1d": 0.0429,
+   "rvol": 2.234,
+   "score": 33.01,
    "breakout": false,
    "triggers": [
     "rvol"
    ],
    "reason": "volume 2,2 fois la normale"
+  },
+  {
+   "ticker": "SPOT",
+   "name": "Spotify",
+   "currency": "USD",
+   "price": 524.91,
+   "chg_1d": -0.0022,
+   "rvol": 2.585,
+   "score": 31.78,
+   "breakout": false,
+   "triggers": [
+    "rvol"
+   ],
+   "reason": "volume 2,6 fois la normale, plafond à 9,7 % (576,00)"
+  },
+  {
+   "ticker": "PH",
+   "name": "Parker-Hannifin",
+   "currency": "USD",
+   "price": 958.34,
+   "chg_1d": 0.0145,
+   "rvol": 2.266,
+   "score": 27.2,
+   "breakout": false,
+   "triggers": [
+    "rvol"
+   ],
+   "reason": "le volume accélère depuis 2 séances, volume 2,3 fois la normale"
+  },
+  {
+   "ticker": "SE",
+   "name": "Sea Limited",
+   "currency": "USD",
+   "price": 77.93,
+   "chg_1d": -0.0311,
+   "rvol": 5.26,
+   "score": 24.5,
+   "breakout": false,
+   "triggers": [
+    "rvol",
+    "volume_accel"
+   ],
+   "reason": "le volume accélère depuis 4 séances, volume 5,3 fois la normale"
+  },
+  {
+   "ticker": "NFLX",
+   "name": "Netflix",
+   "currency": "USD",
+   "price": 65.0475,
+   "chg_1d": -0.053,
+   "rvol": 4.234,
+   "score": 20.68,
+   "breakout": false,
+   "triggers": [
+    "rvol"
+   ],
+   "reason": "le volume accélère depuis 2 séances, volume 4,2 fois la normale"
+  },
+  {
+   "ticker": "BBAI",
+   "name": "BigBear.ai",
+   "currency": "USD",
+   "price": 2.195,
+   "chg_1d": 0.0115,
+   "rvol": 2.293,
+   "score": 17.7,
+   "breakout": false,
+   "triggers": [
+    "rvol"
+   ],
+   "reason": "volume 2,3 fois la normale"
+  },
+  {
+   "ticker": "FLEX",
+   "name": "Flex",
+   "currency": "USD",
+   "price": 86.24,
+   "chg_1d": -0.0143,
+   "rvol": 2.037,
+   "score": 12.75,
+   "breakout": false,
+   "triggers": [
+    "rvol"
+   ],
+   "reason": "volume en hausse 3 séances d'affilée, volume 2,0 fois la normale"
+  },
+  {
+   "ticker": "EME",
+   "name": "EMCOR",
+   "currency": "USD",
+   "price": 698.77,
+   "chg_1d": -0.0053,
+   "rvol": 2.948,
+   "score": 12.25,
+   "breakout": false,
+   "triggers": [
+    "rvol"
+   ],
+   "reason": "volume 2,9 fois la normale"
+  },
+  {
+   "ticker": "GOOGL",
+   "name": "Alphabet",
+   "currency": "USD",
+   "price": 334.67,
+   "chg_1d": -0.0165,
+   "rvol": 2.16,
+   "score": 10.82,
+   "breakout": false,
+   "triggers": [
+    "rvol"
+   ],
+   "reason": "volume 2,2 fois la normale"
+  },
+  {
+   "ticker": "BABA",
+   "name": "Alibaba",
+   "currency": "USD",
+   "price": 104.42,
+   "chg_1d": -0.0386,
+   "rvol": 2.025,
+   "score": 4.29,
+   "breakout": false,
+   "triggers": [
+    "rvol"
+   ],
+   "reason": "volume 2,0 fois la normale"
   }
  ]
 }
