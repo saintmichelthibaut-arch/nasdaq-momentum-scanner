@@ -1,5 +1,5 @@
 {
- "generated_at_utc": "2026-10-28T00:43:16+00:00",
+ "generated_at_utc": "2026-10-28T11:14:27+00:00",
  "market_date": {
   "US": "2026-10-27",
   "EU": "2026-10-27"
@@ -12,20 +12,6 @@
   "volume_accel_above": 70
  },
  "alerts": [
-  {
-   "ticker": "TSLA",
-   "name": "Tesla",
-   "currency": "USD",
-   "price": 407.46,
-   "chg_1d": 0.0404,
-   "rvol": 5.558,
-   "score": 74.88,
-   "breakout": true,
-   "triggers": [
-    "rvol"
-   ],
-   "reason": "volume 5,6 fois la normale"
-  },
   {
    "ticker": "QRVO",
    "name": "Qorvo",
@@ -42,157 +28,85 @@
    "reason": "le volume accélère régulièrement, volume 7,4 fois la normale, plafond à 5,6 % (120,52)"
   },
   {
-   "ticker": "LMT",
-   "name": "Lockheed Martin",
+   "ticker": "CDNS",
+   "name": "Cadence Design Systems",
    "currency": "USD",
-   "price": 623.0,
-   "chg_1d": -0.0192,
-   "rvol": 2.065,
-   "score": 63.17,
-   "breakout": true,
+   "price": 343.08,
+   "chg_1d": 0.0649,
+   "rvol": 2.008,
+   "score": 59.31,
+   "breakout": false,
    "triggers": [
     "rvol"
    ],
-   "reason": "volume 2,1 fois la normale, plafond à 2,2 % (636,56)"
+   "reason": "le volume accélère depuis 2 séances, volume 2,0 fois la normale, plafond à 5,5 % (361,91)"
   },
   {
    "ticker": "GSAT",
    "name": "Globalstar",
    "currency": "USD",
-   "price": 83.89,
-   "chg_1d": 0.0122,
-   "rvol": 3.276,
-   "score": 54.82,
+   "price": 83.9,
+   "chg_1d": 0.0123,
+   "rvol": 3.374,
+   "score": 55.05,
    "breakout": false,
    "triggers": [
     "rvol"
    ],
-   "reason": "volume 3,3 fois la normale, plafond à 1,1 % (84,85)"
+   "reason": "volume 3,4 fois la normale, plafond à 1,1 % (84,85)"
+  },
+  {
+   "ticker": "NXPI",
+   "name": "NXP Semiconductors",
+   "currency": "USD",
+   "price": 253.5,
+   "chg_1d": 0.0312,
+   "rvol": 1.572,
+   "score": 54.53,
+   "breakout": true,
+   "triggers": [
+    "breakout_volume"
+   ],
+   "reason": "cassure du plus haut 50 séances à 249,72"
   },
   {
    "ticker": "SOFI",
    "name": "SoFi Technologies",
    "currency": "USD",
-   "price": 16.395,
-   "chg_1d": 0.1338,
-   "rvol": 3.47,
-   "score": 51.56,
+   "price": 16.4,
+   "chg_1d": 0.1342,
+   "rvol": 3.603,
+   "score": 51.77,
    "breakout": true,
    "triggers": [
     "rvol",
     "breakout_volume"
    ],
-   "reason": "volume 3,5 fois la normale, cassure du plus haut 20 séances à 16,25"
-  },
-  {
-   "ticker": "NVDA",
-   "name": "NVIDIA",
-   "currency": "USD",
-   "price": 217.885,
-   "chg_1d": 0.0087,
-   "rvol": 3.697,
-   "score": 29.47,
-   "breakout": false,
-   "triggers": [
-    "rvol"
-   ],
-   "reason": "volume 3,7 fois la normale"
-  },
-  {
-   "ticker": "GLW",
-   "name": "Corning",
-   "currency": "USD",
-   "price": 126.4,
-   "chg_1d": -0.0105,
-   "rvol": 4.816,
-   "score": 28.27,
-   "breakout": false,
-   "triggers": [
-    "rvol",
-    "volume_accel"
-   ],
-   "reason": "le volume accélère depuis 2 séances, volume 4,8 fois la normale"
+   "reason": "volume 3,6 fois la normale, cassure du plus haut 20 séances à 16,25"
   },
   {
    "ticker": "AMKR",
    "name": "Amkor Technology",
    "currency": "USD",
-   "price": 39.96,
-   "chg_1d": 0.0856,
-   "rvol": 2.459,
-   "score": 27.1,
+   "price": 39.94,
+   "chg_1d": 0.085,
+   "rvol": 2.706,
+   "score": 27.78,
    "breakout": false,
    "triggers": [
     "rvol",
     "volume_accel"
    ],
-   "reason": "le volume accélère régulièrement, volume 2,5 fois la normale"
+   "reason": "le volume accélère régulièrement, volume 2,7 fois la normale"
   },
   {
    "ticker": "BBAI",
    "name": "BigBear.ai",
    "currency": "USD",
-   "price": 2.365,
-   "chg_1d": 0.1156,
-   "rvol": 2.213,
-   "score": 26.85,
-   "breakout": false,
-   "triggers": [
-    "rvol"
-   ],
-   "reason": "volume 2,2 fois la normale"
-  },
-  {
-   "ticker": "CLS",
-   "name": "Celestica",
-   "currency": "USD",
-   "price": 276.33,
-   "chg_1d": 0.1203,
-   "rvol": 12.543,
-   "score": 26.18,
-   "breakout": false,
-   "triggers": [
-    "rvol",
-    "volume_accel"
-   ],
-   "reason": "le volume accélère depuis 2 séances, volume 12,5 fois la normale"
-  },
-  {
-   "ticker": "VRT",
-   "name": "Vertiv Holdings",
-   "currency": "USD",
-   "price": 208.71,
-   "chg_1d": 0.0447,
-   "rvol": 2.085,
-   "score": 24.48,
-   "breakout": false,
-   "triggers": [
-    "rvol"
-   ],
-   "reason": "volume 2,1 fois la normale"
-  },
-  {
-   "ticker": "RMBS",
-   "name": "Rambus",
-   "currency": "USD",
-   "price": 88.89,
-   "chg_1d": -0.0158,
-   "rvol": 1.83,
-   "score": 19.71,
-   "breakout": false,
-   "triggers": [
-    "volume_accel"
-   ],
-   "reason": "le volume accélère régulièrement"
-  },
-  {
-   "ticker": "FIX",
-   "name": "Comfort Systems USA",
-   "currency": "USD",
-   "price": 1288.25,
-   "chg_1d": 0.0354,
-   "rvol": 2.377,
-   "score": 19.66,
+   "price": 2.35,
+   "chg_1d": 0.1085,
+   "rvol": 2.403,
+   "score": 26.59,
    "breakout": false,
    "triggers": [
     "rvol"
@@ -200,102 +114,104 @@
    "reason": "volume 2,4 fois la normale"
   },
   {
-   "ticker": "FLEX",
-   "name": "Flex",
+   "ticker": "CLS",
+   "name": "Celestica",
    "currency": "USD",
-   "price": 83.35,
-   "chg_1d": 0.0826,
-   "rvol": 2.121,
-   "score": 18.92,
+   "price": 276.54,
+   "chg_1d": 0.1212,
+   "rvol": 3.398,
+   "score": 24.0,
    "breakout": false,
    "triggers": [
-    "rvol"
+    "rvol",
+    "volume_accel"
    ],
-   "reason": "volume 2,1 fois la normale"
+   "reason": "le volume accélère depuis 2 séances, volume 3,4 fois la normale"
+  },
+  {
+   "ticker": "RMBS",
+   "name": "Rambus",
+   "currency": "USD",
+   "price": 88.91,
+   "chg_1d": -0.0156,
+   "rvol": 1.992,
+   "score": 22.39,
+   "breakout": false,
+   "triggers": [
+    "volume_accel"
+   ],
+   "reason": "le volume accélère régulièrement"
   },
   {
    "ticker": "CRS",
    "name": "Carpenter Technology",
    "currency": "USD",
-   "price": 288.29,
-   "chg_1d": -0.0041,
-   "rvol": 2.158,
-   "score": 17.98,
+   "price": 288.49,
+   "chg_1d": -0.0034,
+   "rvol": 2.333,
+   "score": 21.11,
    "breakout": false,
    "triggers": [
-    "rvol"
+    "rvol",
+    "volume_accel"
    ],
-   "reason": "le volume accélère régulièrement, volume 2,2 fois la normale"
+   "reason": "le volume accélère régulièrement, volume 2,3 fois la normale"
   },
   {
-   "ticker": "CW",
-   "name": "Curtiss-Wright",
+   "ticker": "FLEX",
+   "name": "Flex",
    "currency": "USD",
-   "price": 476.95,
-   "chg_1d": 0.0009,
-   "rvol": 2.296,
-   "score": 16.77,
+   "price": 83.35,
+   "chg_1d": 0.0826,
+   "rvol": 2.422,
+   "score": 19.87,
    "breakout": false,
    "triggers": [
     "rvol"
    ],
-   "reason": "volume 2,3 fois la normale"
+   "reason": "volume 2,4 fois la normale"
   },
   {
    "ticker": "HUBB",
    "name": "Hubbell",
    "currency": "USD",
-   "price": 434.48,
-   "chg_1d": -0.0542,
-   "rvol": 3.016,
-   "score": 16.63,
+   "price": 434.28,
+   "chg_1d": -0.0547,
+   "rvol": 3.358,
+   "score": 17.81,
    "breakout": false,
    "triggers": [
     "rvol"
    ],
-   "reason": "volume 3,0 fois la normale"
-  },
-  {
-   "ticker": "SE",
-   "name": "Sea Limited",
-   "currency": "USD",
-   "price": 74.745,
-   "chg_1d": 0.0099,
-   "rvol": 3.174,
-   "score": 13.74,
-   "breakout": false,
-   "triggers": [
-    "rvol"
-   ],
-   "reason": "volume 3,2 fois la normale"
+   "reason": "le volume accélère depuis 2 séances, volume 3,4 fois la normale"
   },
   {
    "ticker": "ENPH",
    "name": "Enphase Energy",
    "currency": "USD",
-   "price": 29.725,
-   "chg_1d": -0.0209,
-   "rvol": 2.229,
-   "score": 12.32,
+   "price": 29.76,
+   "chg_1d": -0.0198,
+   "rvol": 3.415,
+   "score": 16.8,
    "breakout": false,
    "triggers": [
     "rvol"
    ],
-   "reason": "volume 2,2 fois la normale"
+   "reason": "volume 3,4 fois la normale"
   },
   {
    "ticker": "META",
    "name": "Meta Platforms",
    "currency": "USD",
-   "price": 620.12,
-   "chg_1d": -0.0166,
-   "rvol": 2.089,
-   "score": 11.03,
+   "price": 620.19,
+   "chg_1d": -0.0164,
+   "rvol": 2.642,
+   "score": 13.9,
    "breakout": false,
    "triggers": [
     "rvol"
    ],
-   "reason": "volume 2,1 fois la normale"
+   "reason": "volume 2,6 fois la normale"
   }
  ]
 }
