@@ -1,5 +1,5 @@
 {
- "generated_at_utc": "2026-10-29T00:18:49+00:00",
+ "generated_at_utc": "2026-10-29T01:12:26+00:00",
  "market_date": {
   "US": "2026-10-28",
   "EU": "2026-10-28"
@@ -154,20 +154,6 @@
     "rvol"
    ],
    "reason": "volume 2,6 fois la normale"
-  },
-  {
-   "ticker": "UEC",
-   "name": "Uranium Energy",
-   "currency": "USD",
-   "price": 8.345,
-   "chg_1d": 0.0379,
-   "rvol": 2.777,
-   "score": 32.55,
-   "breakout": false,
-   "triggers": [
-    "rvol"
-   ],
-   "reason": "volume en hausse 3 séances d'affilée, volume 2,8 fois la normale"
   },
   {
    "ticker": "FLEX",
