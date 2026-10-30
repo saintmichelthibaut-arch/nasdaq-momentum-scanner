@@ -1,5 +1,5 @@
 {
- "generated_at_utc": "2026-10-30T00:12:38+00:00",
+ "generated_at_utc": "2026-10-30T01:19:53+00:00",
  "market_date": {
   "US": "2026-10-29",
   "EU": "2026-10-29"
@@ -13,62 +13,33 @@
  },
  "alerts": [
   {
+   "ticker": "QRVO",
+   "name": "Qorvo",
+   "currency": "USD",
+   "price": 114.17,
+   "chg_1d": 0.0573,
+   "rvol": 7.435,
+   "score": 74.7,
+   "breakout": true,
+   "triggers": [
+    "rvol",
+    "volume_accel"
+   ],
+   "reason": "le volume accélère régulièrement, volume 7,4 fois la normale, plafond à 5,6 % (120,52)"
+  },
+  {
    "ticker": "TSLA",
    "name": "Tesla",
    "currency": "USD",
    "price": 403.29,
    "chg_1d": -0.0023,
-   "rvol": 2.232,
-   "score": 63.08,
+   "rvol": 2.571,
+   "score": 65.27,
    "breakout": true,
    "triggers": [
     "rvol"
    ],
-   "reason": "volume 2,2 fois la normale, plafond à 1,9 % (410,85)"
-  },
-  {
-   "ticker": "MSFT",
-   "name": "Microsoft",
-   "currency": "USD",
-   "price": 530.43,
-   "chg_1d": -0.0011,
-   "rvol": 5.704,
-   "score": 62.21,
-   "breakout": false,
-   "triggers": [
-    "rvol",
-    "volume_accel"
-   ],
-   "reason": "le volume accélère depuis 4 séances, volume 5,7 fois la normale, plafond à 3,9 % (551,15)"
-  },
-  {
-   "ticker": "RBRK",
-   "name": "Rubrik",
-   "currency": "USD",
-   "price": 133.57,
-   "chg_1d": -0.0179,
-   "rvol": 2.038,
-   "score": 61.47,
-   "breakout": true,
-   "triggers": [
-    "rvol"
-   ],
-   "reason": "volume 2,0 fois la normale, plafond à 4,8 % (139,92)"
-  },
-  {
-   "ticker": "VRT",
-   "name": "Vertiv Holdings",
-   "currency": "USD",
-   "price": 245.94,
-   "chg_1d": 0.0123,
-   "rvol": 3.19,
-   "score": 58.62,
-   "breakout": false,
-   "triggers": [
-    "rvol",
-    "volume_accel"
-   ],
-   "reason": "le volume accélère depuis 3 séances, volume 3,2 fois la normale"
+   "reason": "volume 2,6 fois la normale, plafond à 1,9 % (410,85)"
   },
   {
    "ticker": "TENB",
@@ -76,7 +47,7 @@
    "currency": "USD",
    "price": 51.77,
    "chg_1d": 0.0626,
-   "rvol": 1.682,
+   "rvol": 1.681,
    "score": 57.31,
    "breakout": true,
    "triggers": [
@@ -90,89 +61,14 @@
    "currency": "USD",
    "price": 316.48,
    "chg_1d": 0.1333,
-   "rvol": 6.079,
-   "score": 56.51,
+   "rvol": 2.958,
+   "score": 52.03,
    "breakout": true,
    "triggers": [
     "rvol",
     "breakout_volume"
    ],
-   "reason": "volume en hausse 3 séances d'affilée, volume 6,1 fois la normale, cassure du plus haut 50 séances à 315,53"
-  },
-  {
-   "ticker": "GD",
-   "name": "General Dynamics",
-   "currency": "USD",
-   "price": 371.01,
-   "chg_1d": 0.047,
-   "rvol": 2.105,
-   "score": 52.78,
-   "breakout": true,
-   "triggers": [
-    "rvol",
-    "breakout_volume"
-   ],
-   "reason": "volume 2,1 fois la normale, cassure du plus haut 20 séances à 357,46"
-  },
-  {
-   "ticker": "V",
-   "name": "Visa",
-   "currency": "USD",
-   "price": 410.61,
-   "chg_1d": 0.025,
-   "rvol": 3.445,
-   "score": 52.14,
-   "breakout": true,
-   "triggers": [
-    "rvol",
-    "volume_accel"
-   ],
-   "reason": "le volume accélère régulièrement, volume 3,4 fois la normale, plafond à 1,0 % (414,60)"
-  },
-  {
-   "ticker": "MA",
-   "name": "Mastercard",
-   "currency": "USD",
-   "price": 635.705,
-   "chg_1d": 0.0416,
-   "rvol": 2.913,
-   "score": 50.59,
-   "breakout": true,
-   "triggers": [
-    "rvol",
-    "breakout_volume"
-   ],
-   "reason": "volume en hausse 4 séances d'affilée, volume 2,9 fois la normale, cassure du plus haut 52 semaines à 633,29"
-  },
-  {
-   "ticker": "ORCL",
-   "name": "Oracle",
-   "currency": "USD",
-   "price": 139.59,
-   "chg_1d": -0.0342,
-   "rvol": 2.292,
-   "score": 50.59,
-   "breakout": false,
-   "triggers": [
-    "rvol",
-    "volume_accel"
-   ],
-   "reason": "le volume accélère régulièrement, volume 2,3 fois la normale"
-  },
-  {
-   "ticker": "RTX",
-   "name": "RTX",
-   "currency": "USD",
-   "price": 199.42,
-   "chg_1d": 0.0183,
-   "rvol": 2.877,
-   "score": 47.77,
-   "breakout": true,
-   "triggers": [
-    "rvol",
-    "breakout_volume"
-   ],
-   "reason": "volume 2,9 fois la normale, cassure du plus haut 20 séances à 198,75"
+   "reason": "volume en hausse 3 séances d'affilée, volume 3,0 fois la normale, cassure du plus haut 50 séances à 315,53"
   },
   {
    "ticker": "SIMO",
@@ -181,7 +77,7 @@
    "price": 227.46,
    "chg_1d": 0.0357,
    "rvol": 2.431,
-   "score": 40.02,
+   "score": 40.03,
    "breakout": false,
    "triggers": [
     "rvol",
@@ -195,41 +91,27 @@
    "currency": "USD",
    "price": 348.94,
    "chg_1d": 0.0149,
-   "rvol": 2.037,
-   "score": 38.62,
+   "rvol": 2.219,
+   "score": 39.63,
    "breakout": true,
    "triggers": [
     "rvol"
    ],
-   "reason": "volume 2,0 fois la normale, plafond à 0,8 % (351,73)"
+   "reason": "volume 2,2 fois la normale, plafond à 0,8 % (351,73)"
   },
   {
-   "ticker": "ATI",
-   "name": "ATI",
+   "ticker": "RTX",
+   "name": "RTX",
    "currency": "USD",
-   "price": 175.01,
-   "chg_1d": 0.0587,
-   "rvol": 2.837,
-   "score": 37.29,
-   "breakout": false,
+   "price": 199.42,
+   "chg_1d": 0.0183,
+   "rvol": 1.715,
+   "score": 39.32,
+   "breakout": true,
    "triggers": [
-    "rvol"
+    "breakout_volume"
    ],
-   "reason": "le volume accélère régulièrement, volume 2,8 fois la normale"
-  },
-  {
-   "ticker": "PWR",
-   "name": "Quanta Services",
-   "currency": "USD",
-   "price": 635.21,
-   "chg_1d": 0.0467,
-   "rvol": 2.442,
-   "score": 36.33,
-   "breakout": false,
-   "triggers": [
-    "rvol"
-   ],
-   "reason": "volume 2,4 fois la normale"
+   "reason": "cassure du plus haut 20 séances à 198,75"
   },
   {
    "ticker": "STRL",
@@ -238,7 +120,7 @@
    "price": 373.67,
    "chg_1d": -0.0391,
    "rvol": 2.331,
-   "score": 32.65,
+   "score": 32.66,
    "breakout": false,
    "triggers": [
     "rvol",
@@ -247,41 +129,12 @@
    "reason": "le volume accélère depuis 3 séances, volume 2,3 fois la normale"
   },
   {
-   "ticker": "RDW",
-   "name": "Redwire",
-   "currency": "USD",
-   "price": 9.16,
-   "chg_1d": 0.0166,
-   "rvol": 2.147,
-   "score": 31.67,
-   "breakout": false,
-   "triggers": [
-    "rvol"
-   ],
-   "reason": "volume 2,1 fois la normale"
-  },
-  {
-   "ticker": "META",
-   "name": "Meta Platforms",
-   "currency": "USD",
-   "price": 624.545,
-   "chg_1d": 0.0197,
-   "rvol": 3.536,
-   "score": 29.68,
-   "breakout": false,
-   "triggers": [
-    "rvol",
-    "volume_accel"
-   ],
-   "reason": "le volume accélère régulièrement, volume 3,5 fois la normale"
-  },
-  {
    "ticker": "FTNT",
    "name": "Fortinet",
    "currency": "USD",
    "price": 139.08,
    "chg_1d": -0.2011,
-   "rvol": 3.973,
+   "rvol": 3.974,
    "score": 28.58,
    "breakout": false,
    "triggers": [
@@ -296,84 +149,14 @@
    "currency": "USD",
    "price": 109.65,
    "chg_1d": -0.2696,
-   "rvol": 9.964,
+   "rvol": 5.694,
    "score": 27.74,
    "breakout": false,
    "triggers": [
     "rvol",
     "volume_accel"
    ],
-   "reason": "le volume accélère depuis 2 séances, volume 10,0 fois la normale"
-  },
-  {
-   "ticker": "CIEN",
-   "name": "Ciena",
-   "currency": "USD",
-   "price": 349.1,
-   "chg_1d": -0.0388,
-   "rvol": 2.536,
-   "score": 27.19,
-   "breakout": false,
-   "triggers": [
-    "rvol"
-   ],
-   "reason": "volume 2,5 fois la normale"
-  },
-  {
-   "ticker": "EME",
-   "name": "EMCOR",
-   "currency": "USD",
-   "price": 689.79,
-   "chg_1d": 0.0166,
-   "rvol": 2.307,
-   "score": 26.32,
-   "breakout": false,
-   "triggers": [
-    "rvol"
-   ],
-   "reason": "volume 2,3 fois la normale"
-  },
-  {
-   "ticker": "HWM",
-   "name": "Howmet Aerospace",
-   "currency": "USD",
-   "price": 205.81,
-   "chg_1d": 0.0544,
-   "rvol": 2.048,
-   "score": 25.88,
-   "breakout": false,
-   "triggers": [
-    "rvol"
-   ],
-   "reason": "volume 2,0 fois la normale"
-  },
-  {
-   "ticker": "CRS",
-   "name": "Carpenter Technology",
-   "currency": "USD",
-   "price": 298.86,
-   "chg_1d": 0.0674,
-   "rvol": 2.85,
-   "score": 25.8,
-   "breakout": false,
-   "triggers": [
-    "rvol"
-   ],
-   "reason": "volume 2,9 fois la normale"
-  },
-  {
-   "ticker": "LITE",
-   "name": "Lumentum",
-   "currency": "USD",
-   "price": 919.85,
-   "chg_1d": 0.0065,
-   "rvol": 2.229,
-   "score": 25.66,
-   "breakout": false,
-   "triggers": [
-    "rvol"
-   ],
-   "reason": "le volume accélère depuis 2 séances, volume 2,2 fois la normale"
+   "reason": "le volume accélère depuis 2 séances, volume 5,7 fois la normale"
   },
   {
    "ticker": "NVDA",
@@ -381,13 +164,13 @@
    "currency": "USD",
    "price": 213.72,
    "chg_1d": -0.0077,
-   "rvol": 3.839,
-   "score": 25.17,
+   "rvol": 3.575,
+   "score": 24.9,
    "breakout": false,
    "triggers": [
     "rvol"
    ],
-   "reason": "volume 3,8 fois la normale"
+   "reason": "volume 3,6 fois la normale"
   },
   {
    "ticker": "GOOGL",
@@ -395,70 +178,28 @@
    "currency": "USD",
    "price": 283.75,
    "chg_1d": -0.1266,
-   "rvol": 15.868,
+   "rvol": 14.681,
    "score": 24.75,
    "breakout": false,
    "triggers": [
     "rvol",
     "volume_accel"
    ],
-   "reason": "le volume accélère depuis 4 séances, volume 15,9 fois la normale"
+   "reason": "le volume accélère depuis 4 séances, volume 14,7 fois la normale"
   },
   {
-   "ticker": "CRM",
-   "name": "Salesforce",
+   "ticker": "MRVL",
+   "name": "Marvell Technology",
    "currency": "USD",
-   "price": 230.94,
-   "chg_1d": -0.0461,
-   "rvol": 2.647,
-   "score": 19.44,
+   "price": 218.2,
+   "chg_1d": -0.1329,
+   "rvol": 2.671,
+   "score": 18.53,
    "breakout": false,
    "triggers": [
     "rvol"
    ],
-   "reason": "volume 2,6 fois la normale"
-  },
-  {
-   "ticker": "TT",
-   "name": "Trane Technologies",
-   "currency": "USD",
-   "price": 431.05,
-   "chg_1d": -0.0388,
-   "rvol": 3.731,
-   "score": 19.01,
-   "breakout": false,
-   "triggers": [
-    "rvol"
-   ],
-   "reason": "le volume accélère depuis 2 séances, volume 3,7 fois la normale"
-  },
-  {
-   "ticker": "PINS",
-   "name": "Pinterest",
-   "currency": "USD",
-   "price": 19.9,
-   "chg_1d": -0.0488,
-   "rvol": 4.882,
-   "score": 17.86,
-   "breakout": false,
-   "triggers": [
-    "rvol"
-   ],
-   "reason": "volume 4,9 fois la normale"
-  },
-  {
-   "ticker": "FORM",
-   "name": "FormFactor",
-   "currency": "USD",
-   "price": 97.36,
-   "chg_1d": -0.1174,
-   "rvol": 2.352,
-   "score": 17.54,
-   "breakout": false,
-   "triggers": [
-    "rvol"
-   ],
-   "reason": "volume en hausse 4 séances d'affilée, volume 2,4 fois la normale"
+   "reason": "volume en hausse 4 séances d'affilée, volume 2,7 fois la normale"
   },
   {
    "ticker": "AMZN",
@@ -466,13 +207,13 @@
    "currency": "USD",
    "price": 244.23,
    "chg_1d": -0.0407,
-   "rvol": 4.223,
-   "score": 17.01,
+   "rvol": 4.094,
+   "score": 16.87,
    "breakout": false,
    "triggers": [
     "rvol"
    ],
-   "reason": "volume en hausse 4 séances d'affilée, volume 4,2 fois la normale"
+   "reason": "volume en hausse 4 séances d'affilée, volume 4,1 fois la normale"
   },
   {
    "ticker": "DASH",
@@ -480,7 +221,7 @@
    "currency": "USD",
    "price": 179.0,
    "chg_1d": 0.0561,
-   "rvol": 2.502,
+   "rvol": 2.501,
    "score": 16.61,
    "breakout": false,
    "triggers": [
@@ -489,18 +230,32 @@
    "reason": "volume 2,5 fois la normale"
   },
   {
+   "ticker": "PINS",
+   "name": "Pinterest",
+   "currency": "USD",
+   "price": 19.9,
+   "chg_1d": -0.0488,
+   "rvol": 3.041,
+   "score": 15.85,
+   "breakout": false,
+   "triggers": [
+    "rvol"
+   ],
+   "reason": "volume 3,0 fois la normale"
+  },
+  {
    "ticker": "RDDT",
    "name": "Reddit",
    "currency": "USD",
    "price": 129.78,
    "chg_1d": -0.0365,
-   "rvol": 4.052,
-   "score": 13.5,
+   "rvol": 2.717,
+   "score": 10.57,
    "breakout": false,
    "triggers": [
     "rvol"
    ],
-   "reason": "volume 4,1 fois la normale"
+   "reason": "volume 2,7 fois la normale"
   }
  ]
 }
