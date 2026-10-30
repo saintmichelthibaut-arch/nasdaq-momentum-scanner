@@ -1,5 +1,5 @@
 {
- "generated_at_utc": "2026-10-30T01:19:53+00:00",
+ "generated_at_utc": "2026-10-30T11:18:26+00:00",
  "market_date": {
   "US": "2026-10-29",
   "EU": "2026-10-29"
@@ -28,27 +28,27 @@
    "reason": "le volume accélère régulièrement, volume 7,4 fois la normale, plafond à 5,6 % (120,52)"
   },
   {
-   "ticker": "TSLA",
-   "name": "Tesla",
+   "ticker": "NXPI",
+   "name": "NXP Semiconductors",
    "currency": "USD",
-   "price": 403.29,
-   "chg_1d": -0.0023,
-   "rvol": 2.571,
-   "score": 65.27,
+   "price": 266.0,
+   "chg_1d": 0.0569,
+   "rvol": 1.567,
+   "score": 61.92,
    "breakout": true,
    "triggers": [
-    "rvol"
+    "breakout_volume"
    ],
-   "reason": "volume 2,6 fois la normale, plafond à 1,9 % (410,85)"
+   "reason": "cassure du plus haut 50 séances à 255,31"
   },
   {
    "ticker": "TENB",
    "name": "Tenable",
    "currency": "USD",
-   "price": 51.77,
-   "chg_1d": 0.0626,
-   "rvol": 1.681,
-   "score": 57.31,
+   "price": 51.78,
+   "chg_1d": 0.0628,
+   "rvol": 1.86,
+   "score": 58.39,
    "breakout": true,
    "triggers": [
     "breakout_volume"
@@ -59,161 +59,148 @@
    "ticker": "HII",
    "name": "Huntington Ingalls",
    "currency": "USD",
-   "price": 316.48,
-   "chg_1d": 0.1333,
-   "rvol": 2.958,
-   "score": 52.03,
+   "price": 316.21,
+   "chg_1d": 0.1323,
+   "rvol": 3.207,
+   "score": 52.71,
    "breakout": true,
    "triggers": [
     "rvol",
     "breakout_volume"
    ],
-   "reason": "volume en hausse 3 séances d'affilée, volume 3,0 fois la normale, cassure du plus haut 50 séances à 315,53"
+   "reason": "volume en hausse 3 séances d'affilée, volume 3,2 fois la normale, cassure du plus haut 50 séances à 315,53"
   },
   {
-   "ticker": "SIMO",
-   "name": "Silicon Motion",
+   "ticker": "RBLX",
+   "name": "Roblox",
    "currency": "USD",
-   "price": 227.46,
-   "chg_1d": 0.0357,
-   "rvol": 2.431,
-   "score": 40.03,
+   "price": 52.46,
+   "chg_1d": -0.0154,
+   "rvol": 2.297,
+   "score": 49.45,
    "breakout": false,
    "triggers": [
-    "rvol",
-    "volume_accel"
+    "rvol"
    ],
-   "reason": "le volume accélère depuis 2 séances, volume 2,4 fois la normale"
+   "reason": "volume en hausse 4 séances d'affilée, volume 2,3 fois la normale, plafond à 6,9 % (56,08)"
   },
   {
-   "ticker": "AAPL",
-   "name": "Apple",
+   "ticker": "LHX",
+   "name": "L3Harris",
    "currency": "USD",
-   "price": 348.94,
-   "chg_1d": 0.0149,
-   "rvol": 2.219,
-   "score": 39.63,
+   "price": 278.43,
+   "chg_1d": 0.0684,
+   "rvol": 2.096,
+   "score": 45.13,
    "breakout": true,
    "triggers": [
     "rvol"
    ],
-   "reason": "volume 2,2 fois la normale, plafond à 0,8 % (351,73)"
+   "reason": "volume 2,1 fois la normale, plafond à 5,1 % (292,74)"
   },
   {
    "ticker": "RTX",
    "name": "RTX",
    "currency": "USD",
-   "price": 199.42,
-   "chg_1d": 0.0183,
-   "rvol": 1.715,
-   "score": 39.32,
+   "price": 199.4,
+   "chg_1d": 0.0182,
+   "rvol": 2.311,
+   "score": 44.05,
    "breakout": true,
    "triggers": [
+    "rvol",
     "breakout_volume"
    ],
-   "reason": "cassure du plus haut 20 séances à 198,75"
+   "reason": "volume 2,3 fois la normale, cassure du plus haut 20 séances à 198,75"
+  },
+  {
+   "ticker": "SIMO",
+   "name": "Silicon Motion",
+   "currency": "USD",
+   "price": 227.75,
+   "chg_1d": 0.0371,
+   "rvol": 2.527,
+   "score": 40.93,
+   "breakout": false,
+   "triggers": [
+    "rvol",
+    "volume_accel"
+   ],
+   "reason": "le volume accélère depuis 2 séances, volume 2,5 fois la normale"
   },
   {
    "ticker": "STRL",
    "name": "Sterling Infrastructure",
    "currency": "USD",
-   "price": 373.67,
+   "price": 373.66,
    "chg_1d": -0.0391,
-   "rvol": 2.331,
-   "score": 32.66,
+   "rvol": 2.508,
+   "score": 38.21,
    "breakout": false,
    "triggers": [
     "rvol",
     "volume_accel"
    ],
-   "reason": "le volume accélère depuis 3 séances, volume 2,3 fois la normale"
+   "reason": "le volume accélère depuis 3 séances, volume 2,5 fois la normale"
+  },
+  {
+   "ticker": "ATI",
+   "name": "ATI",
+   "currency": "USD",
+   "price": 175.0,
+   "chg_1d": 0.0587,
+   "rvol": 2.241,
+   "score": 32.56,
+   "breakout": false,
+   "triggers": [
+    "rvol"
+   ],
+   "reason": "volume 2,2 fois la normale"
   },
   {
    "ticker": "FTNT",
    "name": "Fortinet",
    "currency": "USD",
-   "price": 139.08,
-   "chg_1d": -0.2011,
-   "rvol": 3.974,
-   "score": 28.58,
+   "price": 139.1,
+   "chg_1d": -0.2009,
+   "rvol": 4.324,
+   "score": 29.0,
    "breakout": false,
    "triggers": [
     "rvol",
     "volume_accel"
    ],
-   "reason": "le volume accélère depuis 4 séances, volume 4,0 fois la normale"
+   "reason": "le volume accélère depuis 4 séances, volume 4,3 fois la normale"
   },
   {
    "ticker": "NOW",
    "name": "ServiceNow",
    "currency": "USD",
-   "price": 109.65,
-   "chg_1d": -0.2696,
-   "rvol": 5.694,
+   "price": 109.67,
+   "chg_1d": -0.2695,
+   "rvol": 6.073,
    "score": 27.74,
    "breakout": false,
    "triggers": [
     "rvol",
     "volume_accel"
    ],
-   "reason": "le volume accélère depuis 2 séances, volume 5,7 fois la normale"
-  },
-  {
-   "ticker": "NVDA",
-   "name": "NVIDIA",
-   "currency": "USD",
-   "price": 213.72,
-   "chg_1d": -0.0077,
-   "rvol": 3.575,
-   "score": 24.9,
-   "breakout": false,
-   "triggers": [
-    "rvol"
-   ],
-   "reason": "volume 3,6 fois la normale"
+   "reason": "le volume accélère depuis 2 séances, volume 6,1 fois la normale"
   },
   {
    "ticker": "GOOGL",
    "name": "Alphabet",
    "currency": "USD",
-   "price": 283.75,
-   "chg_1d": -0.1266,
-   "rvol": 14.681,
-   "score": 24.75,
+   "price": 283.82,
+   "chg_1d": -0.1264,
+   "rvol": 5.429,
+   "score": 24.94,
    "breakout": false,
    "triggers": [
     "rvol",
     "volume_accel"
    ],
-   "reason": "le volume accélère depuis 4 séances, volume 14,7 fois la normale"
-  },
-  {
-   "ticker": "MRVL",
-   "name": "Marvell Technology",
-   "currency": "USD",
-   "price": 218.2,
-   "chg_1d": -0.1329,
-   "rvol": 2.671,
-   "score": 18.53,
-   "breakout": false,
-   "triggers": [
-    "rvol"
-   ],
-   "reason": "volume en hausse 4 séances d'affilée, volume 2,7 fois la normale"
-  },
-  {
-   "ticker": "AMZN",
-   "name": "Amazon",
-   "currency": "USD",
-   "price": 244.23,
-   "chg_1d": -0.0407,
-   "rvol": 4.094,
-   "score": 16.87,
-   "breakout": false,
-   "triggers": [
-    "rvol"
-   ],
-   "reason": "volume en hausse 4 séances d'affilée, volume 4,1 fois la normale"
+   "reason": "le volume accélère depuis 4 séances, volume 5,4 fois la normale"
   },
   {
    "ticker": "DASH",
@@ -221,41 +208,83 @@
    "currency": "USD",
    "price": 179.0,
    "chg_1d": 0.0561,
-   "rvol": 2.501,
-   "score": 16.61,
+   "rvol": 2.803,
+   "score": 18.96,
    "breakout": false,
    "triggers": [
     "rvol"
    ],
-   "reason": "volume 2,5 fois la normale"
+   "reason": "volume 2,8 fois la normale"
   },
   {
    "ticker": "PINS",
    "name": "Pinterest",
    "currency": "USD",
-   "price": 19.9,
-   "chg_1d": -0.0488,
-   "rvol": 3.041,
-   "score": 15.85,
+   "price": 19.92,
+   "chg_1d": -0.0478,
+   "rvol": 3.89,
+   "score": 16.82,
    "breakout": false,
    "triggers": [
     "rvol"
    ],
-   "reason": "volume 3,0 fois la normale"
+   "reason": "volume 3,9 fois la normale"
+  },
+  {
+   "ticker": "MRVL",
+   "name": "Marvell Technology",
+   "currency": "USD",
+   "price": 218.34,
+   "chg_1d": -0.1324,
+   "rvol": 2.038,
+   "score": 16.29,
+   "breakout": false,
+   "triggers": [
+    "rvol"
+   ],
+   "reason": "volume en hausse 4 séances d'affilée, volume 2,0 fois la normale"
   },
   {
    "ticker": "RDDT",
    "name": "Reddit",
    "currency": "USD",
-   "price": 129.78,
-   "chg_1d": -0.0365,
-   "rvol": 2.717,
-   "score": 10.57,
+   "price": 129.6,
+   "chg_1d": -0.0379,
+   "rvol": 4.144,
+   "score": 13.58,
    "breakout": false,
    "triggers": [
     "rvol"
    ],
-   "reason": "volume 2,7 fois la normale"
+   "reason": "volume 4,1 fois la normale"
+  },
+  {
+   "ticker": "AMZN",
+   "name": "Amazon",
+   "currency": "USD",
+   "price": 243.79,
+   "chg_1d": -0.0425,
+   "rvol": 2.353,
+   "score": 12.82,
+   "breakout": false,
+   "triggers": [
+    "rvol"
+   ],
+   "reason": "volume en hausse 4 séances d'affilée, volume 2,4 fois la normale"
+  },
+  {
+   "ticker": "TT",
+   "name": "Trane Technologies",
+   "currency": "USD",
+   "price": 431.1,
+   "chg_1d": -0.0387,
+   "rvol": 2.154,
+   "score": 12.26,
+   "breakout": false,
+   "triggers": [
+    "rvol"
+   ],
+   "reason": "volume 2,2 fois la normale"
   }
  ]
 }
