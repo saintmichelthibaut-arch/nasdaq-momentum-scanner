@@ -1,8 +1,8 @@
 {
- "generated_at_utc": "2026-11-10T13:24:02+00:00",
+ "generated_at_utc": "2026-11-11T00:51:32+00:00",
  "market_date": {
-  "US": "2026-11-09",
-  "EU": "2026-11-09"
+  "US": "2026-11-10",
+  "EU": "2026-11-10"
  },
  "profile": "swing",
  "rules": {
@@ -16,192 +16,76 @@
    "ticker": "TTD",
    "name": "The Trade Desk",
    "currency": "USD",
-   "price": 14.93,
-   "chg_1d": 0.1547,
-   "rvol": 6.676,
-   "score": 71.93,
+   "price": 15.42,
+   "chg_1d": 0.0328,
+   "rvol": 3.463,
+   "score": 83.91,
    "breakout": true,
    "triggers": [
-    "rvol",
-    "breakout_volume"
-   ],
-   "reason": "volume 6,7 fois la normale, cassure du plus haut 20 séances à 13,68"
-  },
-  {
-   "ticker": "AOSL",
-   "name": "Alpha and Omega Semiconductor",
-   "currency": "USD",
-   "price": 29.17,
-   "chg_1d": 0.2355,
-   "rvol": 2.466,
-   "score": 69.87,
-   "breakout": true,
-   "triggers": [
+    "score",
     "rvol",
     "breakout_volume",
     "volume_accel"
    ],
-   "reason": "le volume accélère depuis 4 séances, volume 2,5 fois la normale, cassure du plus haut 20 séances à 27,33"
-  },
-  {
-   "ticker": "GSAT",
-   "name": "Globalstar",
-   "currency": "USD",
-   "price": 85.78,
-   "chg_1d": 0.0173,
-   "rvol": 2.23,
-   "score": 58.54,
-   "breakout": true,
-   "triggers": [
-    "rvol",
-    "breakout_volume"
-   ],
-   "reason": "volume 2,2 fois la normale, cassure du plus haut 52 semaines à 85,10"
-  },
-  {
-   "ticker": "MPWR",
-   "name": "Monolithic Power Systems",
-   "currency": "USD",
-   "price": 1388.05,
-   "chg_1d": 0.166,
-   "rvol": 1.542,
-   "score": 53.57,
-   "breakout": true,
-   "triggers": [
-    "breakout_volume"
-   ],
-   "reason": "cassure du plus haut 20 séances à 1 365,36"
-  },
-  {
-   "ticker": "LUNR",
-   "name": "Intuitive Machines",
-   "currency": "USD",
-   "price": 12.04,
-   "chg_1d": 0.15,
-   "rvol": 2.575,
-   "score": 51.27,
-   "breakout": false,
-   "triggers": [
-    "rvol",
-    "volume_accel"
-   ],
-   "reason": "le volume accélère régulièrement, volume 2,6 fois la normale"
-  },
-  {
-   "ticker": "TDG",
-   "name": "TransDigm",
-   "currency": "USD",
-   "price": 1218.85,
-   "chg_1d": 0.0182,
-   "rvol": 2.012,
-   "score": 45.66,
-   "breakout": true,
-   "triggers": [
-    "rvol"
-   ],
-   "reason": "volume 2,0 fois la normale, plafond à 3,9 % (1 265,76)"
-  },
-  {
-   "ticker": "OKLO",
-   "name": "Oklo",
-   "currency": "USD",
-   "price": 26.84,
-   "chg_1d": 0.1397,
-   "rvol": 1.944,
-   "score": 44.16,
-   "breakout": false,
-   "triggers": [
-    "volume_accel"
-   ],
-   "reason": "le volume accélère régulièrement"
-  },
-  {
-   "ticker": "RGTI",
-   "name": "Rigetti Computing",
-   "currency": "USD",
-   "price": 12.98,
-   "chg_1d": 0.1047,
-   "rvol": 1.603,
-   "score": 43.62,
-   "breakout": false,
-   "triggers": [
-    "volume_accel"
-   ],
-   "reason": "le volume accélère régulièrement"
+   "reason": "le volume accélère régulièrement, volume 3,5 fois la normale, cassure du plus haut 50 séances à 15,30, score passé de 72 à 84"
   },
   {
    "ticker": "ACHR",
    "name": "Archer Aviation",
    "currency": "USD",
-   "price": 4.81,
-   "chg_1d": 0.0833,
-   "rvol": 1.83,
-   "score": 43.32,
+   "price": 4.71,
+   "chg_1d": -0.0208,
+   "rvol": 1.855,
+   "score": 46.97,
    "breakout": false,
    "triggers": [
     "volume_accel"
    ],
-   "reason": "le volume accélère régulièrement"
+   "reason": "le volume accélère depuis 2 séances"
   },
   {
-   "ticker": "NVDA",
-   "name": "NVIDIA",
+   "ticker": "SE",
+   "name": "Sea Limited",
    "currency": "USD",
-   "price": 178.67,
-   "chg_1d": -0.0427,
-   "rvol": 3.901,
-   "score": 24.94,
+   "price": 76.8,
+   "chg_1d": -0.0149,
+   "rvol": 2.352,
+   "score": 30.39,
    "breakout": false,
    "triggers": [
-    "rvol",
-    "volume_accel"
+    "rvol"
    ],
-   "reason": "le volume accélère régulièrement, volume 3,9 fois la normale"
+   "reason": "volume 2,4 fois la normale"
   },
   {
    "ticker": "AKAM",
    "name": "Akamai",
    "currency": "USD",
-   "price": 80.29,
-   "chg_1d": -0.0337,
-   "rvol": 2.979,
-   "score": 23.2,
+   "price": 83.71,
+   "chg_1d": 0.0426,
+   "rvol": 3.859,
+   "score": 28.39,
    "breakout": false,
    "triggers": [
     "rvol",
     "volume_accel"
    ],
-   "reason": "le volume accélère depuis 3 séances, volume 3,0 fois la normale"
+   "reason": "le volume accélère depuis 4 séances, volume 3,9 fois la normale"
   },
   {
-   "ticker": "AXON",
-   "name": "Axon Enterprise",
+   "ticker": "NVDA",
+   "name": "NVIDIA",
    "currency": "USD",
-   "price": 303.18,
-   "chg_1d": -0.0314,
-   "rvol": 2.707,
-   "score": 23.12,
+   "price": 168.89,
+   "chg_1d": -0.0547,
+   "rvol": 3.111,
+   "score": 25.25,
    "breakout": false,
    "triggers": [
     "rvol",
     "volume_accel"
    ],
-   "reason": "le volume accélère régulièrement, volume 2,7 fois la normale"
-  },
-  {
-   "ticker": "CEVA",
-   "name": "CEVA",
-   "currency": "USD",
-   "price": 24.84,
-   "chg_1d": -0.0834,
-   "rvol": 2.574,
-   "score": 19.52,
-   "breakout": false,
-   "triggers": [
-    "rvol",
-    "volume_accel"
-   ],
-   "reason": "le volume accélère depuis 4 séances, volume 2,6 fois la normale"
+   "reason": "le volume accélère régulièrement, volume 3,1 fois la normale"
   }
  ]
 }
