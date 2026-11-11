@@ -1,5 +1,5 @@
 {
- "generated_at_utc": "2026-11-11T01:27:55+00:00",
+ "generated_at_utc": "2026-11-11T12:36:58+00:00",
  "market_date": {
   "US": "2026-11-10",
   "EU": "2026-11-10"
@@ -16,10 +16,10 @@
    "ticker": "TTD",
    "name": "The Trade Desk",
    "currency": "USD",
-   "price": 15.425,
-   "chg_1d": 0.0332,
-   "rvol": 5.274,
-   "score": 83.94,
+   "price": 15.42,
+   "chg_1d": 0.0328,
+   "rvol": 3.462,
+   "score": 83.91,
    "breakout": true,
    "triggers": [
     "score",
@@ -27,35 +27,21 @@
     "breakout_volume",
     "volume_accel"
    ],
-   "reason": "le volume accélère régulièrement, volume 5,3 fois la normale, cassure du plus haut 50 séances à 15,30, score passé de 72 à 84"
+   "reason": "le volume accélère régulièrement, volume 3,5 fois la normale, cassure du plus haut 50 séances à 15,30, score passé de 72 à 84"
   },
   {
-   "ticker": "AI",
-   "name": "C3.ai",
+   "ticker": "ACHR",
+   "name": "Archer Aviation",
    "currency": "USD",
-   "price": 11.83,
-   "chg_1d": -0.0142,
-   "rvol": 3.264,
-   "score": 49.22,
+   "price": 4.71,
+   "chg_1d": -0.0208,
+   "rvol": 1.856,
+   "score": 46.99,
    "breakout": false,
    "triggers": [
-    "rvol"
+    "volume_accel"
    ],
-   "reason": "volume 3,3 fois la normale"
-  },
-  {
-   "ticker": "AMD",
-   "name": "Advanced Micro Devices",
-   "currency": "USD",
-   "price": 515.42,
-   "chg_1d": 0.0134,
-   "rvol": 3.541,
-   "score": 42.99,
-   "breakout": false,
-   "triggers": [
-    "rvol"
-   ],
-   "reason": "volume 3,5 fois la normale"
+   "reason": "le volume accélère depuis 2 séances"
   },
   {
    "ticker": "SE",
@@ -63,57 +49,43 @@
    "currency": "USD",
    "price": 76.8,
    "chg_1d": -0.0149,
-   "rvol": 2.145,
-   "score": 29.23,
+   "rvol": 2.394,
+   "score": 30.61,
    "breakout": false,
    "triggers": [
     "rvol"
    ],
-   "reason": "volume 2,1 fois la normale"
+   "reason": "volume 2,4 fois la normale"
   },
   {
    "ticker": "AKAM",
    "name": "Akamai",
    "currency": "USD",
-   "price": 83.82,
-   "chg_1d": 0.044,
-   "rvol": 3.507,
-   "score": 28.44,
+   "price": 83.71,
+   "chg_1d": 0.0426,
+   "rvol": 3.859,
+   "score": 28.39,
    "breakout": false,
    "triggers": [
     "rvol",
     "volume_accel"
    ],
-   "reason": "le volume accélère depuis 4 séances, volume 3,5 fois la normale"
+   "reason": "le volume accélère depuis 4 séances, volume 3,9 fois la normale"
   },
   {
    "ticker": "NVDA",
    "name": "NVIDIA",
    "currency": "USD",
-   "price": 168.79,
-   "chg_1d": -0.0553,
-   "rvol": 25.929,
+   "price": 168.89,
+   "chg_1d": -0.0547,
+   "rvol": 3.107,
    "score": 25.25,
    "breakout": false,
    "triggers": [
     "rvol",
     "volume_accel"
    ],
-   "reason": "le volume accélère depuis 2 séances, volume 25,9 fois la normale"
-  },
-  {
-   "ticker": "FIX",
-   "name": "Comfort Systems USA",
-   "currency": "USD",
-   "price": 1104.41,
-   "chg_1d": -0.0079,
-   "rvol": 3.667,
-   "score": 18.18,
-   "breakout": false,
-   "triggers": [
-    "rvol"
-   ],
-   "reason": "volume 3,7 fois la normale"
+   "reason": "le volume accélère régulièrement, volume 3,1 fois la normale"
   }
  ]
 }
