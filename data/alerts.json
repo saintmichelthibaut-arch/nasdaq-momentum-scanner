@@ -1,8 +1,8 @@
 {
- "generated_at_utc": "2026-11-11T12:36:58+00:00",
+ "generated_at_utc": "2026-11-12T02:00:22+00:00",
  "market_date": {
-  "US": "2026-11-10",
-  "EU": "2026-11-10"
+  "US": "2026-11-11",
+  "EU": "2026-11-11"
  },
  "profile": "swing",
  "rules": {
@@ -13,44 +13,43 @@
  },
  "alerts": [
   {
-   "ticker": "TTD",
-   "name": "The Trade Desk",
+   "ticker": "TDG",
+   "name": "TransDigm",
    "currency": "USD",
-   "price": 15.42,
-   "chg_1d": 0.0328,
-   "rvol": 3.462,
-   "score": 83.91,
-   "breakout": true,
-   "triggers": [
-    "score",
-    "rvol",
-    "breakout_volume",
-    "volume_accel"
-   ],
-   "reason": "le volume accélère régulièrement, volume 3,5 fois la normale, cassure du plus haut 50 séances à 15,30, score passé de 72 à 84"
-  },
-  {
-   "ticker": "ACHR",
-   "name": "Archer Aviation",
-   "currency": "USD",
-   "price": 4.71,
-   "chg_1d": -0.0208,
-   "rvol": 1.856,
-   "score": 46.99,
+   "price": 1245.41,
+   "chg_1d": 0.0162,
+   "rvol": 2.162,
+   "score": 66.36,
    "breakout": false,
    "triggers": [
+    "rvol",
     "volume_accel"
    ],
-   "reason": "le volume accélère depuis 2 séances"
+   "reason": "le volume accélère régulièrement, volume 2,2 fois la normale, plafond à 1,4 % (1 263,40)"
   },
   {
-   "ticker": "SE",
-   "name": "Sea Limited",
+   "ticker": "BILL",
+   "name": "BILL Holdings",
    "currency": "USD",
-   "price": 76.8,
-   "chg_1d": -0.0149,
-   "rvol": 2.394,
-   "score": 30.61,
+   "price": 54.43,
+   "chg_1d": 0.0128,
+   "rvol": 2.058,
+   "score": 56.32,
+   "breakout": true,
+   "triggers": [
+    "rvol",
+    "breakout_volume"
+   ],
+   "reason": "volume 2,1 fois la normale, cassure du plus haut 100 séances à 54,37"
+  },
+  {
+   "ticker": "AMD",
+   "name": "Advanced Micro Devices",
+   "currency": "USD",
+   "price": 552.96,
+   "chg_1d": 0.0733,
+   "rvol": 2.437,
+   "score": 49.76,
    "breakout": false,
    "triggers": [
     "rvol"
@@ -58,34 +57,90 @@
    "reason": "volume 2,4 fois la normale"
   },
   {
-   "ticker": "AKAM",
-   "name": "Akamai",
+   "ticker": "AAPL",
+   "name": "Apple",
    "currency": "USD",
-   "price": 83.71,
-   "chg_1d": 0.0426,
-   "rvol": 3.859,
-   "score": 28.39,
-   "breakout": false,
+   "price": 355.79,
+   "chg_1d": 0.0209,
+   "rvol": 2.056,
+   "score": 45.27,
+   "breakout": true,
    "triggers": [
     "rvol",
-    "volume_accel"
+    "breakout_volume"
    ],
-   "reason": "le volume accélère depuis 4 séances, volume 3,9 fois la normale"
+   "reason": "volume 2,1 fois la normale, cassure du plus haut 52 semaines à 355,38"
+  },
+  {
+   "ticker": "CRWV",
+   "name": "CoreWeave",
+   "currency": "USD",
+   "price": 60.84,
+   "chg_1d": 0.2485,
+   "rvol": 2.025,
+   "score": 38.4,
+   "breakout": false,
+   "triggers": [
+    "rvol"
+   ],
+   "reason": "volume 2,0 fois la normale"
+  },
+  {
+   "ticker": "CLS",
+   "name": "Celestica",
+   "currency": "USD",
+   "price": 242.96,
+   "chg_1d": 0.0852,
+   "rvol": 2.515,
+   "score": 28.05,
+   "breakout": false,
+   "triggers": [
+    "rvol"
+   ],
+   "reason": "volume 2,5 fois la normale"
   },
   {
    "ticker": "NVDA",
    "name": "NVIDIA",
    "currency": "USD",
-   "price": 168.89,
-   "chg_1d": -0.0547,
-   "rvol": 3.107,
-   "score": 25.25,
+   "price": 173.85,
+   "chg_1d": 0.0294,
+   "rvol": 13.58,
+   "score": 27.09,
    "breakout": false,
    "triggers": [
     "rvol",
     "volume_accel"
    ],
-   "reason": "le volume accélère régulièrement, volume 3,1 fois la normale"
+   "reason": "le volume accélère régulièrement, volume 13,6 fois la normale"
+  },
+  {
+   "ticker": "MSFT",
+   "name": "Microsoft",
+   "currency": "USD",
+   "price": 521.21,
+   "chg_1d": -0.0224,
+   "rvol": 2.918,
+   "score": 23.61,
+   "breakout": false,
+   "triggers": [
+    "rvol"
+   ],
+   "reason": "volume 2,9 fois la normale, plafond à 7,3 % (559,15)"
+  },
+  {
+   "ticker": "SNDK",
+   "name": "Sandisk",
+   "currency": "USD",
+   "price": 977.9,
+   "chg_1d": 0.1371,
+   "rvol": 2.37,
+   "score": 15.95,
+   "breakout": false,
+   "triggers": [
+    "rvol"
+   ],
+   "reason": "volume 2,4 fois la normale"
   }
  ]
 }
