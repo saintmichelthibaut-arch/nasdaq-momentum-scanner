@@ -1,5 +1,5 @@
 {
- "generated_at_utc": "2026-11-12T02:00:22+00:00",
+ "generated_at_utc": "2026-11-12T02:29:39+00:00",
  "market_date": {
   "US": "2026-11-11",
   "EU": "2026-11-11"
@@ -18,58 +18,13 @@
    "currency": "USD",
    "price": 1245.41,
    "chg_1d": 0.0162,
-   "rvol": 2.162,
-   "score": 66.36,
-   "breakout": false,
-   "triggers": [
-    "rvol",
-    "volume_accel"
-   ],
-   "reason": "le volume accélère régulièrement, volume 2,2 fois la normale, plafond à 1,4 % (1 263,40)"
-  },
-  {
-   "ticker": "BILL",
-   "name": "BILL Holdings",
-   "currency": "USD",
-   "price": 54.43,
-   "chg_1d": 0.0128,
-   "rvol": 2.058,
-   "score": 56.32,
-   "breakout": true,
-   "triggers": [
-    "rvol",
-    "breakout_volume"
-   ],
-   "reason": "volume 2,1 fois la normale, cassure du plus haut 100 séances à 54,37"
-  },
-  {
-   "ticker": "AMD",
-   "name": "Advanced Micro Devices",
-   "currency": "USD",
-   "price": 552.96,
-   "chg_1d": 0.0733,
-   "rvol": 2.437,
-   "score": 49.76,
+   "rvol": 2.043,
+   "score": 64.67,
    "breakout": false,
    "triggers": [
     "rvol"
    ],
-   "reason": "volume 2,4 fois la normale"
-  },
-  {
-   "ticker": "AAPL",
-   "name": "Apple",
-   "currency": "USD",
-   "price": 355.79,
-   "chg_1d": 0.0209,
-   "rvol": 2.056,
-   "score": 45.27,
-   "breakout": true,
-   "triggers": [
-    "rvol",
-    "breakout_volume"
-   ],
-   "reason": "volume 2,1 fois la normale, cassure du plus haut 52 semaines à 355,38"
+   "reason": "le volume accélère régulièrement, volume 2,0 fois la normale, plafond à 1,4 % (1 263,40)"
   },
   {
    "ticker": "CRWV",
@@ -86,61 +41,32 @@
    "reason": "volume 2,0 fois la normale"
   },
   {
-   "ticker": "CLS",
-   "name": "Celestica",
+   "ticker": "COHR",
+   "name": "Coherent",
    "currency": "USD",
-   "price": 242.96,
-   "chg_1d": 0.0852,
-   "rvol": 2.515,
-   "score": 28.05,
+   "price": 234.61,
+   "chg_1d": 0.0929,
+   "rvol": 2.041,
+   "score": 35.39,
    "breakout": false,
    "triggers": [
     "rvol"
    ],
-   "reason": "volume 2,5 fois la normale"
+   "reason": "volume 2,0 fois la normale"
   },
   {
-   "ticker": "NVDA",
-   "name": "NVIDIA",
+   "ticker": "STX",
+   "name": "Seagate Technology",
    "currency": "USD",
-   "price": 173.85,
-   "chg_1d": 0.0294,
-   "rvol": 13.58,
-   "score": 27.09,
-   "breakout": false,
-   "triggers": [
-    "rvol",
-    "volume_accel"
-   ],
-   "reason": "le volume accélère régulièrement, volume 13,6 fois la normale"
-  },
-  {
-   "ticker": "MSFT",
-   "name": "Microsoft",
-   "currency": "USD",
-   "price": 521.21,
-   "chg_1d": -0.0224,
-   "rvol": 2.918,
-   "score": 23.61,
+   "price": 551.96,
+   "chg_1d": 0.1004,
+   "rvol": 2.214,
+   "score": 24.34,
    "breakout": false,
    "triggers": [
     "rvol"
    ],
-   "reason": "volume 2,9 fois la normale, plafond à 7,3 % (559,15)"
-  },
-  {
-   "ticker": "SNDK",
-   "name": "Sandisk",
-   "currency": "USD",
-   "price": 977.9,
-   "chg_1d": 0.1371,
-   "rvol": 2.37,
-   "score": 15.95,
-   "breakout": false,
-   "triggers": [
-    "rvol"
-   ],
-   "reason": "volume 2,4 fois la normale"
+   "reason": "volume 2,2 fois la normale"
   }
  ]
 }
