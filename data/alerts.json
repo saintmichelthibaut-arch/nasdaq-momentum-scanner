@@ -1,5 +1,5 @@
 {
- "generated_at_utc": "2026-11-13T02:06:13+00:00",
+ "generated_at_utc": "2026-11-13T12:58:58+00:00",
  "market_date": {
   "US": "2026-11-12",
   "EU": "2026-11-12"
@@ -13,57 +13,28 @@
  },
  "alerts": [
   {
-   "ticker": "AVGO",
-   "name": "Broadcom",
-   "currency": "USD",
-   "price": 364.38,
-   "chg_1d": 0.0555,
-   "rvol": 3.886,
-   "score": 66.46,
-   "breakout": true,
-   "triggers": [
-    "rvol",
-    "breakout_volume"
-   ],
-   "reason": "volume 3,9 fois la normale, cassure du plus haut 20 séances à 356,85"
-  },
-  {
-   "ticker": "TDG",
-   "name": "TransDigm",
-   "currency": "USD",
-   "price": 1203.96,
-   "chg_1d": -0.033,
-   "rvol": 2.853,
-   "score": 64.66,
-   "breakout": false,
-   "triggers": [
-    "rvol"
-   ],
-   "reason": "le volume accélère régulièrement, volume 2,9 fois la normale, plafond à 4,9 % (1 263,40)"
-  },
-  {
    "ticker": "LUNR",
    "name": "Intuitive Machines",
    "currency": "USD",
    "price": 13.03,
    "chg_1d": 0.0698,
-   "rvol": 3.333,
-   "score": 63.19,
+   "rvol": 3.483,
+   "score": 63.28,
    "breakout": true,
    "triggers": [
     "rvol",
     "breakout_volume"
    ],
-   "reason": "volume 3,3 fois la normale, cassure du plus haut 20 séances à 12,58"
+   "reason": "volume 3,5 fois la normale, cassure du plus haut 20 séances à 12,58"
   },
   {
    "ticker": "AMD",
    "name": "Advanced Micro Devices",
    "currency": "USD",
-   "price": 585.5801,
-   "chg_1d": 0.0591,
-   "rvol": 1.645,
-   "score": 61.9,
+   "price": 585.3,
+   "chg_1d": 0.0586,
+   "rvol": 1.723,
+   "score": 62.29,
    "breakout": true,
    "triggers": [
     "breakout_volume"
@@ -71,146 +42,89 @@
    "reason": "cassure du plus haut 20 séances à 579,18"
   },
   {
-   "ticker": "TSLA",
-   "name": "Tesla",
+   "ticker": "AVGO",
+   "name": "Broadcom",
    "currency": "USD",
-   "price": 397.62,
-   "chg_1d": 0.0173,
-   "rvol": 2.629,
-   "score": 57.96,
-   "breakout": false,
+   "price": 364.36,
+   "chg_1d": 0.0554,
+   "rvol": 1.678,
+   "score": 54.98,
+   "breakout": true,
    "triggers": [
-    "rvol"
+    "breakout_volume"
    ],
-   "reason": "volume 2,6 fois la normale, plafond à 4,2 % (414,23)"
-  },
-  {
-   "ticker": "AAPL",
-   "name": "Apple",
-   "currency": "USD",
-   "price": 354.89,
-   "chg_1d": -0.0021,
-   "rvol": 2.199,
-   "score": 52.1,
-   "breakout": false,
-   "triggers": [
-    "rvol"
-   ],
-   "reason": "volume 2,2 fois la normale, plafond à 0,3 % (355,91)"
-  },
-  {
-   "ticker": "CRWV",
-   "name": "CoreWeave",
-   "currency": "USD",
-   "price": 56.585,
-   "chg_1d": -0.0689,
-   "rvol": 2.162,
-   "score": 47.54,
-   "breakout": false,
-   "triggers": [
-    "rvol",
-    "volume_accel"
-   ],
-   "reason": "le volume accélère régulièrement, volume 2,2 fois la normale"
+   "reason": "cassure du plus haut 20 séances à 356,85"
   },
   {
    "ticker": "ZM",
    "name": "Zoom Communications",
    "currency": "USD",
-   "price": 97.79,
-   "chg_1d": -0.003,
-   "rvol": 1.62,
-   "score": 42.81,
+   "price": 97.7,
+   "chg_1d": -0.0039,
+   "rvol": 1.851,
+   "score": 46.85,
    "breakout": false,
    "triggers": [
     "volume_accel"
    ],
-   "reason": "le volume accélère régulièrement"
-  },
-  {
-   "ticker": "DELL",
-   "name": "Dell Technologies",
-   "currency": "USD",
-   "price": 371.35,
-   "chg_1d": -0.0062,
-   "rvol": 2.784,
-   "score": 31.43,
-   "breakout": false,
-   "triggers": [
-    "rvol"
-   ],
-   "reason": "le volume accélère depuis 2 séances, volume 2,8 fois la normale"
+   "reason": "le volume accélère depuis 4 séances"
   },
   {
    "ticker": "NBIS",
    "name": "Nebius Group",
    "currency": "USD",
-   "price": 128.7316,
-   "chg_1d": -0.1678,
-   "rvol": 2.509,
-   "score": 31.26,
+   "price": 128.64,
+   "chg_1d": -0.1684,
+   "rvol": 2.649,
+   "score": 32.23,
    "breakout": false,
    "triggers": [
     "rvol"
    ],
-   "reason": "le volume accélère depuis 3 séances, volume 2,5 fois la normale"
-  },
-  {
-   "ticker": "GOOGL",
-   "name": "Alphabet",
-   "currency": "USD",
-   "price": 298.75,
-   "chg_1d": 0.0181,
-   "rvol": 2.727,
-   "score": 29.15,
-   "breakout": false,
-   "triggers": [
-    "rvol"
-   ],
-   "reason": "volume 2,7 fois la normale"
+   "reason": "le volume accélère depuis 3 séances, volume 2,6 fois la normale"
   },
   {
    "ticker": "NVDA",
    "name": "NVIDIA",
    "currency": "USD",
-   "price": 166.04,
-   "chg_1d": -0.0443,
-   "rvol": 50.965,
+   "price": 166.19,
+   "chg_1d": -0.0434,
+   "rvol": 4.486,
    "score": 25.25,
    "breakout": false,
    "triggers": [
     "rvol",
     "volume_accel"
    ],
-   "reason": "le volume accélère régulièrement, volume 51,0 fois la normale"
+   "reason": "le volume accélère régulièrement, volume 4,5 fois la normale"
   },
   {
    "ticker": "SMCI",
    "name": "Super Micro Computer",
    "currency": "USD",
-   "price": 26.98,
-   "chg_1d": -0.1134,
-   "rvol": 2.373,
-   "score": 15.1,
+   "price": 26.99,
+   "chg_1d": -0.113,
+   "rvol": 2.597,
+   "score": 16.28,
    "breakout": false,
    "triggers": [
     "rvol"
    ],
-   "reason": "volume 2,4 fois la normale"
+   "reason": "volume 2,6 fois la normale"
   },
   {
    "ticker": "BABA",
    "name": "Alibaba",
    "currency": "USD",
-   "price": 94.355,
-   "chg_1d": -0.0706,
-   "rvol": 4.353,
-   "score": 12.92,
+   "price": 94.36,
+   "chg_1d": -0.0705,
+   "rvol": 2.712,
+   "score": 9.49,
    "breakout": false,
    "triggers": [
     "rvol"
    ],
-   "reason": "volume 4,4 fois la normale"
+   "reason": "volume 2,7 fois la normale"
   }
  ]
 }
