@@ -1,5 +1,5 @@
 {
- "generated_at_utc": "2026-11-14T01:00:11+00:00",
+ "generated_at_utc": "2026-11-14T01:43:30+00:00",
  "market_date": {
   "US": "2026-11-13",
   "EU": "2026-11-13"
@@ -13,89 +13,75 @@
  },
  "alerts": [
   {
-   "ticker": "TSLA",
-   "name": "Tesla",
+   "ticker": "SLAB",
+   "name": "Silicon Labs",
    "currency": "USD",
-   "price": 390.1401,
-   "chg_1d": -0.0184,
-   "rvol": 4.111,
-   "score": 57.93,
+   "price": 221.43,
+   "chg_1d": -0.0031,
+   "rvol": 2.571,
+   "score": 50.13,
    "breakout": false,
    "triggers": [
     "rvol"
    ],
-   "reason": "volume en hausse 3 séances d'affilée, volume 4,1 fois la normale, plafond à 6,2 % (414,23)"
-  },
-  {
-   "ticker": "AMD",
-   "name": "Advanced Micro Devices",
-   "currency": "USD",
-   "price": 534.09,
-   "chg_1d": -0.0875,
-   "rvol": 3.01,
-   "score": 54.66,
-   "breakout": false,
-   "triggers": [
-    "rvol"
-   ],
-   "reason": "le volume accélère depuis 2 séances, volume 3,0 fois la normale"
-  },
-  {
-   "ticker": "CLS",
-   "name": "Celestica",
-   "currency": "USD",
-   "price": 240.19,
-   "chg_1d": -0.0545,
-   "rvol": 2.841,
-   "score": 41.51,
-   "breakout": false,
-   "triggers": [
-    "rvol"
-   ],
-   "reason": "le volume accélère depuis 3 séances, volume 2,8 fois la normale"
+   "reason": "le volume accélère depuis 2 séances, volume 2,6 fois la normale, plafond à 0,9 % (223,50)"
   },
   {
    "ticker": "MOD",
    "name": "Modine",
    "currency": "USD",
-   "price": 135.71,
-   "chg_1d": 0.2791,
-   "rvol": 3.607,
-   "score": 38.54,
+   "price": 135.66,
+   "chg_1d": 0.2786,
+   "rvol": 3.753,
+   "score": 38.84,
    "breakout": false,
    "triggers": [
     "rvol"
    ],
-   "reason": "volume 3,6 fois la normale"
+   "reason": "volume 3,8 fois la normale"
   },
   {
-   "ticker": "COHR",
-   "name": "Coherent",
+   "ticker": "NBIS",
+   "name": "Nebius Group",
    "currency": "USD",
-   "price": 218.19,
-   "chg_1d": -0.0599,
-   "rvol": 2.733,
-   "score": 33.78,
-   "breakout": false,
-   "triggers": [
-    "rvol"
-   ],
-   "reason": "volume 2,7 fois la normale"
-  },
-  {
-   "ticker": "NVDA",
-   "name": "NVIDIA",
-   "currency": "USD",
-   "price": 162.8201,
-   "chg_1d": -0.0203,
-   "rvol": 18.676,
-   "score": 24.5,
+   "price": 115.81,
+   "chg_1d": -0.0997,
+   "rvol": 4.053,
+   "score": 28.7,
    "breakout": false,
    "triggers": [
     "rvol",
     "volume_accel"
    ],
-   "reason": "le volume accélère depuis 2 séances, volume 18,7 fois la normale"
+   "reason": "le volume accélère depuis 4 séances, volume 4,1 fois la normale"
+  },
+  {
+   "ticker": "IONQ",
+   "name": "IonQ",
+   "currency": "USD",
+   "price": 28.86,
+   "chg_1d": -0.0648,
+   "rvol": 3.156,
+   "score": 15.15,
+   "breakout": false,
+   "triggers": [
+    "rvol"
+   ],
+   "reason": "volume 3,2 fois la normale"
+  },
+  {
+   "ticker": "BBAI",
+   "name": "BigBear.ai",
+   "currency": "USD",
+   "price": 1.905,
+   "chg_1d": -0.0797,
+   "rvol": 3.092,
+   "score": 10.66,
+   "breakout": false,
+   "triggers": [
+    "rvol"
+   ],
+   "reason": "volume 3,1 fois la normale"
   }
  ]
 }
