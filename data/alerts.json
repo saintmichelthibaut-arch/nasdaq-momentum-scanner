@@ -1,8 +1,8 @@
 {
- "generated_at_utc": "2026-11-14T12:02:35+00:00",
+ "generated_at_utc": "2026-11-17T03:06:22+00:00",
  "market_date": {
-  "US": "2026-11-13",
-  "EU": "2026-11-13"
+  "US": "2026-11-16",
+  "EU": "2026-11-16"
  },
  "profile": "swing",
  "rules": {
@@ -13,46 +13,46 @@
  },
  "alerts": [
   {
-   "ticker": "SLAB",
-   "name": "Silicon Labs",
+   "ticker": "BILL",
+   "name": "BILL Holdings",
    "currency": "USD",
-   "price": 221.43,
-   "chg_1d": -0.0031,
-   "rvol": 2.571,
-   "score": 50.13,
+   "price": 57.63,
+   "chg_1d": 0.0578,
+   "rvol": 1.815,
+   "score": 47.95,
+   "breakout": true,
+   "triggers": [
+    "breakout_volume"
+   ],
+   "reason": "cassure du plus haut 100 séances à 55,01"
+  },
+  {
+   "ticker": "POWL",
+   "name": "Powell Industries",
+   "currency": "USD",
+   "price": 151.2,
+   "chg_1d": 0.0594,
+   "rvol": 3.48,
+   "score": 36.58,
    "breakout": false,
    "triggers": [
     "rvol"
    ],
-   "reason": "le volume accélère depuis 2 séances, volume 2,6 fois la normale, plafond à 0,9 % (223,50)"
+   "reason": "volume 3,5 fois la normale"
   },
   {
-   "ticker": "MOD",
-   "name": "Modine",
+   "ticker": "BWXT",
+   "name": "BWX Technologies",
    "currency": "USD",
-   "price": 135.66,
-   "chg_1d": 0.2786,
-   "rvol": 3.753,
-   "score": 38.84,
+   "price": 117.09,
+   "chg_1d": -0.0478,
+   "rvol": 2.046,
+   "score": 3.88,
    "breakout": false,
    "triggers": [
     "rvol"
    ],
-   "reason": "volume 3,8 fois la normale"
-  },
-  {
-   "ticker": "NBIS",
-   "name": "Nebius Group",
-   "currency": "USD",
-   "price": 115.88,
-   "chg_1d": -0.0992,
-   "rvol": 1.788,
-   "score": 22.22,
-   "breakout": false,
-   "triggers": [
-    "volume_accel"
-   ],
-   "reason": "le volume accélère régulièrement"
+   "reason": "volume 2,0 fois la normale"
   }
  ]
 }
