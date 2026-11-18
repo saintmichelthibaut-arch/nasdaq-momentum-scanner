@@ -1,8 +1,8 @@
 {
- "generated_at_utc": "2026-11-17T14:16:18+00:00",
+ "generated_at_utc": "2026-11-18T02:34:38+00:00",
  "market_date": {
-  "US": "2026-11-16",
-  "EU": "2026-11-16"
+  "US": "2026-11-17",
+  "EU": "2026-11-17"
  },
  "profile": "swing",
  "rules": {
@@ -16,43 +16,15 @@
    "ticker": "BILL",
    "name": "BILL Holdings",
    "currency": "USD",
-   "price": 57.63,
-   "chg_1d": 0.0578,
-   "rvol": 1.815,
-   "score": 47.95,
+   "price": 64.88,
+   "chg_1d": 0.1258,
+   "rvol": 6.652,
+   "score": 50.7,
    "breakout": true,
    "triggers": [
-    "breakout_volume"
-   ],
-   "reason": "cassure du plus haut 100 séances à 55,01"
-  },
-  {
-   "ticker": "POWL",
-   "name": "Powell Industries",
-   "currency": "USD",
-   "price": 151.2,
-   "chg_1d": 0.0594,
-   "rvol": 3.48,
-   "score": 36.58,
-   "breakout": false,
-   "triggers": [
     "rvol"
    ],
-   "reason": "volume 3,5 fois la normale"
-  },
-  {
-   "ticker": "BWXT",
-   "name": "BWX Technologies",
-   "currency": "USD",
-   "price": 117.09,
-   "chg_1d": -0.0478,
-   "rvol": 2.046,
-   "score": 3.88,
-   "breakout": false,
-   "triggers": [
-    "rvol"
-   ],
-   "reason": "volume 2,0 fois la normale"
+   "reason": "le volume accélère depuis 2 séances, volume 6,7 fois la normale"
   }
  ]
 }
