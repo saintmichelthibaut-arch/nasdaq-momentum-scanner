@@ -1,5 +1,5 @@
 {
- "generated_at_utc": "2026-11-19T01:59:09+00:00",
+ "generated_at_utc": "2026-11-19T02:46:50+00:00",
  "market_date": {
   "US": "2026-11-18",
   "EU": "2026-11-18"
@@ -16,114 +16,43 @@
    "ticker": "BILL",
    "name": "BILL Holdings",
    "currency": "USD",
-   "price": 66.04,
-   "chg_1d": 0.0179,
-   "rvol": 2.925,
-   "score": 50.23,
+   "price": 66.01,
+   "chg_1d": 0.0174,
+   "rvol": 1.95,
+   "score": 48.66,
    "breakout": true,
    "triggers": [
-    "rvol",
     "volume_accel"
    ],
-   "reason": "le volume accélère régulièrement, volume 2,9 fois la normale"
+   "reason": "le volume accélère régulièrement"
   },
   {
-   "ticker": "AAPL",
-   "name": "Apple",
+   "ticker": "PANW",
+   "name": "Palo Alto Networks",
    "currency": "USD",
-   "price": 352.29,
-   "chg_1d": 0.0011,
-   "rvol": 2.629,
-   "score": 45.32,
+   "price": 339.92,
+   "chg_1d": 0.099,
+   "rvol": 2.705,
+   "score": 36.1,
    "breakout": false,
    "triggers": [
     "rvol"
    ],
-   "reason": "volume 2,6 fois la normale, plafond à 2,4 % (360,83)"
+   "reason": "volume 2,7 fois la normale"
   },
   {
-   "ticker": "MOD",
-   "name": "Modine",
+   "ticker": "VEEV",
+   "name": "Veeva Systems",
    "currency": "USD",
-   "price": 137.79,
-   "chg_1d": 0.0621,
-   "rvol": 2.11,
-   "score": 39.02,
+   "price": 277.2,
+   "chg_1d": -0.0389,
+   "rvol": 2.06,
+   "score": 15.45,
    "breakout": false,
    "triggers": [
     "rvol"
    ],
-   "reason": "volume 2,1 fois la normale"
-  },
-  {
-   "ticker": "ATI",
-   "name": "ATI",
-   "currency": "USD",
-   "price": 180.99,
-   "chg_1d": 0.0394,
-   "rvol": 2.449,
-   "score": 28.13,
-   "breakout": false,
-   "triggers": [
-    "rvol"
-   ],
-   "reason": "volume en hausse 3 séances d'affilée, volume 2,4 fois la normale"
-  },
-  {
-   "ticker": "NVDA",
-   "name": "NVIDIA",
-   "currency": "USD",
-   "price": 150.87,
-   "chg_1d": -0.0295,
-   "rvol": 6.683,
-   "score": 18.45,
-   "breakout": false,
-   "triggers": [
-    "rvol"
-   ],
-   "reason": "volume 6,7 fois la normale"
-  },
-  {
-   "ticker": "IONQ",
-   "name": "IonQ",
-   "currency": "USD",
-   "price": 23.4736,
-   "chg_1d": -0.055,
-   "rvol": 2.461,
-   "score": 12.07,
-   "breakout": false,
-   "triggers": [
-    "rvol"
-   ],
-   "reason": "volume en hausse 5 séances d'affilée, volume 2,5 fois la normale"
-  },
-  {
-   "ticker": "BABA",
-   "name": "Alibaba",
-   "currency": "USD",
-   "price": 84.35,
-   "chg_1d": -0.0265,
-   "rvol": 2.321,
-   "score": 10.05,
-   "breakout": false,
-   "triggers": [
-    "rvol"
-   ],
-   "reason": "volume en hausse 3 séances d'affilée, volume 2,3 fois la normale"
-  },
-  {
-   "ticker": "SMR",
-   "name": "NuScale Power",
-   "currency": "USD",
-   "price": 3.91,
-   "chg_1d": -0.044,
-   "rvol": 2.428,
-   "score": 9.47,
-   "breakout": false,
-   "triggers": [
-    "rvol"
-   ],
-   "reason": "volume en hausse 3 séances d'affilée, volume 2,4 fois la normale"
+   "reason": "volume en hausse 3 séances d'affilée, volume 2,1 fois la normale"
   }
  ]
 }
