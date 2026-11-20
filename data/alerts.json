@@ -1,5 +1,5 @@
 {
- "generated_at_utc": "2026-11-20T01:52:39+00:00",
+ "generated_at_utc": "2026-11-20T02:34:13+00:00",
  "market_date": {
   "US": "2026-11-19",
   "EU": "2026-11-19"
@@ -13,48 +13,19 @@
  },
  "alerts": [
   {
-   "ticker": "BILL",
-   "name": "BILL Holdings",
-   "currency": "USD",
-   "price": 64.09,
-   "chg_1d": -0.0291,
-   "rvol": 3.587,
-   "score": 65.06,
-   "breakout": true,
-   "triggers": [
-    "rvol",
-    "volume_accel"
-   ],
-   "reason": "le volume accélère régulièrement, volume 3,6 fois la normale, plafond à 3,8 % (66,54)"
-  },
-  {
    "ticker": "PANW",
    "name": "Palo Alto Networks",
    "currency": "USD",
    "price": 361.73,
    "chg_1d": 0.0642,
-   "rvol": 3.693,
-   "score": 63.81,
+   "rvol": 2.572,
+   "score": 61.0,
    "breakout": false,
    "triggers": [
     "rvol",
     "volume_accel"
    ],
-   "reason": "le volume accélère depuis 3 séances, volume 3,7 fois la normale"
-  },
-  {
-   "ticker": "S",
-   "name": "SentinelOne",
-   "currency": "USD",
-   "price": 24.01,
-   "chg_1d": 0.0287,
-   "rvol": 2.779,
-   "score": 63.26,
-   "breakout": false,
-   "triggers": [
-    "rvol"
-   ],
-   "reason": "volume 2,8 fois la normale"
+   "reason": "le volume accélère depuis 3 séances, volume 2,6 fois la normale"
   },
   {
    "ticker": "PDD",
@@ -72,103 +43,19 @@
    "reason": "le volume accélère régulièrement, volume 3,6 fois la normale, cassure du plus haut 50 séances à 85,42"
   },
   {
-   "ticker": "AMD",
-   "name": "Advanced Micro Devices",
-   "currency": "USD",
-   "price": 489.165,
-   "chg_1d": -0.0773,
-   "rvol": 4.046,
-   "score": 31.46,
-   "breakout": false,
-   "triggers": [
-    "rvol"
-   ],
-   "reason": "volume 4,0 fois la normale"
-  },
-  {
-   "ticker": "SPOT",
-   "name": "Spotify",
-   "currency": "USD",
-   "price": 584.075,
-   "chg_1d": -0.0359,
-   "rvol": 2.267,
-   "score": 27.49,
-   "breakout": false,
-   "triggers": [
-    "rvol"
-   ],
-   "reason": "volume en hausse 3 séances d'affilée, volume 2,3 fois la normale, plafond à 8,7 % (635,00)"
-  },
-  {
    "ticker": "ESTC",
    "name": "Elastic",
    "currency": "USD",
    "price": 76.09,
    "chg_1d": -0.0834,
-   "rvol": 2.956,
-   "score": 25.92,
+   "rvol": 2.314,
+   "score": 23.26,
    "breakout": false,
    "triggers": [
     "rvol",
     "volume_accel"
    ],
-   "reason": "le volume accélère depuis 4 séances, volume 3,0 fois la normale"
-  },
-  {
-   "ticker": "MA",
-   "name": "Mastercard",
-   "currency": "USD",
-   "price": 626.76,
-   "chg_1d": -0.0258,
-   "rvol": 2.378,
-   "score": 23.42,
-   "breakout": false,
-   "triggers": [
-    "rvol"
-   ],
-   "reason": "volume 2,4 fois la normale, plafond à 8,8 % (681,99)"
-  },
-  {
-   "ticker": "DY",
-   "name": "Dycom",
-   "currency": "USD",
-   "price": 221.43,
-   "chg_1d": -0.0193,
-   "rvol": 2.207,
-   "score": 21.68,
-   "breakout": false,
-   "triggers": [
-    "rvol"
-   ],
-   "reason": "volume en hausse 3 séances d'affilée, volume 2,2 fois la normale"
-  },
-  {
-   "ticker": "NVDA",
-   "name": "NVIDIA",
-   "currency": "USD",
-   "price": 146.0,
-   "chg_1d": -0.0329,
-   "rvol": 8.887,
-   "score": 21.38,
-   "breakout": false,
-   "triggers": [
-    "rvol"
-   ],
-   "reason": "volume 8,9 fois la normale"
-  },
-  {
-   "ticker": "TSLA",
-   "name": "Tesla",
-   "currency": "USD",
-   "price": 374.43,
-   "chg_1d": -0.0242,
-   "rvol": 2.581,
-   "score": 21.3,
-   "breakout": false,
-   "triggers": [
-    "rvol"
-   ],
-   "reason": "volume 2,6 fois la normale"
+   "reason": "le volume accélère depuis 4 séances, volume 2,3 fois la normale"
   },
   {
    "ticker": "AMBA",
@@ -177,7 +64,7 @@
    "price": 58.87,
    "chg_1d": 0.0774,
    "rvol": 3.328,
-   "score": 20.79,
+   "score": 20.8,
    "breakout": false,
    "triggers": [
     "rvol"
@@ -197,132 +84,6 @@
     "volume_accel"
    ],
    "reason": "le volume accélère régulièrement"
-  },
-  {
-   "ticker": "IONQ",
-   "name": "IonQ",
-   "currency": "USD",
-   "price": 22.7101,
-   "chg_1d": -0.0328,
-   "rvol": 4.253,
-   "score": 19.89,
-   "breakout": false,
-   "triggers": [
-    "rvol"
-   ],
-   "reason": "le volume accélère régulièrement, volume 4,3 fois la normale"
-  },
-  {
-   "ticker": "AI",
-   "name": "C3.ai",
-   "currency": "USD",
-   "price": 10.04,
-   "chg_1d": 0.002,
-   "rvol": 2.882,
-   "score": 17.25,
-   "breakout": false,
-   "triggers": [
-    "rvol"
-   ],
-   "reason": "le volume accélère régulièrement, volume 2,9 fois la normale"
-  },
-  {
-   "ticker": "CPNG",
-   "name": "Coupang",
-   "currency": "USD",
-   "price": 14.055,
-   "chg_1d": -0.0158,
-   "rvol": 3.434,
-   "score": 16.07,
-   "breakout": false,
-   "triggers": [
-    "rvol"
-   ],
-   "reason": "volume en hausse 4 séances d'affilée, volume 3,4 fois la normale"
-  },
-  {
-   "ticker": "CRM",
-   "name": "Salesforce",
-   "currency": "USD",
-   "price": 183.41,
-   "chg_1d": -0.0367,
-   "rvol": 1.991,
-   "score": 14.54,
-   "breakout": false,
-   "triggers": [
-    "volume_accel"
-   ],
-   "reason": "le volume accélère régulièrement"
-  },
-  {
-   "ticker": "UBER",
-   "name": "Uber",
-   "currency": "USD",
-   "price": 65.61,
-   "chg_1d": -0.0458,
-   "rvol": 2.287,
-   "score": 12.66,
-   "breakout": false,
-   "triggers": [
-    "rvol"
-   ],
-   "reason": "volume 2,3 fois la normale"
-  },
-  {
-   "ticker": "GOOGL",
-   "name": "Alphabet",
-   "currency": "USD",
-   "price": 272.5,
-   "chg_1d": -0.0352,
-   "rvol": 2.346,
-   "score": 11.75,
-   "breakout": false,
-   "triggers": [
-    "rvol"
-   ],
-   "reason": "volume 2,3 fois la normale"
-  },
-  {
-   "ticker": "RBLX",
-   "name": "Roblox",
-   "currency": "USD",
-   "price": 46.36,
-   "chg_1d": -0.0205,
-   "rvol": 2.001,
-   "score": 11.59,
-   "breakout": false,
-   "triggers": [
-    "rvol"
-   ],
-   "reason": "volume 2,0 fois la normale"
-  },
-  {
-   "ticker": "UEC",
-   "name": "Uranium Energy",
-   "currency": "USD",
-   "price": 5.76,
-   "chg_1d": -0.027,
-   "rvol": 2.22,
-   "score": 10.62,
-   "breakout": false,
-   "triggers": [
-    "rvol"
-   ],
-   "reason": "volume 2,2 fois la normale"
-  },
-  {
-   "ticker": "PL",
-   "name": "Planet Labs",
-   "currency": "USD",
-   "price": 11.62,
-   "chg_1d": -0.0357,
-   "rvol": 2.373,
-   "score": 9.47,
-   "breakout": false,
-   "triggers": [
-    "rvol"
-   ],
-   "reason": "volume 2,4 fois la normale"
   }
  ]
 }
