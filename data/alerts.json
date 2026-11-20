@@ -1,5 +1,5 @@
 {
- "generated_at_utc": "2026-11-20T02:34:13+00:00",
+ "generated_at_utc": "2026-11-20T13:56:30+00:00",
  "market_date": {
   "US": "2026-11-19",
   "EU": "2026-11-19"
@@ -18,14 +18,14 @@
    "currency": "USD",
    "price": 361.73,
    "chg_1d": 0.0642,
-   "rvol": 2.572,
-   "score": 61.0,
+   "rvol": 2.785,
+   "score": 61.93,
    "breakout": false,
    "triggers": [
     "rvol",
     "volume_accel"
    ],
-   "reason": "le volume accélère depuis 3 séances, volume 2,6 fois la normale"
+   "reason": "le volume accélère depuis 3 séances, volume 2,8 fois la normale"
   },
   {
    "ticker": "PDD",
@@ -33,43 +33,29 @@
    "currency": "USD",
    "price": 86.0,
    "chg_1d": 0.1104,
-   "rvol": 3.604,
-   "score": 55.42,
+   "rvol": 4.063,
+   "score": 56.15,
    "breakout": true,
    "triggers": [
     "rvol",
     "breakout_volume"
    ],
-   "reason": "le volume accélère régulièrement, volume 3,6 fois la normale, cassure du plus haut 50 séances à 85,42"
+   "reason": "le volume accélère régulièrement, volume 4,1 fois la normale, cassure du plus haut 50 séances à 85,42"
   },
   {
    "ticker": "ESTC",
    "name": "Elastic",
    "currency": "USD",
-   "price": 76.09,
-   "chg_1d": -0.0834,
-   "rvol": 2.314,
-   "score": 23.26,
+   "price": 76.33,
+   "chg_1d": -0.0805,
+   "rvol": 2.891,
+   "score": 25.69,
    "breakout": false,
    "triggers": [
     "rvol",
     "volume_accel"
    ],
-   "reason": "le volume accélère depuis 4 séances, volume 2,3 fois la normale"
-  },
-  {
-   "ticker": "AMBA",
-   "name": "Ambarella",
-   "currency": "USD",
-   "price": 58.87,
-   "chg_1d": 0.0774,
-   "rvol": 3.328,
-   "score": 20.8,
-   "breakout": false,
-   "triggers": [
-    "rvol"
-   ],
-   "reason": "le volume accélère régulièrement, volume 3,3 fois la normale"
+   "reason": "le volume accélère depuis 4 séances, volume 2,9 fois la normale"
   },
   {
    "ticker": "VEEV",
@@ -77,13 +63,42 @@
    "currency": "USD",
    "price": 262.92,
    "chg_1d": -0.0515,
-   "rvol": 1.854,
-   "score": 20.65,
+   "rvol": 2.134,
+   "score": 24.25,
    "breakout": false,
    "triggers": [
+    "rvol",
     "volume_accel"
    ],
-   "reason": "le volume accélère régulièrement"
+   "reason": "le volume accélère depuis 4 séances, volume 2,1 fois la normale"
+  },
+  {
+   "ticker": "AMBA",
+   "name": "Ambarella",
+   "currency": "USD",
+   "price": 58.93,
+   "chg_1d": 0.0785,
+   "rvol": 2.012,
+   "score": 15.29,
+   "breakout": false,
+   "triggers": [
+    "rvol"
+   ],
+   "reason": "volume 2,0 fois la normale"
+  },
+  {
+   "ticker": "ZM",
+   "name": "Zoom Communications",
+   "currency": "USD",
+   "price": 83.82,
+   "chg_1d": -0.0956,
+   "rvol": 2.057,
+   "score": 11.94,
+   "breakout": false,
+   "triggers": [
+    "rvol"
+   ],
+   "reason": "volume en hausse 3 séances d'affilée, volume 2,1 fois la normale"
   }
  ]
 }
