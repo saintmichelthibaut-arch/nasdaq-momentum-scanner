@@ -1,8 +1,8 @@
 {
- "generated_at_utc": "2026-11-20T13:56:30+00:00",
+ "generated_at_utc": "2026-11-21T01:42:34+00:00",
  "market_date": {
-  "US": "2026-11-19",
-  "EU": "2026-11-19"
+  "US": "2026-11-20",
+  "EU": "2026-11-20"
  },
  "profile": "swing",
  "rules": {
@@ -13,73 +13,424 @@
  },
  "alerts": [
   {
-   "ticker": "PANW",
-   "name": "Palo Alto Networks",
+   "ticker": "BILL",
+   "name": "BILL Holdings",
    "currency": "USD",
-   "price": 361.73,
-   "chg_1d": 0.0642,
-   "rvol": 2.785,
-   "score": 61.93,
-   "breakout": false,
+   "price": 61.45,
+   "chg_1d": -0.041,
+   "rvol": 17.505,
+   "score": 66.77,
+   "breakout": true,
    "triggers": [
     "rvol",
     "volume_accel"
    ],
-   "reason": "le volume accélère depuis 3 séances, volume 2,8 fois la normale"
+   "reason": "le volume accélère régulièrement, volume 17,5 fois la normale, plafond à 8,3 % (66,58)"
   },
   {
    "ticker": "PDD",
    "name": "PDD Holdings",
    "currency": "USD",
-   "price": 86.0,
-   "chg_1d": 0.1104,
-   "rvol": 4.063,
-   "score": 56.15,
-   "breakout": true,
+   "price": 83.65,
+   "chg_1d": -0.0273,
+   "rvol": 2.087,
+   "score": 65.49,
+   "breakout": false,
+   "triggers": [
+    "rvol"
+   ],
+   "reason": "le volume accélère régulièrement, volume 2,1 fois la normale, plafond à 4,5 % (87,39)"
+  },
+  {
+   "ticker": "PANW",
+   "name": "Palo Alto Networks",
+   "currency": "USD",
+   "price": 343.69,
+   "chg_1d": -0.0499,
+   "rvol": 2.025,
+   "score": 55.78,
+   "breakout": false,
    "triggers": [
     "rvol",
-    "breakout_volume"
+    "volume_accel"
    ],
-   "reason": "le volume accélère régulièrement, volume 4,1 fois la normale, cassure du plus haut 50 séances à 85,42"
+   "reason": "le volume accélère régulièrement, volume 2,0 fois la normale"
+  },
+  {
+   "ticker": "SYNA",
+   "name": "Synaptics",
+   "currency": "USD",
+   "price": 115.7,
+   "chg_1d": -0.0103,
+   "rvol": 2.27,
+   "score": 39.78,
+   "breakout": false,
+   "triggers": [
+    "rvol"
+   ],
+   "reason": "le volume accélère depuis 2 séances, volume 2,3 fois la normale, plafond à 5,4 % (121,98)"
+  },
+  {
+   "ticker": "SPOT",
+   "name": "Spotify",
+   "currency": "USD",
+   "price": 577.03,
+   "chg_1d": -0.0117,
+   "rvol": 2.159,
+   "score": 30.49,
+   "breakout": false,
+   "triggers": [
+    "rvol"
+   ],
+   "reason": "le volume accélère depuis 4 séances, volume 2,2 fois la normale"
   },
   {
    "ticker": "ESTC",
    "name": "Elastic",
    "currency": "USD",
-   "price": 76.33,
-   "chg_1d": -0.0805,
-   "rvol": 2.891,
-   "score": 25.69,
+   "price": 75.17,
+   "chg_1d": -0.0152,
+   "rvol": 4.407,
+   "score": 29.9,
    "breakout": false,
    "triggers": [
     "rvol",
     "volume_accel"
    ],
-   "reason": "le volume accélère depuis 4 séances, volume 2,9 fois la normale"
+   "reason": "le volume accélère depuis 5 séances, volume 4,4 fois la normale"
   },
   {
-   "ticker": "VEEV",
-   "name": "Veeva Systems",
+   "ticker": "AAPL",
+   "name": "Apple",
    "currency": "USD",
-   "price": 262.92,
-   "chg_1d": -0.0515,
-   "rvol": 2.134,
-   "score": 24.25,
+   "price": 342.68,
+   "chg_1d": -0.0187,
+   "rvol": 4.01,
+   "score": 29.73,
+   "breakout": false,
+   "triggers": [
+    "rvol"
+   ],
+   "reason": "volume 4,0 fois la normale, plafond à 5,3 % (360,83)"
+  },
+  {
+   "ticker": "DY",
+   "name": "Dycom",
+   "currency": "USD",
+   "price": 205.55,
+   "chg_1d": -0.0714,
+   "rvol": 2.984,
+   "score": 29.62,
    "breakout": false,
    "triggers": [
     "rvol",
     "volume_accel"
    ],
-   "reason": "le volume accélère depuis 4 séances, volume 2,1 fois la normale"
+   "reason": "le volume accélère depuis 4 séances, volume 3,0 fois la normale"
   },
   {
-   "ticker": "AMBA",
-   "name": "Ambarella",
+   "ticker": "CPNG",
+   "name": "Coupang",
    "currency": "USD",
-   "price": 58.93,
-   "chg_1d": 0.0785,
-   "rvol": 2.012,
-   "score": 15.29,
+   "price": 14.27,
+   "chg_1d": 0.0149,
+   "rvol": 2.784,
+   "score": 27.68,
+   "breakout": false,
+   "triggers": [
+    "rvol"
+   ],
+   "reason": "le volume accélère depuis 5 séances, volume 2,8 fois la normale"
+  },
+  {
+   "ticker": "AMZN",
+   "name": "Amazon",
+   "currency": "USD",
+   "price": 247.15,
+   "chg_1d": -0.0397,
+   "rvol": 2.791,
+   "score": 27.37,
+   "breakout": false,
+   "triggers": [
+    "rvol"
+   ],
+   "reason": "volume en hausse 3 séances d'affilée, volume 2,8 fois la normale"
+  },
+  {
+   "ticker": "AMD",
+   "name": "Advanced Micro Devices",
+   "currency": "USD",
+   "price": 424.26,
+   "chg_1d": -0.1327,
+   "rvol": 2.374,
+   "score": 25.13,
+   "breakout": false,
+   "triggers": [
+    "rvol"
+   ],
+   "reason": "le volume accélère depuis 2 séances, volume 2,4 fois la normale"
+  },
+  {
+   "ticker": "AVGO",
+   "name": "Broadcom",
+   "currency": "USD",
+   "price": 304.17,
+   "chg_1d": -0.1225,
+   "rvol": 3.013,
+   "score": 24.49,
+   "breakout": false,
+   "triggers": [
+    "rvol"
+   ],
+   "reason": "volume 3,0 fois la normale"
+  },
+  {
+   "ticker": "ANET",
+   "name": "Arista Networks",
+   "currency": "USD",
+   "price": 167.65,
+   "chg_1d": -0.1157,
+   "rvol": 2.099,
+   "score": 23.78,
+   "breakout": false,
+   "triggers": [
+    "rvol"
+   ],
+   "reason": "volume 2,1 fois la normale"
+  },
+  {
+   "ticker": "MSFT",
+   "name": "Microsoft",
+   "currency": "USD",
+   "price": 485.01,
+   "chg_1d": -0.0267,
+   "rvol": 2.677,
+   "score": 23.64,
+   "breakout": false,
+   "triggers": [
+    "rvol"
+   ],
+   "reason": "volume 2,7 fois la normale"
+  },
+  {
+   "ticker": "INTU",
+   "name": "Intuit",
+   "currency": "USD",
+   "price": 270.43,
+   "chg_1d": -0.1277,
+   "rvol": 5.117,
+   "score": 22.31,
+   "breakout": false,
+   "triggers": [
+    "rvol",
+    "volume_accel"
+   ],
+   "reason": "le volume accélère depuis 2 séances, volume 5,1 fois la normale"
+  },
+  {
+   "ticker": "GOOGL",
+   "name": "Alphabet",
+   "currency": "USD",
+   "price": 265.6767,
+   "chg_1d": -0.0256,
+   "rvol": 4.269,
+   "score": 20.75,
+   "breakout": false,
+   "triggers": [
+    "rvol"
+   ],
+   "reason": "le volume accélère depuis 2 séances, volume 4,3 fois la normale"
+  },
+  {
+   "ticker": "IRDM",
+   "name": "Iridium",
+   "currency": "USD",
+   "price": 42.105,
+   "chg_1d": -0.0358,
+   "rvol": 2.515,
+   "score": 18.16,
+   "breakout": false,
+   "triggers": [
+    "rvol"
+   ],
+   "reason": "volume 2,5 fois la normale"
+  },
+  {
+   "ticker": "KEYS",
+   "name": "Keysight",
+   "currency": "USD",
+   "price": 261.89,
+   "chg_1d": -0.0694,
+   "rvol": 2.347,
+   "score": 18.03,
+   "breakout": false,
+   "triggers": [
+    "rvol"
+   ],
+   "reason": "volume 2,3 fois la normale"
+  },
+  {
+   "ticker": "SNAP",
+   "name": "Snap",
+   "currency": "USD",
+   "price": 4.545,
+   "chg_1d": -0.1123,
+   "rvol": 3.096,
+   "score": 17.09,
+   "breakout": false,
+   "triggers": [
+    "rvol"
+   ],
+   "reason": "volume 3,1 fois la normale"
+  },
+  {
+   "ticker": "SNDK",
+   "name": "Sandisk",
+   "currency": "USD",
+   "price": 79.3,
+   "chg_1d": -0.1599,
+   "rvol": 2.795,
+   "score": 16.31,
+   "breakout": false,
+   "triggers": [
+    "rvol"
+   ],
+   "reason": "le volume accélère depuis 2 séances, volume 2,8 fois la normale"
+  },
+  {
+   "ticker": "BE",
+   "name": "Bloom Energy",
+   "currency": "USD",
+   "price": 142.37,
+   "chg_1d": -0.1531,
+   "rvol": 3.343,
+   "score": 16.23,
+   "breakout": false,
+   "triggers": [
+    "rvol"
+   ],
+   "reason": "volume 3,3 fois la normale"
+  },
+  {
+   "ticker": "IONQ",
+   "name": "IonQ",
+   "currency": "USD",
+   "price": 20.735,
+   "chg_1d": -0.087,
+   "rvol": 3.291,
+   "score": 15.67,
+   "breakout": false,
+   "triggers": [
+    "rvol"
+   ],
+   "reason": "le volume accélère depuis 2 séances, volume 3,3 fois la normale"
+  },
+  {
+   "ticker": "AI",
+   "name": "C3.ai",
+   "currency": "USD",
+   "price": 9.125,
+   "chg_1d": -0.0911,
+   "rvol": 3.246,
+   "score": 15.61,
+   "breakout": false,
+   "triggers": [
+    "rvol"
+   ],
+   "reason": "volume 3,2 fois la normale"
+  },
+  {
+   "ticker": "TSM",
+   "name": "Taiwan Semiconductor",
+   "currency": "USD",
+   "price": 319.55,
+   "chg_1d": -0.0924,
+   "rvol": 5.401,
+   "score": 15.42,
+   "breakout": false,
+   "triggers": [
+    "rvol"
+   ],
+   "reason": "volume 5,4 fois la normale"
+  },
+  {
+   "ticker": "NVDA",
+   "name": "NVIDIA",
+   "currency": "USD",
+   "price": 125.79,
+   "chg_1d": -0.1383,
+   "rvol": 18.03,
+   "score": 15.39,
+   "breakout": false,
+   "triggers": [
+    "rvol"
+   ],
+   "reason": "volume 18,0 fois la normale"
+  },
+  {
+   "ticker": "ASML",
+   "name": "ASML Holding",
+   "currency": "USD",
+   "price": 1268.25,
+   "chg_1d": -0.0649,
+   "rvol": 3.303,
+   "score": 15.19,
+   "breakout": false,
+   "triggers": [
+    "rvol"
+   ],
+   "reason": "volume 3,3 fois la normale"
+  },
+  {
+   "ticker": "DELL",
+   "name": "Dell Technologies",
+   "currency": "USD",
+   "price": 278.13,
+   "chg_1d": -0.1101,
+   "rvol": 3.03,
+   "score": 14.89,
+   "breakout": false,
+   "triggers": [
+    "rvol"
+   ],
+   "reason": "volume 3,0 fois la normale"
+  },
+  {
+   "ticker": "ICHR",
+   "name": "Ichor Holdings",
+   "currency": "USD",
+   "price": 27.28,
+   "chg_1d": -0.1515,
+   "rvol": 2.275,
+   "score": 14.15,
+   "breakout": false,
+   "triggers": [
+    "rvol"
+   ],
+   "reason": "volume en hausse 3 séances d'affilée, volume 2,3 fois la normale"
+  },
+  {
+   "ticker": "LRCX",
+   "name": "Lam Research",
+   "currency": "USD",
+   "price": 183.64,
+   "chg_1d": -0.0984,
+   "rvol": 2.79,
+   "score": 14.05,
+   "breakout": false,
+   "triggers": [
+    "rvol"
+   ],
+   "reason": "volume 2,8 fois la normale"
+  },
+  {
+   "ticker": "VRT",
+   "name": "Vertiv Holdings",
+   "currency": "USD",
+   "price": 166.29,
+   "chg_1d": -0.1011,
+   "rvol": 2.019,
+   "score": 12.23,
    "breakout": false,
    "triggers": [
     "rvol"
@@ -87,18 +438,116 @@
    "reason": "volume 2,0 fois la normale"
   },
   {
-   "ticker": "ZM",
-   "name": "Zoom Communications",
+   "ticker": "CGNX",
+   "name": "Cognex",
    "currency": "USD",
-   "price": 83.82,
-   "chg_1d": -0.0956,
-   "rvol": 2.057,
-   "score": 11.94,
+   "price": 44.23,
+   "chg_1d": -0.072,
+   "rvol": 2.233,
+   "score": 11.79,
    "breakout": false,
    "triggers": [
     "rvol"
    ],
-   "reason": "volume en hausse 3 séances d'affilée, volume 2,1 fois la normale"
+   "reason": "volume en hausse 3 séances d'affilée, volume 2,2 fois la normale"
+  },
+  {
+   "ticker": "CIEN",
+   "name": "Ciena",
+   "currency": "USD",
+   "price": 234.45,
+   "chg_1d": -0.1073,
+   "rvol": 2.538,
+   "score": 11.58,
+   "breakout": false,
+   "triggers": [
+    "rvol"
+   ],
+   "reason": "volume 2,5 fois la normale"
+  },
+  {
+   "ticker": "GLW",
+   "name": "Corning",
+   "currency": "USD",
+   "price": 94.39,
+   "chg_1d": -0.1093,
+   "rvol": 2.354,
+   "score": 11.07,
+   "breakout": false,
+   "triggers": [
+    "rvol"
+   ],
+   "reason": "volume 2,4 fois la normale"
+  },
+  {
+   "ticker": "MU",
+   "name": "Micron Technology",
+   "currency": "USD",
+   "price": 594.385,
+   "chg_1d": -0.1391,
+   "rvol": 2.445,
+   "score": 10.82,
+   "breakout": false,
+   "triggers": [
+    "rvol"
+   ],
+   "reason": "volume 2,4 fois la normale"
+  },
+  {
+   "ticker": "PLTR",
+   "name": "Palantir",
+   "currency": "USD",
+   "price": 143.57,
+   "chg_1d": -0.0658,
+   "rvol": 2.556,
+   "score": 10.65,
+   "breakout": false,
+   "triggers": [
+    "rvol"
+   ],
+   "reason": "volume 2,6 fois la normale"
+  },
+  {
+   "ticker": "MTZ",
+   "name": "MasTec",
+   "currency": "USD",
+   "price": 144.675,
+   "chg_1d": -0.1219,
+   "rvol": 2.56,
+   "score": 10.6,
+   "breakout": false,
+   "triggers": [
+    "rvol"
+   ],
+   "reason": "volume 2,6 fois la normale"
+  },
+  {
+   "ticker": "PL",
+   "name": "Planet Labs",
+   "currency": "USD",
+   "price": 10.525,
+   "chg_1d": -0.095,
+   "rvol": 2.26,
+   "score": 9.81,
+   "breakout": false,
+   "triggers": [
+    "rvol"
+   ],
+   "reason": "volume 2,3 fois la normale"
+  },
+  {
+   "ticker": "SOUN",
+   "name": "SoundHound AI",
+   "currency": "USD",
+   "price": 2.61,
+   "chg_1d": -0.1031,
+   "rvol": 2.474,
+   "score": 8.02,
+   "breakout": false,
+   "triggers": [
+    "rvol"
+   ],
+   "reason": "volume 2,5 fois la normale"
   }
  ]
 }
