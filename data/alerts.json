@@ -1,8 +1,8 @@
 {
- "generated_at_utc": "2026-11-25T15:27:41+00:00",
+ "generated_at_utc": "2026-11-26T03:01:21+00:00",
  "market_date": {
-  "US": "2026-11-24",
-  "EU": "2026-11-24"
+  "US": "2026-11-25",
+  "EU": "2026-11-25"
  },
  "profile": "swing",
  "rules": {
@@ -13,13 +13,27 @@
  },
  "alerts": [
   {
-   "ticker": "ZS",
-   "name": "Zscaler",
+   "ticker": "SYNA",
+   "name": "Synaptics",
    "currency": "USD",
-   "price": 231.62,
-   "chg_1d": 0.0104,
-   "rvol": 2.156,
-   "score": 62.72,
+   "price": 116.63,
+   "chg_1d": -0.0012,
+   "rvol": 2.095,
+   "score": 57.75,
+   "breakout": false,
+   "triggers": [
+    "rvol"
+   ],
+   "reason": "volume 2,1 fois la normale, plafond à 4,6 % (121,98)"
+  },
+  {
+   "ticker": "FLNC",
+   "name": "Fluence Energy",
+   "currency": "USD",
+   "price": 4.72,
+   "chg_1d": 0.1512,
+   "rvol": 2.215,
+   "score": 44.59,
    "breakout": false,
    "triggers": [
     "rvol",
@@ -28,153 +42,62 @@
    "reason": "le volume accélère régulièrement, volume 2,2 fois la normale"
   },
   {
-   "ticker": "SYM",
-   "name": "Symbotic",
+   "ticker": "WDAY",
+   "name": "Workday",
    "currency": "USD",
-   "price": 37.39,
-   "chg_1d": 0.0692,
-   "rvol": 2.381,
-   "score": 52.74,
+   "price": 180.44,
+   "chg_1d": 0.0068,
+   "rvol": 1.816,
+   "score": 41.19,
    "breakout": false,
    "triggers": [
-    "rvol",
     "volume_accel"
    ],
-   "reason": "le volume accélère depuis 4 séances, volume 2,4 fois la normale"
-  },
-  {
-   "ticker": "BILL",
-   "name": "BILL Holdings",
-   "currency": "USD",
-   "price": 61.45,
-   "chg_1d": -0.0026,
-   "rvol": 2.514,
-   "score": 45.11,
-   "breakout": false,
-   "triggers": [
-    "rvol",
-    "volume_accel"
-   ],
-   "reason": "le volume accélère régulièrement, volume 2,5 fois la normale, plafond à 8,3 % (66,58)"
-  },
-  {
-   "ticker": "FLNC",
-   "name": "Fluence Energy",
-   "currency": "USD",
-   "price": 4.1,
-   "chg_1d": 0.0789,
-   "rvol": 5.147,
-   "score": 43.41,
-   "breakout": false,
-   "triggers": [
-    "rvol",
-    "volume_accel"
-   ],
-   "reason": "le volume accélère régulièrement, volume 5,1 fois la normale"
+   "reason": "le volume accélère depuis 2 séances"
   },
   {
    "ticker": "DELL",
    "name": "Dell Technologies",
    "currency": "USD",
-   "price": 295.28,
-   "chg_1d": -0.1183,
-   "rvol": 2.445,
-   "score": 28.63,
+   "price": 297.06,
+   "chg_1d": 0.006,
+   "rvol": 2.88,
+   "score": 36.61,
    "breakout": false,
    "triggers": [
     "rvol",
     "volume_accel"
    ],
-   "reason": "le volume accélère depuis 4 séances, volume 2,4 fois la normale"
-  },
-  {
-   "ticker": "WDAY",
-   "name": "Workday",
-   "currency": "USD",
-   "price": 179.23,
-   "chg_1d": 0.0179,
-   "rvol": 1.845,
-   "score": 27.73,
-   "breakout": false,
-   "triggers": [
-    "volume_accel"
-   ],
-   "reason": "le volume accélère régulièrement"
+   "reason": "le volume accélère depuis 5 séances, volume 2,9 fois la normale"
   },
   {
    "ticker": "AMBA",
    "name": "Ambarella",
    "currency": "USD",
-   "price": 44.47,
-   "chg_1d": -0.1996,
-   "rvol": 5.896,
+   "price": 35.68,
+   "chg_1d": -0.1977,
+   "rvol": 8.293,
    "score": 24.0,
    "breakout": false,
    "triggers": [
     "rvol",
     "volume_accel"
    ],
-   "reason": "le volume accélère régulièrement, volume 5,9 fois la normale"
+   "reason": "le volume accélère depuis 2 séances, volume 8,3 fois la normale"
   },
   {
-   "ticker": "HPE",
-   "name": "Hewlett Packard Enterprise",
+   "ticker": "ZM",
+   "name": "Zoom Communications",
    "currency": "USD",
-   "price": 40.19,
-   "chg_1d": -0.1631,
-   "rvol": 2.84,
-   "score": 23.73,
+   "price": 88.56,
+   "chg_1d": 0.0018,
+   "rvol": 2.145,
+   "score": 23.24,
    "breakout": false,
    "triggers": [
-    "rvol",
-    "volume_accel"
+    "rvol"
    ],
-   "reason": "le volume accélère depuis 4 séances, volume 2,8 fois la normale"
-  },
-  {
-   "ticker": "ADI",
-   "name": "Analog Devices",
-   "currency": "USD",
-   "price": 312.95,
-   "chg_1d": -0.1737,
-   "rvol": 2.383,
-   "score": 23.48,
-   "breakout": false,
-   "triggers": [
-    "rvol",
-    "volume_accel"
-   ],
-   "reason": "le volume accélère régulièrement, volume 2,4 fois la normale"
-  },
-  {
-   "ticker": "DY",
-   "name": "Dycom",
-   "currency": "USD",
-   "price": 179.01,
-   "chg_1d": -0.1802,
-   "rvol": 3.032,
-   "score": 21.93,
-   "breakout": false,
-   "triggers": [
-    "rvol",
-    "volume_accel"
-   ],
-   "reason": "le volume accélère régulièrement, volume 3,0 fois la normale"
-  },
-  {
-   "ticker": "SMTC",
-   "name": "Semtech",
-   "currency": "USD",
-   "price": 86.46,
-   "chg_1d": -0.1697,
-   "rvol": 2.032,
-   "score": 17.49,
-   "breakout": false,
-   "triggers": [
-    "rvol",
-    "volume_accel"
-   ],
-   "reason": "le volume accélère depuis 4 séances, volume 2,0 fois la normale"
+   "reason": "volume 2,1 fois la normale"
   }
  ]
 }
