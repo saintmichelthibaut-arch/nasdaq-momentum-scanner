@@ -1,8 +1,8 @@
 {
- "generated_at_utc": "2026-11-27T14:54:31+00:00",
+ "generated_at_utc": "2026-11-28T02:56:13+00:00",
  "market_date": {
-  "US": "2026-11-25",
-  "EU": "2026-11-26"
+  "US": "2026-11-27",
+  "EU": "2026-11-27"
  },
  "profile": "swing",
  "rules": {
@@ -11,93 +11,5 @@
   "breakout_min_rvol": 1.5,
   "volume_accel_above": 70
  },
- "alerts": [
-  {
-   "ticker": "SYNA",
-   "name": "Synaptics",
-   "currency": "USD",
-   "price": 116.63,
-   "chg_1d": -0.0012,
-   "rvol": 2.095,
-   "score": 57.75,
-   "breakout": false,
-   "triggers": [
-    "rvol"
-   ],
-   "reason": "volume 2,1 fois la normale, plafond à 4,6 % (121,98)"
-  },
-  {
-   "ticker": "FLNC",
-   "name": "Fluence Energy",
-   "currency": "USD",
-   "price": 4.72,
-   "chg_1d": 0.1512,
-   "rvol": 2.222,
-   "score": 44.61,
-   "breakout": false,
-   "triggers": [
-    "rvol",
-    "volume_accel"
-   ],
-   "reason": "le volume accélère régulièrement, volume 2,2 fois la normale"
-  },
-  {
-   "ticker": "WDAY",
-   "name": "Workday",
-   "currency": "USD",
-   "price": 180.44,
-   "chg_1d": 0.0068,
-   "rvol": 1.816,
-   "score": 41.19,
-   "breakout": false,
-   "triggers": [
-    "volume_accel"
-   ],
-   "reason": "le volume accélère depuis 2 séances"
-  },
-  {
-   "ticker": "DELL",
-   "name": "Dell Technologies",
-   "currency": "USD",
-   "price": 297.06,
-   "chg_1d": 0.006,
-   "rvol": 2.902,
-   "score": 36.67,
-   "breakout": false,
-   "triggers": [
-    "rvol",
-    "volume_accel"
-   ],
-   "reason": "le volume accélère depuis 5 séances, volume 2,9 fois la normale"
-  },
-  {
-   "ticker": "AMBA",
-   "name": "Ambarella",
-   "currency": "USD",
-   "price": 35.68,
-   "chg_1d": -0.1977,
-   "rvol": 8.306,
-   "score": 24.0,
-   "breakout": false,
-   "triggers": [
-    "rvol",
-    "volume_accel"
-   ],
-   "reason": "le volume accélère depuis 2 séances, volume 8,3 fois la normale"
-  },
-  {
-   "ticker": "ZM",
-   "name": "Zoom Communications",
-   "currency": "USD",
-   "price": 88.56,
-   "chg_1d": 0.0018,
-   "rvol": 2.145,
-   "score": 23.24,
-   "breakout": false,
-   "triggers": [
-    "rvol"
-   ],
-   "reason": "volume 2,1 fois la normale"
-  }
- ]
+ "alerts": []
 }
